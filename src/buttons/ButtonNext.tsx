@@ -4,11 +4,14 @@ import { tabIdCheckout } from '../slices/sliceCart';
 import { setActiveTab } from '../store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faCircleNotch, faCreditCard } from '@fortawesome/free-solid-svg-icons';
-import { Button } from 'reactstrap';
+import Button from './Button';
+import { useCartContext } from '../CartProvider';
 
-interface Props {}
-
-function ButtonNext(props: Props) {
+function ButtonNext() {
+  const {
+    classNameBtnNext,
+    classNameBtnNextComplete,
+  } = useCartContext();
   const {
     activeTab,
     loading,
@@ -17,13 +20,11 @@ function ButtonNext(props: Props) {
   const currentTabIndex = tabs.findIndex((t: any) => t.tabId === activeTab);
   const nextTab = tabs[currentTabIndex + 1];
   const isCheckoutTabOpen = activeTab === tabIdCheckout;
-  const color = isCheckoutTabOpen ? 'success' : 'primary';
   const icon = loading ? faCircleNotch : isCheckoutTabOpen ? faCreditCard : faArrowRight;
   return (
     <Button
-      color={color}
+      className={isCheckoutTabOpen ? classNameBtnNextComplete : classNameBtnNext}
       onClick={nextTab ? () => setActiveTab(nextTab.tabId) : undefined}
-      size='lg'
       disabled={loading}
     >
       <FontAwesomeIcon icon={icon} spin={loading} />

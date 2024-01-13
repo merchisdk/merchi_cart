@@ -6,7 +6,7 @@ import {
   CheckoutContainer,
   InnerContainer,
 } from '../components/containers';
-import { Title }  from '../components/title';
+import TItle  from '../components';
 import ShipmentGroupCard from '../components/ShipmentGroupCard';
 import { tabIdShipment } from '../slices/sliceCart';
 import { faTruck } from '@fortawesome/free-solid-svg-icons';

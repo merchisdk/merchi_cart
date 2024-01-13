@@ -7,12 +7,9 @@ import {
   tabIdShipment,
 } from '../slices/sliceCart';
 import ButtonNext from './ButtonNext';
-import ButtonShipmentTabNext from './button_shipment_tab_next';
+import ButtonShipmentTabNext from './ButtonShipmentTabNext';
 
-interface Props {
-}
-
-function ButtonNextDynamic(props: Props) {
+function ButtonNextDynamic() {
   const { cart, activeTab } = useSelector((s: any) => s.stateCart);
   const cartItems = cart.cartItems;
   const hasCartItems = cartItems && cartItems.length;
@@ -20,11 +17,15 @@ function ButtonNextDynamic(props: Props) {
   const isShipmentTabActive = activeTab === tabIdShipment;
   const isCheckoutTabOpen = activeTab === tabIdCheckout;
   const isPaymentSuccessOpen = activeTab === tabIdPaymentSuccess;
-  return isCheckoutTabOpen || isPaymentSuccessOpen ? <></> :
-    isShipmentTabActive ?
-      <ButtonShipmentTabNext /> :
-      isCartItemsTabActive && !hasCartItems ? <></> :
-        <ButtonNext />;
+  return isCheckoutTabOpen || isPaymentSuccessOpen ? (
+    <></>
+  ) : isShipmentTabActive ? (
+    <ButtonShipmentTabNext />
+  ) : isCartItemsTabActive && !hasCartItems ? (
+    <></>
+  ) : (
+    <ButtonNext />
+  );
 }
 
 export default ButtonNextDynamic;

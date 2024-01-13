@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { toggleCartOpen } from './store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faShoppingCart } from '@fortawesome/free-solid-svg-icons';
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faShoppingCart, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useCartContext } from './CartProvider';
 
 function CartHeader() {

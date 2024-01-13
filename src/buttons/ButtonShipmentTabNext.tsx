@@ -3,19 +3,17 @@ import { useSelector } from 'react-redux';
 import { shipmentFormId } from '../slices/slice_cart_shipment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
-import { Button } from 'reactstrap';
+import Button from './Button';
+import { useCartContext } from '../CartProvider';
 
-interface Props {
-}
-
-function ButtonShipmentTabNext(props: Props) {
+export default function ButtonShipmentTabNext() {
+  const { classNameBtnNext } = useCartContext();
   const { savingShipmentAddress } = useSelector((s: any) => s.cartShipmentState);
   const icon = savingShipmentAddress ? faCircleNotch : faArrowRight;
   return (
     <Button
-      color='primary'
+      className={classNameBtnNext}
       form={shipmentFormId}
-      size='lg'
       disabled={savingShipmentAddress}
     >
       <FontAwesomeIcon icon={icon} spin={savingShipmentAddress} />
@@ -25,5 +23,3 @@ function ButtonShipmentTabNext(props: Props) {
     </Button>
   );
 }
-
-export default ButtonShipmentTabNext;

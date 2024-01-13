@@ -1,16 +1,17 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
+import { useCartContext } from '../CartProvider';
 import { setActiveTab, toggleCartOpen } from '../store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
-import { Button } from 'reactstrap';
-
+import Button from './Button';
 
 interface Props {
   text?: string;
 }
 
 function ButtonBack({ text }: Props) {
+  const { classNameBtnBack } = useCartContext();
   const { activeTab, tabs } = useSelector((s: any) => s.stateCart);
   const currentTabIndex = tabs.findIndex((t: any) => t.tabId === activeTab);
   let nextTab = null;
@@ -20,14 +21,12 @@ function ButtonBack({ text }: Props) {
   const nextTabId = nextTab ? nextTab.tabId : 0;
   return (
     <Button
-      className='pull-left'
-      color='default'
-      onClick={
-        activeTab === 0 ?
-          toggleCartOpen
-        :
-          () => setActiveTab(nextTabId)}
-      size='lg'
+      className={classNameBtnBack}
+      onClick={activeTab === 0 ?
+        toggleCartOpen
+      :
+        () => setActiveTab(nextTabId)
+      }
     >
       <FontAwesomeIcon icon={faArrowLeft} />
       {text ? ` ${text}` : ''}

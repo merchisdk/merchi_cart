@@ -9,7 +9,7 @@ import {
   updateCartShipmentAddress,
   saveCartShipmentAddressAndGoToNextTab,
 } from '../store';
-import { Title }  from '../components/title';
+import TItle  from '../components';
 import { useForm } from 'react-hook-form';
 import { shipmentFormId, sliceCartShipment } from '../slices/slice_cart_shipment';
 import { FormGroup, Label } from 'reactstrap';

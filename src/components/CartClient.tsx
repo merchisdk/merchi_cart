@@ -1,40 +1,27 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { sliceCart } from '../slices/sliceCart';
-import { Title } from './title';
 import {
   primaryEmail,
   primaryPhone,
-} from '../../ts_helpers/user';
+} from '../utilities/user';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle, faUserTimes } from '@fortawesome/free-solid-svg-icons';
-import { Button } from 'reactstrap';
+import Button from '../buttons/Button';
+import Title from './Title';
+import { useCartContext } from '../CartProvider';
 
 export function ClientInfo({ client }: any) {
+  const { classNameListClientInfo } = useCartContext();
   const { name = 'Returning customer' } = client;
-  const emailAddress = primaryEmail(client) ?
-    primaryEmail(client) : 'Email not shown';
-  const phoneNumber = primaryPhone(client) ?
-    primaryPhone(client) : 'Phone number not shown';
+  const emailAddress = primaryEmail(client) || 'Email not shown';
+  const phoneNumber = primaryPhone(client) || 'Phone number not shown';
   return (
-    <div>
-      <ul className='list-unstyled text-center'
-          style={{
-            fontSize: '15px',
-            listStyle: 'none',
-            marginBottom: '0px',
-            paddingLeft: '0px'}}>
-        <li>
-          {name}
-        </li>
-        <li>
-          {emailAddress}
-        </li>
-        <li>
-          {phoneNumber}
-        </li>
-      </ul>
-    </div>
+    <ul className={classNameListClientInfo}>
+      <li>{name}</li>
+      <li>{emailAddress}</li>
+      <li>{phoneNumber}</li>
+    </ul>
   );
 }
 
@@ -42,25 +29,16 @@ interface Props {
   client: any;
 }
 
-function CartClient(props: Props) {
-  const { client } = props;
+function CartClient({ client }: Props) {
   const dispatch = useDispatch();
   function clearClient() {
     dispatch(sliceCart.actions.setCartClient(null))
   }
   return (
-    <div className='p-b-20 p-t-0'>
-      <Title
-        icon={faUserCircle}
-        title='Checkout as'
-      />
+    <div>
+      <Title icon={faUserCircle} title='Checkout as' />
       <ClientInfo client={client} />
-      <Button
-        color='default'
-        size='md'
-        onClick={clearClient}
-        className='m-t-20'
-      >
+      <Button onClick={clearClient}>
         <FontAwesomeIcon icon={faUserTimes} /> Change
       </Button>
     </div>

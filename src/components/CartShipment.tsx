@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { Title } from './title';
+import Title from './Title';
 import { sliceCart, tabIdShipment } from '../slices/sliceCart';
 import { addressInOneLine } from '../../ts_helpers/address';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

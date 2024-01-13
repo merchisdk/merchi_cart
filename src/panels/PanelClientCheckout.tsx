@@ -8,7 +8,7 @@ import {
 } from '../components/containers';
 import CartClient from '../components/CartClient';
 import CartShipment from '../components/CartShipment';
-import { Title }  from '../components/title';
+import TItle  from '../components';
 import FormNewCustomer from '../forms/FormNewCustomer';
 import FormReturningCustomerActive from '../forms/FormReturningCustomerActive';
 import FormSquarePayment from '../forms/FormSquarePayment';

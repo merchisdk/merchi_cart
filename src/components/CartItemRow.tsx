@@ -1,12 +1,9 @@
 import * as React from 'react';
-import FontAwesomeIconTooltip from '../../components/icons/FontAwesomeIconTooltip';
-import { showCurrencyAndCost } from '../../ts_helpers/currency';
-import {
-  makeProduct,
-  productProfileUrl,
-} from '../../ts_helpers/product';
-import { valueString } from '../../ts_helpers/variations';
+import { cartItemCurrencyAndCost } from '../utilities/currency';
+import { productFeatureImageUrl } from '../utilities/product';
+import { valueString } from '../utilities/variations';
 import { actionDeleteCartItem, setCartItem } from '../store';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Button } from 'reactstrap';
 
@@ -33,7 +30,9 @@ function VariationList(props: VariationListProps) {
       {variations.map((v: any, index: number) =>
         <VariationListItem
           key={`${index}-variation`}
-          variation={v} />)}
+          variation={v}
+        />
+      )}
     </ul>
   );
 }
@@ -76,25 +75,28 @@ interface Props {
   loading: boolean;
 }
 
-function CartItemRow(props: Props) {
-  const { cartItem, index, loading } = props;
+function CartItemRow({ cartItem, index, loading }: Props) {
   const {
     product,
     quantity,
-    subtotalCost,
     variations,
     variationsGroups: groups,
   } = cartItem;
-  const productEnt = makeProduct(product);
+  const { name } = product;
   return (
     <tr>
       <th scope='row' className='border-0'>
-        <img src={productProfileUrl(product)} alt='' width='70' className='img-rounded m-10' />
+        <img
+          src={productFeatureImageUrl(product)}
+          alt={name}
+          width='70'
+          className='img-rounded m-10'
+        />
         <div className='ml-3 d-inline-block align-middle'>
           <span className='text-muted font-weight-normal font-italic d-block'>
             <h5 style={{display: 'inline'}}>
               <a href='#'>
-                {product.name}
+                {name}
               </a>
             </h5>
             {variations && <VariationList variations={variations} />}
@@ -108,28 +110,22 @@ function CartItemRow(props: Props) {
         <strong>{quantity}</strong>
       </td>
       <td className='border-0 align-middle text-right'>
-        <strong>{subtotalCost ?
-          showCurrencyAndCost(productEnt, cartItem.subtotalCost) : null}
-        </strong>
+        <strong>{cartItemCurrencyAndCost(cartItem)}</strong>
       </td>
       <td className='border-0 align-middle text-right'>
         <Button
           color='link'
           onClick={() => setCartItem(cartItem, index)}
         >
-          <FontAwesomeIconTooltip
-            icon={faEdit}
-            tooltip='Edit item'
-          />
+          <FontAwesomeIcon icon={faEdit} />
         </Button>
         <Button
           color='link'
           onClick={() => actionDeleteCartItem(index)}
         >
-          <FontAwesomeIconTooltip
+          <FontAwesomeIcon
             icon={loading ? faCircleNotch : faTrashAlt}
             spin={loading}
-            tooltip={loading ? 'Deleteing item' : 'Delete item'}
           />
         </Button>
       </td>

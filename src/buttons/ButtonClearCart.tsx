@@ -1,17 +1,17 @@
 import * as React from 'react';
+import { useCartContext } from '../CartProvider';
 import { tabIdClearCart } from '../slices/sliceCart';
 import { setActiveTab } from '../store';
-import { Button } from 'reactstrap';
+import Button from './Button';
 
-interface Props {}
-
-function ButtonClearCart(props: Props) {
+function ButtonClearCart() {
+  const {
+    classNameBtnCartClear
+  } = useCartContext();
   return (
     <Button
-      className='mr-auto'
-      color='danger'
+      className={classNameBtnCartClear}
       onClick={() => setActiveTab(tabIdClearCart)}
-      size='lg'
     >
       Clear cart
     </Button>

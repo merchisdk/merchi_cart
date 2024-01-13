@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Provider } from 'react-redux';
-import { Cart } from './cart';
+import Cart from './cart';
 import CssCartUtility from '../css/CssCartUtility';
 import CssModalHelper from '../css/CssModalHelper';
 import { actionFetchTheme, initMerchiCart, store } from './store';

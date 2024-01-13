@@ -1,10 +1,11 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { formatCurrency } from '../currency';
-import { cartRequiresShipment } from '../ts_helpers/cart';
+import { formatCurrency } from './utilities/currency';
+import { cartRequiresShipment } from './utilities/cart';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
-import { Col, Row, Table } from 'reactstrap';
+import { Table } from './components';
+import { useCartContext } from './CartProvider';
 
 interface Props {
   attribute: string;
@@ -51,14 +52,17 @@ interface RowProps {
   name: string;
 }
 
-function CostsTableRow(props: RowProps) {
-  const { attr, name } = props;
+function CostsTableRow({ attr, name }: RowProps) {
+  const {
+    classNameCartTotalItem,
+    classNameCartTotalItemPrice,
+  } = useCartContext();
   return (
     <tr>
-      <td className='text-right cart-cell-width-subtotal'>
+      <td className={classNameCartTotalItem}>
         {name}
       </td>
-      <th className='text-right'>
+      <th className={classNameCartTotalItemPrice}>
         <CartTotal attribute={attr} />
       </th>
     </tr>
@@ -66,38 +70,40 @@ function CostsTableRow(props: RowProps) {
 }
 
 function CartTotals() {
+  const {
+    classNameCartTotalContainer,
+    classNameCartTotalItemPrice
+  } = useCartContext();
   const { cart } = useSelector((s: any) => s.stateCart);
   const cartItems = cart.cartItems ? cart.cartItems : [];
   return (
-    <Row>
-      <Col>
-        <Table borderless className='m-b-0'>
-          <tbody>
-            <CostsTableRow
-              attr='cartItemsTotalCost'
-              name='Subtotal'
-            />
-            {
-              cartRequiresShipment({ ...cart, cartItems }) &&
-                <CostsTableRow
-                  attr='shipmentTotalCost'
-                  name='Shipping'
-                />
-            }
-            <CostsTableRow
-              attr='totalCost'
-              name='Total'
-            />
-            <tr>
-              <td />
-              <td className='text-right text-muted cart-tax-row'>
-                Total price includes taxes
-              </td>
-            </tr>
-          </tbody>
-        </Table>
-      </Col>
-    </Row>
+    <div className={classNameCartTotalContainer}>
+      <Table>
+        <tbody>
+          <CostsTableRow
+            attr='cartItemsTotalCost'
+            name='Subtotal'
+          />
+          {
+            cartRequiresShipment({ ...cart, cartItems }) &&
+              <CostsTableRow
+                attr='shipmentTotalCost'
+                name='Shipping'
+              />
+          }
+          <CostsTableRow
+            attr='totalCost'
+            name='Total'
+          />
+          <tr>
+            <td />
+            <td className={classNameCartTotalItemPrice}>
+              Total price includes taxes
+            </td>
+          </tr>
+        </tbody>
+      </Table>
+    </div>
   );
 }
 

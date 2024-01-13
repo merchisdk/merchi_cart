@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { currencyMap } from '../../currency';
-import { Button } from 'reactstrap';
+import { useCartContext } from '../CartProvider';
+import { currencyMap } from '../utilities/currency';
+import Button from './Button';
 
 interface Props {
   cart: any;
@@ -8,18 +9,22 @@ interface Props {
 }
 
 function ButtonPay({ cart, loading }: Props) {
+  const { classNameBtnPay } = useCartContext();
   const { currency, totalCost } = cart;
   return (
     <Button
+      className={classNameBtnPay}
       disabled={loading}
-      color='primary'
-      size='lg'
       type='submit'
-      block>
-      {loading ?
-        <span>Loading...</span> :
-        <span>Pay {currencyMap[currency]}
-      {totalCost}<small> / inc tax</small></span>}
+    >
+      {loading ? (
+        <span>Loading...</span>
+      ) : (
+        <span>
+          Pay {currencyMap[currency]}
+          {totalCost}<small> / inc tax</small>
+        </span>
+      )}
     </Button>
   );
 }
