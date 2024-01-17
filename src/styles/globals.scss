@@ -1,0 +1,179 @@
+.merchi-cart-body {
+  display: block;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  min-height: 100px;
+  height: 450px;
+}
+.merchi-loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: var(--bs-height-md, 100px);
+}
+.merchi-loading-container-text {
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-align: center;
+}
+.merchi-payment-gateway-inactive {
+  height: 300px;
+  background: url('../assets/merchi-swipe-outline.png');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 276px 215px;
+  margin-top: 100px;
+}
+.merchi-tab-panel {
+  display: none;
+  padding: 1rem;
+}
+.merchi-cart-tab-content {
+  padding: 15px;
+}
+.merchi-cart-tab-content > .merchi-cart-tab-panel {
+  display: none;
+}
+.merchi-cart-tab-content > .active {
+  display: block;
+}
+.merchi-cart-clear-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.merchi-cart-clear-text {
+  font-size: 16px;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
+}
+.merchi-cart-item-table-head {
+  border: none;
+  background-color: #f8f9fa;
+  padding: 0.5rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  text-transform: uppercase;
+}
+.merchi-cart-item-table-head-right {
+  border: none;
+  background-color: #f8f9fa;
+  padding: 0.5rem;
+  padding-left: 0.75rem;
+  padding-right: 0.75rem;
+  text-transform: uppercase;
+  text-align: right;
+}
+.merchi-cart-success-message {
+  font-size: 16px;
+  padding-bottom: 4rem;
+  padding-top: 4rem;
+}
+
+/* Merchi checkout */
+.merchi-row {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (min-width: 768px) {
+  .merchi-row {
+    flex-direction: row;
+  }
+
+  .merchi-column {
+    width: 50%;
+    padding-right: 10px;
+  }
+
+  .merchi-column:last-child {
+    padding-left: 10px;
+    padding-right: 0;
+  }
+}
+
+.merchi-collapse {
+  display: none;
+}
+
+.merchi-collapse.show {
+  display: block;
+}
+
+.merchi-nav {
+  display: flex;
+  flex-wrap: wrap;
+  padding-left: 0;
+  margin-bottom: 0;
+  list-style: none;
+}
+
+.merchi-nav-link {
+  cursor: pointer;
+  display: block;
+  padding: 0.5rem 1rem;
+}
+
+.merchi-nav-link:hover, .merchi-nav-link:focus {
+  text-decoration: none;
+}
+
+.merchi-nav-link.disabled {
+  color: #6c757d;
+  pointer-events: none;
+  cursor: default;
+}
+
+.merchi-nav-tabs {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.merchi-nav-tabs .merchi-nav-item {
+  margin-bottom: -1px;
+}
+
+.merchi-nav-tabs .merchi-nav-link {
+  border: 1px solid transparent;
+  border-top-left-radius: 0.25rem;
+  border-top-right-radius: 0.25rem;
+}
+
+.merchi-nav-tabs .merchi-nav-link:hover, .merchi-nav-tabs .merchi-nav-link:focus {
+  border-color: #e9ecef #e9ecef #dee2e6;
+}
+
+.merchi-nav-tabs .merchi-nav-link.disabled {
+  color: #6c757d;
+  background-color: transparent;
+  border-color: transparent;
+}
+
+.merchi-nav-tabs .merchi-nav-link.active,
+.merchi-nav-tabs .merchi-nav-item.show .merchi-nav-link {
+  color: #495057;
+  background-color: #fff;
+  border-color: #dee2e6 #dee2e6 #fff;
+}
+
+.merchi-nav-pills .merchi-nav-link {
+  border-radius: 0.25rem;
+}
+
+.merchi-nav-pills .merchi-nav-link.active,
+.merchi-nav-pills .show > .merchi-nav-link {
+  color: #fff;
+  background-color: #007bff;
+}
+
+.merchi-nav-fill .merchi-nav-item {
+  flex: 1 1 auto;
+  text-align: center;
+}
+.merchi-no-cart-items {
+  display: flex;
+  justify-content: center;
+  align-content: center;
+  height: 450px;
+}
