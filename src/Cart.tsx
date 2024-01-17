@@ -1,55 +1,59 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux';
-import {
-  CartFooter,
-  LoadingTemplate,
-} from './components';
+import { Provider, useSelector } from 'react-redux';
+import { store } from './store';
 import CartAlert from './CartAlert';
 import CartHeader from './CartHeader';
 import CartTotals from './CartTotals';
-import CartProvider, { PropsCart } from './CartProvider';
-import ButtonBack from './buttons/ButtonBack';
-import ButtonClearCart from './buttons/ButtonClearCart';
-import CartPaymentSettingsInvalid from './components/CartPaymentSettingsInvalid';
-import ButtonNextDynamic from './buttons/ButtonNextDynamic';
-import PanelCartItems from './panels/PanelCartItems';
-import PanelCartShipment from './panels/PanelCartShipment';
-import PanelClearCart from './panels/PanelClearCart';
-import PanelClientCheckout from './panels/PanelClientCheckout';
-import PanelEditCartItem from './panels/PanelEditCartItem';
-import PanelPaymentSuccess from './panels/PanelPaymentSuccess';
+import CartProvider, { PropsCart, useCartContext } from './CartProvider';
+import {
+  ButtonBack,
+  ButtonClearCart,
+  ButtonNextDynamic,
+} from './buttons';
+import {
+  CartFooter,
+  CartPaymentSettingsInvalid,
+  LoadingTemplate,
+} from './components';
+import {
+  PanelCartItems,
+  PanelCartShipment,
+  PanelClearCart,
+  PanelClientCheckout,
+  PanelEditCartItem,
+  PanelPaymentSuccess,
+}from './panels';
 import {
   tabIdClearCart,
   tabIdItem,
   tabIdPaymentSuccess,
 } from './slices/sliceCart';
 import {
-  TabContent,
-} from 'reactstrap';
+  actionFetchTheme,
+  initMerchiCart,
+} from './store';
 
-// interface Props {
-//   cartButtonWrappedInContainer?: boolean;
-//   cartIconButtonClass?: string;
-//   currentUser?: any;
-//   customSuccessMessage?: string;
-//   domainId: number;
-//   hideFacebookLogin?: boolean;
-// }
-
-// cartButtonWrappedInContainer = true,
-// cartIconButtonClass,
-// customSuccessMessage,
-// hideFacebookLogin,
-
-export default function Cart(props: PropsCart) {
+function CartComponents() {
+  const {
+    domainId,
+    includeTheme,
+    initialiseCart
+  } = useCartContext();
   const {
     activeTab,
     cartSettingsInvalid,
     fetchingCart,
   } = useSelector((s: any) => s.stateCart);
-
+  React.useEffect(() => {
+    if (initialiseCart && domainId) {
+      if (includeTheme) {
+        actionFetchTheme(domainId);
+      }
+      initMerchiCart(domainId);
+    }
+  }, [domainId, includeTheme, initialiseCart]);
   return (
-    <CartProvider {...props}>
+    <>
       <CartHeader />
       <CartAlert />
       {fetchingCart ? (
@@ -57,10 +61,7 @@ export default function Cart(props: PropsCart) {
       ) : cartSettingsInvalid ? (
         <CartPaymentSettingsInvalid />
       ) : (
-        <TabContent
-          activeTab={activeTab}
-          className='merchi-tab-pane'
-        >
+        <div className='merchi-tab-pane'>
           <PanelClearCart />
           <PanelEditCartItem />
           <PanelCartItems />
@@ -79,8 +80,20 @@ export default function Cart(props: PropsCart) {
               </CartFooter>
             </>
           }
-        </TabContent>
-      )}
+        </div>
+        )}
+    </>
+  );
+}
+
+export default function Cart(props: PropsCart) {
+  return (
+    <CartProvider {...props}>
+      <Provider store={store}>
+        <CartComponents />
+        <CartHeader />
+        <CartAlert />
+      </Provider>
     </CartProvider>
   );
 }

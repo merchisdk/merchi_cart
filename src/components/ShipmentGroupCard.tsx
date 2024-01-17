@@ -6,6 +6,7 @@ import { addressInOneLine } from '../../ts_helpers/address';
 import { currencyTaxAndCost } from '../../ts_helpers/currency';
 import { NoCartShipmentOptionsFound } from '../../list-utility';
 import { ListGroup, ListGroupItem } from 'reactstrap';
+import { useCartContext } from '../CartProvider';
 
 interface PropsPickupInfo {
   originAddress: any;
@@ -24,8 +25,10 @@ function ShipmentPrice({ quote }: any) {
   const { currency } = shipmentMethod;
   return (
     <div>
-      <small className='font-weight-bold'>
-        {totalCost > 0 ? currencyTaxAndCost(currency, taxType, totalCost) : ''}
+      <small>
+        <strong>
+          {totalCost > 0 ? currencyTaxAndCost(currency, taxType, totalCost) : ''}
+        </strong>
       </small>
     </div>
   );
@@ -36,10 +39,11 @@ interface PropsShipmentOptionInfo {
 }
 
 function ShipmentOptionInfo({ quote }: PropsShipmentOptionInfo) {
+  const { classNameShipmentOption } = useCartContext();
   const { name, shipmentMethod } = quote;
   const { originAddress, pickUp, transportCompanyName } = shipmentMethod;
   return (
-    <div className='shipment-option-info'>
+    <div className={classNameShipmentOption}>
       {
         !name ?
           <>
@@ -71,19 +75,19 @@ interface ShipmentOptionProps {
   quote: any;
 }
 
-function ShipmentQuote(props: ShipmentOptionProps) {
-  const state = useSelector((s: any) => s.cartShipmentState);
-  const { selectedQuotes } = state;
-  const { groupIndex, quote } = props;
+function ShipmentQuote({ groupIndex, quote }: ShipmentOptionProps) {
+  const { classNameListItem } = useCartContext();
+  const { selectedQuotes } = useSelector((s: any) => s.stateCartShipment);
   const isSelected = selectedQuotes[groupIndex].id === quote.id;
   function doClick() {
     setSelectedShipmentQuote(groupIndex, quote);
   }
   const icon = isSelected ? 'far fa-check-square' : 'far fa-square';
   return (
-    <ListGroupItem
-      className='cursor-pointer'
+    <div
+      className={classNameListItem}
       onClick={doClick}
+      style={{cursor: 'pointer'}}
     >
       <div
         style={{
@@ -94,10 +98,10 @@ function ShipmentQuote(props: ShipmentOptionProps) {
       >
         <ShipmentOptionInfo quote={quote} />
         <div>
-          <Icon icon={icon} />
+          <i className={icon} />
         </div>
       </div>
-    </ListGroupItem>
+    </div>
   )
 }
 
@@ -106,33 +110,37 @@ interface Props {
   groupIndex: number;
 }
 
-function ShipmentGroupCard(props: Props) {
-  const { group, groupIndex } = props;
+function ShipmentGroupCard({ group, groupIndex }: Props) {
+  const {
+    classNameList,
+    classNameListInline,
+  } = useCartContext();
   const { cartItems, quotes = [] } = group;
   return (
     <div>
-      <ul className='list-inline'>
+      <ul className={classNameListInline}>
         <li>
           <strong>Shipment {groupIndex + 1} contents:</strong>
         </li>
         {cartItems.map((item: any, index: number) =>
           <li key={index}>
             {item.product.name}
-          </li>)}
+          </li>
+        )}
       </ul>
-      {quotes.length ?
-        <ListGroup>
+      {quotes.length ? (
+        <div className={classNameList}>
           {quotes.map((q: any, i: number) =>
             <ShipmentQuote
               key={`${i}-group`}
               quote={q}
               groupIndex={groupIndex}
-            />)
-          }
-        </ListGroup>
-      :
+            />
+          )}
+        </div>
+      ) : (
         <NoCartShipmentOptionsFound />
-      }
+      )}
     </div>
   );
 }

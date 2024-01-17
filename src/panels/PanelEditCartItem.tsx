@@ -1,66 +1,58 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import ButtonBack from '../buttons/ButtonBack';
+import MerchiProductForm from 'merchi_product_form';
 import { tabIdItem } from '../slices/sliceCart';
-import {
-  alertError,
-  cartItemQuoteUpdate,
-  patchCartItem,
-} from '../store';
-import FormPublicProduct from '../../forms/FormPublicProduct';
-import { makeCartItem } from '../../ts_helpers/cart';
+import { patchCartItem } from '../store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
+import { Button, ButtonBack } from '../buttons';
 import {
-  Button,
-  ModalBody,
-  ModalFooter,
-  TabPane,
-} from 'reactstrap';
+  CartBody,
+  CartFooter,
+  CartTabPanel,
+} from '../components';
+import { useCartContext } from '../CartProvider';
 
 function PanelEditCartItem() {
   const {
-    cartItem,
-    fetchingPrice,
-    savingCartItem,
-  } = useSelector((s: any) => s.cartItemState);
-  const cartItemEnt = makeCartItem(cartItem);
+    productFormClassNames,
+    classNameBtnPrimary,
+    urlApi,
+  } = useCartContext();
+  const { cartItem, savingCartItem } = useSelector((s: any) => s.stateCartItem);
   const formId = 'edit-cart-item-form';
-  function onSubmitForm(data: any, isBuyRequest: boolean) {
+  function onSubmit(data: any) {
     patchCartItem(data.job);
   }
   return (
-    <TabPane
-      className='p-0'
-      tabId={tabIdItem}
-    >
-      <ModalBody style={{padding: '2rem'}}>
+    <CartTabPanel tabId={tabIdItem}>
+      <CartBody style={{padding: '2rem'}}>
         {cartItem.id &&
-          <FormPublicProduct
-            errorCallback={alertError}
-            formId={formId}
+          <MerchiProductForm
+            apiHost={urlApi}
             isCartItem={true}
-            job={cartItemEnt}
-            jobUpdate={cartItemQuoteUpdate}
-            loading={fetchingPrice}
-            submitForm={onSubmitForm}
+            job={cartItem}
+            initProduct={cartItem.product}
+            onSubmit={onSubmit}
+            productFormId={formId}
+            hideRequestQuotationButton={true}
+            hidePaymentUpfrontButton={true}
+            {...productFormClassNames}
           />
         }
-      </ModalBody>
-      <ModalFooter className='m-t-0'>
+      </CartBody>
+      <CartFooter>
         <ButtonBack />
         <Button
-          color='primary'
+          className={classNameBtnPrimary}
           disabled={savingCartItem}
-          size='md'
           form={formId}
         >
-          {savingCartItem &&
-            <FontAwesomeIcon icon={faCircleNotch} spin />}
+          {savingCartItem && <FontAwesomeIcon icon={faCircleNotch} spin />}
           {savingCartItem ? ' Loading...' : 'Save'}
         </Button>
-      </ModalFooter>
-    </TabPane>
+      </CartFooter>
+    </CartTabPanel>
   );
 }
 

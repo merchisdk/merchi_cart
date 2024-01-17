@@ -2,17 +2,22 @@ import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import Title from './Title';
 import { sliceCart, tabIdShipment } from '../slices/sliceCart';
-import { addressInOneLine } from '../../ts_helpers/address';
+import { addressInOneLine } from '../utilities/address';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTruck } from '@fortawesome/free-solid-svg-icons';
-import { Button } from 'reactstrap';
+import { Button } from '../buttons';
+import { useCartContext } from '../CartProvider';
 
 interface Props {
   cart: any;
 }
 
-function CartShipment(props: Props) {
-  const { cart } = props;
+function CartShipment({ cart }: Props) {
+  const {
+    classNameBtnDefault,
+    classNameListContainer,
+    classNameListUnstyled,
+  } = useCartContext();
   const { receiverAddress, receiverNotes } = cart;
   const address = receiverAddress ? receiverAddress : null;
   const dispatch = useDispatch();
@@ -20,14 +25,14 @@ function CartShipment(props: Props) {
     dispatch(sliceCart.actions.setActiveTab(tabIdShipment));
   }
   return (
-    <div className='p-b-20 p-t-0'>
+    <div className={classNameListContainer}>
       <Title
         icon={faTruck}
-        title='Ship to'
+        Title='Ship to'
       />
       <ul
-        className='list-unstyled'
-        style={{fontSize: '15px', marginBottom: '0px'}}
+        className={classNameListUnstyled}
+        style={{fontSize: '15px', marginBottom: '1rem'}}
       >
         <li>
           <span style={{display: 'inline-block', marginLeft: 28}}>
@@ -39,13 +44,10 @@ function CartShipment(props: Props) {
         </li>
       </ul>
       <Button
-        color='default'
-        size='md'
         onClick={openShipmentTab}
-        className='m-t-20'
+        className={classNameBtnDefault}
       >
-        <FontAwesomeIcon icon={faEdit} />
-          {address ? ' Change' : ' Set'}
+        <FontAwesomeIcon icon={faEdit} /> {address ? ' Change' : ' Set'}
       </Button>
     </div>
   );

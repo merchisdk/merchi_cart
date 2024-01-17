@@ -1,19 +1,32 @@
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useForm } from 'react-hook-form';
+import InputsAddress from './InputsAddress';
 import {
   CheckoutContainer,
   InnerContainer,
 } from '../components/containers';
-import AddressGeoSuggestInput from '../../address_components/forms/AddressGeoSuggestInput';
+import { Title } from '../components';
 import {
   updateCartShipmentAddress,
   saveCartShipmentAddressAndGoToNextTab,
 } from '../store';
-import TItle  from '../components';
-import { useForm } from 'react-hook-form';
-import { shipmentFormId, sliceCartShipment } from '../slices/slice_cart_shipment';
-import { FormGroup, Label } from 'reactstrap';
+import { shipmentFormId, sliceCartShipment } from '../slices/sliceCartShipment';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
+import { useCartContext } from '../CartProvider';
+
+interface PropsAddress {
+  defaultAddress?: any;
+  labelGeoSuggest?: string;
+  hookForm: any;
+  name?: string;
+  placeholder?: string;
+  updateAddress: (address: any) => void;
+}
+
+const AddressGeoSuggestInput = (props: PropsAddress) => (
+  <InputsAddress {...props} name='receiverAddress' />
+);
 
 interface Props {
   address?: any;
@@ -29,7 +42,6 @@ interface Props {
 }
 
 function FormShipmentAddressAndNotes({
-    addressFieldsOpen,
     address = {},
     formId,
     notes = '',
@@ -37,26 +49,22 @@ function FormShipmentAddressAndNotes({
     deliveryNomenclature = false,
     showHeadings = true,
     setCartShipmentAddress,
-    toggleAddressFields,
     updateCartShipmentAddress,
   }: Props) {
-  const {
-    errors,
-    getValues,
-    handleSubmit,
-    register,
-    reset,
-    setValue,
-  } = useForm({
+  const { classNameCartFormGroup } = useCartContext();
+  const hookForm = useForm({
     defaultValues: {
       receiverAddress: address,
       receiverNotes: notes,
     },
   });
+  const {
+    getValues,
+    handleSubmit,
+    register,
+    reset,
+  } = hookForm;
 
-  function getErrors(key: string) {
-    return errors && (errors as any)[key] ? (errors as any)[key] : {};
-  }
   function onSubmit() {
     setCartShipmentAddress(getValues());
   }
@@ -77,25 +85,20 @@ function FormShipmentAddressAndNotes({
           <InnerContainer paddingBottom='1rem'>
             <Title
               icon={showIcon ? faMapMarkerAlt : null}
-              title='Delivery / billing address'
+              Title='Delivery / billing address'
             />
           </InnerContainer>
         </CheckoutContainer>
       }
       <AddressGeoSuggestInput
-        address={address}
-        addressFieldsOpen={addressFieldsOpen}
-        errors={getErrors('receiverAddress')}
-        geoSuggestInputLabel={`Enter your ${deliveryNomenclature ? 'delivery' : 'shipping'} address`}
-        getValues={getValues}
+        defaultAddress={address}
+        hookForm={hookForm}
+        labelGeoSuggest={`Enter your ${deliveryNomenclature ? 'delivery' : 'shipping'} address`}
         name='receiverAddress'
-        register={register}
-        setValue={setValue}
-        toggleAddressFieldsOpen={toggleAddressFields}
         updateAddress={updateAddress}
       />
-      <FormGroup>
-        <Label>{deliveryNomenclature ? 'Delivery' : 'Shipment'} notes</Label>
+      <div className={classNameCartFormGroup}>
+        <label>{deliveryNomenclature ? 'Delivery' : 'Shipment'} notes</label>
         <textarea
           className='form-control input'
           defaultValue={notes}
@@ -105,7 +108,7 @@ function FormShipmentAddressAndNotes({
           ref={register}
         >
         </textarea>
-      </FormGroup>
+      </div>
     </form>
   );
 }
@@ -116,7 +119,7 @@ export function ActiveFormShipmentAddressAndNotes() {
     addressFieldsOpen,
     receiverAddress,
     receiverNotes,
-  } = useSelector((s: any) => s.cartShipmentState);
+  } = useSelector((s: any) => s.stateCartShipment);
   function toggleAddressFieldsOpen() {
     dispatch(sliceCartShipment.actions.toggleAddressFields());
   }

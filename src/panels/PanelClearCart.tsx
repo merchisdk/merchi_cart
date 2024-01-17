@@ -3,39 +3,45 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { doClearCart, closeClearCart } from '../store';
 import { tabIdClearCart } from '../slices/sliceCart'
-import { Button, ModalBody, TabPane } from 'reactstrap';
+import { Button } from '../buttons';
+import { CartBody, CartTabPanel } from '../components';
+import { useCartContext } from '../CartProvider';
 
-interface Props {
-}
-
-function PanelClearCart(props: Props) {
+function PanelClearCart() {
+  const { 
+    classNameBtnDanger,
+    classNameBtnDefault,
+    classNameClearCartContainer,
+    classNameClearCartText,
+   } = useCartContext();
   return (
-    <TabPane tabId={tabIdClearCart}>
-      <ModalBody className='text-center'>
-        <div className='m-40'>
+    <CartTabPanel tabId={tabIdClearCart}>
+      <CartBody>
+        <div className={classNameClearCartContainer}>
           <h2><FontAwesomeIcon icon={faTrashAlt} /></h2>
           <h3>Clear Cart</h3>
-          <p className='f-s-16 m-t-40 m-b-40'>
+          <p className={classNameClearCartText}>
             Are you sure you would like to clear this cart?
           </p>
           <p>
             <Button
-              className='m-5'
-              size='lg'
-              onClick={closeClearCart}>
+              className={classNameBtnDefault}
+              onClick={closeClearCart}
+            >
               Cancel
             </Button>
+          </p>
+          <p>
             <Button
-              className='m-5'
-              color='danger'
-              size='lg'
-              onClick={doClearCart}>
+              className={classNameBtnDanger}
+              onClick={doClearCart}
+            >
               Yes, clear cart
             </Button>
           </p>
         </div>
-      </ModalBody>
-    </TabPane>
+      </CartBody>
+    </CartTabPanel>
   );
 }
 

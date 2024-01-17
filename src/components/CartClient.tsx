@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import { sliceCart } from '../slices/sliceCart';
+import { axtionSetCartClient } from '../store';
 import {
   primaryEmail,
   primaryPhone,
@@ -32,11 +32,11 @@ interface Props {
 function CartClient({ client }: Props) {
   const dispatch = useDispatch();
   function clearClient() {
-    dispatch(sliceCart.actions.setCartClient(null))
+    axtionSetCartClient(null);
   }
   return (
     <div>
-      <Title icon={faUserCircle} title='Checkout as' />
+      <Title icon={faUserCircle} Title='Checkout as' />
       <ClientInfo client={client} />
       <Button onClick={clearClient}>
         <FontAwesomeIcon icon={faUserTimes} /> Change

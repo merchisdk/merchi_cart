@@ -1,4 +1,4 @@
-import { Merchi } from 'MerchiSDK/merchi';
+import { Merchi } from '../MerchiSDK/merchi';
 import { companyStripePubKeyOrTestPubKey } from './company';
 
 const merchi = new Merchi();
@@ -7,31 +7,19 @@ export const makeCart = (json: any, makeDirty?: boolean, cartToken?: string) => 
   const merchi = new Merchi();
   if (cartToken) merchi.cartToken = cartToken;
   const cart = new merchi.Cart();
-  if (makeDirty) {
-    return cart.fromJson(json, {makeDirty: true});
-  } else {
-    return cart.fromJson(json);
-  }
+  return cart.fromJson(json, { makeDirty });
 };
 
 export const makeCartItem = (json: any, makeDirty?: boolean, cartToken?: string) => {
   const merchi = new Merchi();
   if (cartToken) merchi.cartToken = cartToken;
   const cartItem = new merchi.CartItem();
-  if (makeDirty) {
-    return cartItem.fromJson(json, {makeDirty: true});
-  } else {
-    return cartItem.fromJson(json);
-  }
+  return cartItem.fromJson(json, { makeDirty });
 };
 
 export function makeCartShipmentQuote(json: any, makeDirty?: boolean) {
   const cartShipmentQuote = new merchi.CartShipmentQuote();
-  if (makeDirty) {
-    return cartShipmentQuote.fromJson(json, {makeDirty: true});
-  } else {
-    return cartShipmentQuote.fromJson(json);
-  }
+  return cartShipmentQuote.fromJson(json, { makeDirty });
 }
 
 export function cartHasSelectedQuotes(cart: any) {
@@ -54,11 +42,6 @@ export async function getCartShipmentGroupsAndQuotes(cart: any) {
 function cartCompany(cart: any) {
   return cart && cart.domain && cart.domain.company ?
     cart.domain.company : null;
-}
-
-export function stripePublishableKey(cart: any) {
-  const company = cartCompany(cart);
-  return company ? companyStripePubKeyOrTestPubKey(company) : null;
 }
 
 export function hasStripeLegacyAccount(cart: any) {

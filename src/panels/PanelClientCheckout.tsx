@@ -8,33 +8,25 @@ import {
 } from '../components/containers';
 import CartClient from '../components/CartClient';
 import CartShipment from '../components/CartShipment';
-import TItle  from '../components';
+import {
+  CartBody,
+  CartTabPanel,
+  Title,
+} from '../components';
 import FormNewCustomer from '../forms/FormNewCustomer';
-import FormReturningCustomerActive from '../forms/FormReturningCustomerActive';
+import FormReturningCustomer from '../forms/FormReturningCustomer';
 import FormSquarePayment from '../forms/FormSquarePayment';
 import FormStripePayment from '../forms/FormStripePayment';
 import { faUserPlus, faUserTag } from '@fortawesome/free-solid-svg-icons';
-import { ModalBody, TabPane } from 'reactstrap';
 
-interface Props {
-  hideFacebookLogin?: boolean;
-}
-
-function PanelClientCheckout({ hideFacebookLogin }: Props) {
+function PanelClientCheckout() {
   const { cart, needsShipping } = useSelector((s: any) => s.stateCart);
   const { client, domain } = cart;
   const company = domain && domain.company;
   return (
-    <TabPane
-      className='p-0'
-      tabId={tabIdCheckout}
-    >
+    <CartTabPanel tabId={tabIdCheckout}>
       <CartNav />
-      <ModalBody
-        style={{
-          paddingTop: '2rem',
-        }}
-      >
+      <CartBody style={{ paddingTop: '2rem' }}>
         {client && client.id > -1 ?
           <>
             <CheckoutContainer>
@@ -77,7 +69,7 @@ function PanelClientCheckout({ hideFacebookLogin }: Props) {
               >
                 <Title
                   icon={faUserPlus}
-                  title='Checkout as new customer'
+                  Title='Checkout as new customer'
                 />
                 <FormNewCustomer />
               </InnerContainer>
@@ -88,15 +80,15 @@ function PanelClientCheckout({ hideFacebookLogin }: Props) {
               >
                 <Title
                   icon={faUserTag}
-                  title='Checkout as returning customer'
+                  Title='Checkout as returning customer'
                 />
-                <FormReturningCustomerActive />
+                <FormReturningCustomer />
               </InnerContainer>
             </CheckoutContainer>
           </>
         }
-      </ModalBody>
-    </TabPane>
+      </CartBody>
+    </CartTabPanel>
   );
 }
 

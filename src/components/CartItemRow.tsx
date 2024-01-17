@@ -5,7 +5,8 @@ import { valueString } from '../utilities/variations';
 import { actionDeleteCartItem, setCartItem } from '../store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { Button } from 'reactstrap';
+import Button from '../buttons';
+import { useCartContext } from '../CartProvider';
 
 interface VariationListItemProps {
   variation: any;
@@ -23,10 +24,10 @@ interface VariationListProps {
   variations: any[];
 }
 
-function VariationList(props: VariationListProps) {
-  const { variations } = props;
+function VariationList({ variations }: VariationListProps) {
+  const { classNameVariationsList } = useCartContext();
   return (
-    <ul className='list-unstyled list-inline'>
+    <ul className={classNameVariationsList}>
       {variations.map((v: any, index: number) =>
         <VariationListItem
           key={`${index}-variation`}
@@ -56,15 +57,17 @@ interface VariationsGroupsListProps {
   groups: any[];
 }
 
-function VariationsGroupsList(props: VariationsGroupsListProps) {
-  const { groups } = props;
+function VariationsGroupsList({ groups }: VariationsGroupsListProps) {
+  const { classNameVariationsList } = useCartContext();
   return (
-    <ul className='list-unstyled list-inline'>
+    <ul className={classNameVariationsList}>
       {groups.map((group: any, index: number) =>
         <GroupVariationItems
           key={`${index}-group-variations`}
           group={group}
-          count={index + 1} />)}
+          count={index + 1}
+        />
+      )}
     </ul>
   );
 }
@@ -77,50 +80,56 @@ interface Props {
 
 function CartItemRow({ cartItem, index, loading }: Props) {
   const {
+    classNameBtnLink,
+    classNameCartItemFeatureImage,
+    classNameCartItemInfo,
+    classNameCartItemInfoCell,
+    classNameCartItemInfoCellRight,
+    classNameCartItemInfoContainer,
+  } = useCartContext();
+  const {
     product,
     quantity,
     variations,
-    variationsGroups: groups,
+    variationsGroups,
   } = cartItem;
   const { name } = product;
   return (
     <tr>
-      <th scope='row' className='border-0'>
+      <th scope='row' className={classNameCartItemInfoCell}>
         <img
           src={productFeatureImageUrl(product)}
           alt={name}
           width='70'
-          className='img-rounded m-10'
+          className={classNameCartItemFeatureImage}
         />
-        <div className='ml-3 d-inline-block align-middle'>
-          <span className='text-muted font-weight-normal font-italic d-block'>
+        <div className={classNameCartItemInfoContainer}>
+          <div className={classNameCartItemInfo}>
             <h5 style={{display: 'inline'}}>
-              <a href='#'>
-                {name}
-              </a>
+              {name}
             </h5>
             {variations && <VariationList variations={variations} />}
-          </span>
-          <span className='text-muted font-weight-normal font-italic d-block'>
-            {groups && <VariationsGroupsList groups={groups} />}
-          </span>
+          </div>
+          <div className={classNameCartItemInfo}>
+            {variationsGroups && <VariationsGroupsList groups={variationsGroups} />}
+          </div>
         </div>
       </th>
-      <td className='border-0 align-middle'>
+      <td className={classNameCartItemInfoCellRight}>
         <strong>{quantity}</strong>
       </td>
-      <td className='border-0 align-middle text-right'>
+      <td className={classNameCartItemInfoCellRight}>
         <strong>{cartItemCurrencyAndCost(cartItem)}</strong>
       </td>
-      <td className='border-0 align-middle text-right'>
+      <td className={classNameCartItemInfoCellRight}>
         <Button
-          color='link'
+          className={classNameBtnLink}
           onClick={() => setCartItem(cartItem, index)}
         >
           <FontAwesomeIcon icon={faEdit} />
         </Button>
         <Button
-          color='link'
+          cclassName={classNameBtnLink}
           onClick={() => actionDeleteCartItem(index)}
         >
           <FontAwesomeIcon

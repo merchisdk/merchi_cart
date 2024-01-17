@@ -5,8 +5,7 @@ interface CheckoutContainerProps {
   textAlign?: any;
 }
 
-export function CheckoutContainer(props: CheckoutContainerProps) {
-  const { children, textAlign = 'center' } = props;
+export function CheckoutContainer({ children, textAlign = 'center' }: CheckoutContainerProps) {
   return (
     <div
       style={{
@@ -27,8 +26,7 @@ interface InnerProps {
   width?: number;
 }
 
-export function InnerContainer(props: InnerProps) {
-  const { children, paddingBottom, paddingTop, width = 400 } = props;
+export function InnerContainer({ children, paddingBottom, paddingTop, width = 400 }: InnerProps) {
   return (
     <div style={{
       padding: '3rem',

@@ -1,62 +1,49 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { LoadingTemplateSm } from '../../list-utility';
+import { faTruck } from '@fortawesome/free-solid-svg-icons';
 import { ActiveFormShipmentAddressAndNotes } from '../forms/FormShipmentAddressAndNotes';
 import {
   CheckoutContainer,
   InnerContainer,
 } from '../components/containers';
-import TItle  from '../components';
-import ShipmentGroupCard from '../components/ShipmentGroupCard';
+import {
+  Alert,
+  CartBody,
+  CartTabPanel,
+  LoadingTemplateSm,
+  ShipmentGroupCard,
+  Title,
+} from '../components';
 import { tabIdShipment } from '../slices/sliceCart';
-import { faTruck } from '@fortawesome/free-solid-svg-icons';
 import CartNav from '../tabs/CartNav';
-import { Alert, ModalBody, TabPane } from 'reactstrap';
 
-interface Props {}
-
-function PanelCartShipment(props: Props) {
+function PanelCartShipment() {
   const {
-    cartShipmentState: {
+    stateCartShipment: {
       fetchingShipmentGroups,
       shipmentGroups,
     },
   } = useSelector((s: any) => s);
   return (
-    <TabPane
-      className='p-0'
-      tabId={tabIdShipment}
-    >
+    <CartTabPanel tabId={tabIdShipment}>
       <CartNav />
-      <ModalBody
-        style={{
-          paddingTop: '2rem',
-        }}
-      >
-        <div className='merchi-tab-content'>
-          <CheckoutContainer
-            textAlign='left'
-          >
-            <InnerContainer
-              width={700}
-              paddingBottom='3rem'
-            >
+      <CartBody style={{ paddingTop: '2rem' }}>
+        <div className='merchi-cart-tab-content'>
+          <CheckoutContainer textAlign='left'>
+            <InnerContainer width={700} paddingBottom='3rem'>
               <ActiveFormShipmentAddressAndNotes />
             </InnerContainer>
           </CheckoutContainer>
-          {fetchingShipmentGroups ?
+          {fetchingShipmentGroups ? (
             <CheckoutContainer>
-              <InnerContainer
-                width={700}
-              >
+              <InnerContainer width={700}>
                 <LoadingTemplateSm />
                 <p>Fetching shipping options.</p>
               </InnerContainer>
-            </CheckoutContainer> :
+            </CheckoutContainer>
+          ) : (
             <>
-              <CheckoutContainer
-                textAlign='left'
-              >
+              <CheckoutContainer textAlign='left'>
                 <InnerContainer
                   paddingBottom='1rem'
                   width={700}
@@ -81,7 +68,7 @@ function PanelCartShipment(props: Props) {
                   width={700}
                 >
                   {shipmentGroups.length > 1 &&
-                    <Alert color='warning'>
+                    <Alert alertType='warning'>
                       Items within this cart are warehoused in different locations
                       and will be shipped separately. Please select how you would
                       like your items to be shipped.
@@ -97,10 +84,10 @@ function PanelCartShipment(props: Props) {
                 </InnerContainer>
               </CheckoutContainer>
             </>
-          }
+          )}
         </div>
-      </ModalBody>
-    </TabPane>
+      </CartBody>
+    </CartTabPanel>
   );
 }
 

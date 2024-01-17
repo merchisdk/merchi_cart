@@ -19,7 +19,7 @@ function CartTotal(props: Props) {
       fetchingCart,
       loading,
     },
-    cartShipmentState: {
+    stateCartShipment: {
       fetchingShipmentGroups,
       fetchingShipmentQuote,
     },

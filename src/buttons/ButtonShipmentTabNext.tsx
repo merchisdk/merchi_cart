@@ -8,7 +8,7 @@ import { useCartContext } from '../CartProvider';
 
 export default function ButtonShipmentTabNext() {
   const { classNameBtnNext } = useCartContext();
-  const { savingShipmentAddress } = useSelector((s: any) => s.cartShipmentState);
+  const { savingShipmentAddress } = useSelector((s: any) => s.stateCartShipment);
   const icon = savingShipmentAddress ? faCircleNotch : faArrowRight;
   return (
     <Button

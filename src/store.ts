@@ -1,5 +1,5 @@
+import { batch } from 'react-redux';
 import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
-import sliceFacebookLogin from '../login/slices/sliceFacebookLogin';
 import {
   sliceCart,
   tabIdCheckout,
@@ -7,69 +7,63 @@ import {
   tabIdItems,
   tabIdPaymentSuccess,
 } from './slices/sliceCart';
-import { sliceCartAlert } from './slices/slice_cart_alert';
-import sliceCartItem, { createQuoteCartItem } from './slices/sliceCartItem';
-import { sliceCartPayment } from './slices/slice_cart_payment';
-import { sliceCartShipment } from './slices/slice_cart_shipment';
-import { sliceNewCustomerForm } from '../sign_up_customer/slice';
-import sliceGoogleGeoComplete from '../address_components/slices/sliceGoogleGeoComplete';
-import sliceFormReturningCustomer from '../forms/slices/sliceFormReturningCustomer';
-import reducersSquare from '../square/slices/reducersSquare';
-import sliceStripeCardForm from '../stripe/slices/sliceStripeCardForm';
-import slicePublicInvoice from '../public_invoice/slices/slicePublicInvoice';
-import {
-  actionGeneratePublicInvoicePdf,
-  actionGeneratePublicInvoiceReceiptPdf
-} from '../public_invoice/actions';
-import { Merchi } from 'MerchiSDK/merchi';
-import { platformName } from 'MerchiSDK/constants/platform';
-import { batch } from 'react-redux';
-import { cartEmbed } from '../embed-utility';
-import { makeAddress } from '../ts_helpers/address';
+import { sliceCartAlert } from './slices/sliceCartAlert';
+import sliceCartItem from './slices/sliceCartItem';
+import { sliceCartPayment } from './slices/sliceCartPayment';
+import { sliceCartShipment } from './slices/sliceCartShipment';
+import sliceNewCustomerForm from './slices/sliceNewCustomerForm';
+import sliceFormReturningCustomer from './slices/sliceFormReturningCustomer';
+import reducersSquare from './square/slices/reducersSquare';
+import sliceStripeCardForm from './stripe/slices/sliceStripeCardForm';
+import { Merchi } from './MerchiSDK/merchi';
+import { cartEmbed } from './utilities/helpers';
+import { makeAddress } from './utilities/address';
 import {
   getCartCookie as getMerchiCartCookie,
   setCartCookie,
-} from '../ts_helpers/cookie';
+} from './utilities/cookie';
 import {
   getCartShipmentGroupsAndQuotes,
   makeCart,
   makeCartItem,
   makeCartShipmentQuote,
   stripeIsValidAndActive,
-} from '../ts_helpers/cart';
+} from './utilities/cart';
 import {
-  currentUserTsEntity,
   makeUser,
+  createNewCustomer,
   tryReturningCustomerEmail,
-} from '../ts_helpers/user';
-import { appendStyleSheetText } from '../utilities';
+} from './utilities/user';
+import { appendStyleSheetText } from './utilities/helpers';
 
 const merchi = new Merchi();
 
 const middleware = getDefaultMiddleware({ serializableCheck: false });
 
+const merchiCartReducer = {
+  stateCartAlert: sliceCartAlert.reducer,
+  stateCartItem: sliceCartItem.reducer,
+  stateCartPayment: sliceCartPayment.reducer,
+  stateCartShipment: sliceCartShipment.reducer,
+  stateCart: sliceCart.reducer,
+  stateNewCustomerForm: sliceNewCustomerForm.reducer,
+  stateFormReturningCustomer: sliceFormReturningCustomer.reducer,
+
+  // Square slices
+  ...reducersSquare,
+
+  // Stripe slices
+  ...sliceStripeCardForm,
+};
+
 export const store = configureStore({
   middleware: [...middleware],
-  reducer: {
-    cartAlertState: sliceCartAlert.reducer,
-    cartItemState: sliceCartItem.reducer,
-    cartPaymentState: sliceCartPayment.reducer,
-    cartShipmentState: sliceCartShipment.reducer,
-    stateCart: sliceCart.reducer,
-    newCustomerFormState: sliceNewCustomerForm.reducer,
-    stateGoogleGeoComplete: sliceGoogleGeoComplete.reducer,
-    stateFacebookLogin: sliceFacebookLogin.reducer,
-    stateFormReturningCustomer: sliceFormReturningCustomer.reducer,
-
-    statePublicInvoice: slicePublicInvoice.reducer,
-
-    // Square slices
-    ...reducersSquare,
-
-    // Stripe slices
-    ...sliceStripeCardForm,
-  },
+  reducer: merchiCartReducer,
 });
+
+function getStore() {
+  return store.getState();
+}
 
 const {
   deleteCartItem,
@@ -82,18 +76,13 @@ const {
   fetchThemeError,
   fetchThemeSuccess,
   setCart,
+  setCartClient,
   setDomainId,
   setCartShipmentGroups,
 } = sliceCart.actions;
 
-const {
-  cartItemFetchQuote,
-  cartItemFetchQuoteError,
-  cartItemFetchQuoteSuccess,
-} = sliceCartItem.actions;
-
 async function getCartToken() {
-  const { domainId } = store.getState().stateCart;
+  const { domainId } = getStore().stateCart;
   const cartIdAndToken = domainId ? await getMerchiCartCookie(Number(domainId)) : undefined;
   return cartIdAndToken && cartIdAndToken[1] ? cartIdAndToken[1] : undefined;
 }
@@ -102,7 +91,7 @@ function dispatch(method: any) {
   store.dispatch(method);
 }
 
-export function setCartClient(client: any) {
+export function axtionSetCartClient(client: any) {
   dispatch(setCartClient(client));
 }
 
@@ -135,15 +124,6 @@ export function closeAlert() {
   dispatch(sliceCartAlert.actions.closeAlert());
 }
 
-export function dispatchCartSliceReducer(reducerKey: string) {
-  const action = (sliceCart as any).actions[reducerKey];
-  dispatch(action());
-}
-
-export function toggleCartOpen() {
-  dispatchCartSliceReducer('toggleCartOpen');
-}
-
 export function closeClearCart() {
   dispatch(sliceCart.actions.setActiveTab(tabIdItems));
 }
@@ -158,34 +138,24 @@ function alertSuccess(message: string) {
     { message, title: 'Success!' }));
 }
 
-export function generateInvoicePdf() {
-  actionGeneratePublicInvoicePdf(store, alertError);
-}
-
-export function generateInvoiceReceiptPdf() {
-  actionGeneratePublicInvoiceReceiptPdf(store, alertError);
-}
-
 export function actionFetchTheme(id: number) {
   dispatch(fetchTheme())
-  merchi.Domain.get(id, {embed: {activeTheme: {mainCss: {}}}}).
-    then((domain: any) => {
-      const activeTheme = domain.activeTheme;
-      appendStyleSheetText(
-      	activeTheme.mainCss,
-      	() => dispatch(fetchThemeSuccess()));
-    }).
-    catch((e: any) => {
+  merchi.Domain.get(id, {embed: {activeTheme: {mainCss: {}}}})
+    .then((domain: any) => {
+      return domain.activeTheme;
+    })
+    .then((theme: any) => {
+      appendStyleSheetText(theme.mainCss, () => dispatch(fetchThemeSuccess()));
+    })
+    .catch((e: any) => {
       alertError(e.errorMessage);
       dispatch(fetchThemeError());
     });
 }
 
 async function cartAndCookie() {
-  const currentUser = currentUserTsEntity();
-  const { domainId } = store.getState().stateCart;
+  const { domainId } = getStore().stateCart;
   const cart = makeCart({domain: {id: domainId}}, true);
-  cart.client = currentUser ? currentUser : null;
   return cart.create({embed: cartEmbed})
     .then((c: any) => {
       if (domainId) {
@@ -210,45 +180,22 @@ export async function createAndSetNewCartCookie() {
 }
 
 export async function doClearCart() {
-  dispatch(sliceCart.actions.setCart({}));
+  dispatch(setCart({}));
   closeClearCart();
   await createAndSetNewCartCookie();
 }
 
-export async function cartItemQuoteUpdate(action: any) {
-  const { job } = action;
-  const state = store.getState();
-  const cartToken = await getCartToken();
-  const { cartItem } = state.cartItemState;
-  const cartItemEnt = makeCartItem(cartItem, false, cartToken);
-  const cartItemQuote = createQuoteCartItem(
-    cartItem,
-    job,
-    cartItemEnt,
-  );
-  dispatch(cartItemFetchQuote());
-  cartItemQuote.calculate().
-    then((cI: any) => dispatch(cartItemFetchQuoteSuccess({cartItem: cI.toJson()}))).
-    catch((e: any) => {
-      batch(() => {
-        dispatch(cartItemFetchQuoteError());
-        alertError(e.errorMessage);
-      });
-    });
-}
-
 export async function patchCartItem(cartItem: any) {
-  const data = store.getState();
+  const data = getStore();
   const {
     patchCartItem: doPatch,
     patchCartItemError: doPatchError,
     patchCartItemSuccess: doPatchSuccess,
   } = sliceCartItem.actions;
-  const { setCart } = sliceCart.actions;
   const cartToken = await getCartToken();
   const {
     stateCart: { cart },
-    cartItemState: { cartItem: stateCartItem, index }
+    stateCartItem: { cartItem: stateCartItem, index }
   } = data;
   const cartEnt = makeCart(cart, false, cartToken);
   const cartItemEnt = makeCartItem(cartItem, true);
@@ -280,7 +227,7 @@ export async function patchCartItem(cartItem: any) {
 }
 
 export async function actionDeleteCartItem(index: number) {
-  const data = store.getState();
+  const data = getStore();
   const cartToken = await getCartToken();
   const { stateCart: { cart } } = data;
   const cartEnt = makeCart(cart, false, cartToken);
@@ -312,8 +259,8 @@ export async function updateCartShipmentAddress() {
   const cartToken = await getCartToken();
   const {
     stateCart: { cart },
-    cartShipmentState: { receiverAddress: address },
-  } = store.getState();
+    stateCartShipment: { receiverAddress: address },
+  } = getStore();
   const receiverAddress = makeAddress(address, true);
   const cartEnt = makeCart(cart, false, cartToken);
   cartEnt.receiverAddress = receiverAddress;
@@ -344,9 +291,8 @@ export async function saveCartShipmentAddressAndGoToNextTab(values: any) {
     saveShipmentAddressError,
     saveShipmentAddressSuccess,
   } = sliceCartShipment.actions;
-  const { setCart } = sliceCart.actions;
   const cartToken = await getCartToken();
-  const { stateCart: { cart } } = store.getState();
+  const { stateCart: { cart } } = getStore();
   dispatch(saveShipmentAddress());
   const receiverAddress = makeAddress(address, true);
   const cartEnt = makeCart(cart, false, cartToken);
@@ -370,12 +316,11 @@ export async function saveCartShipmentAddressAndGoToNextTab(values: any) {
 }
 
 async function attachClientToCart(clientJson: any) {
-  const { setCart } = sliceCart.actions;
   const {
     createNewCustomerSuccess: createNewSuccess,
   } = sliceNewCustomerForm.actions;
   const cartToken = await getCartToken();
-  const { stateCart: { cart } } = store.getState();
+  const { stateCart: { cart } } = getStore();
   const clientEnt = makeUser({id: clientJson.id});
   const cartEnt = makeCart(cart, false, cartToken);
   cartEnt.client = clientEnt;
@@ -387,9 +332,8 @@ async function attachClientToCart(clientJson: any) {
 }
 
 export async function setSelectedShipmentQuote(groupIndex: number, quote: any) {
-  const { setCart } = sliceCart.actions;
   const cartToken = await getCartToken();
-  const { stateCart: { cart } } = store.getState();
+  const { stateCart: { cart } } = getStore();
   const {
     setSelectedShipmentQuote: setSelected,
     setSelectedShipmentQuoteError,
@@ -412,40 +356,38 @@ export async function setSelectedShipmentQuote(groupIndex: number, quote: any) {
     });
 }
 
-export function tryReturningCustomer(data: any) {
+const {
+  setReturningCustomerError,
+  tryReturningCustomer: tryReturning,
+  tryReturningCustomerError,
+  tryReturningCustomerSuccess,
+} = sliceFormReturningCustomer.actions;
+
+export function tryReturningCustomer(urlApi: string, data: any) {
   const { emailAddress } = data;
-  const {
-    setReturningCustomerError,
-    tryReturningCustomer: tryReturning,
-    tryReturningCustomerError,
-    tryReturningCustomerSuccess,
-  } = sliceFormReturningCustomer.actions;
-  const error = (e: any) =>
+  dispatch(tryReturning());
+  tryReturningCustomerEmail(urlApi, emailAddress)
+  .then((r: any) => attachClientToCart({
+      emailAddresses: [{emailAddress}],
+      id: r.user_id,
+    }))
+  .then(() => dispatch(tryReturningCustomerSuccess()))
+  .catch((e: any) =>
     batch(() => {
       alertError(e.errorMessage);
       dispatch(tryReturningCustomerError());
       dispatch(setReturningCustomerError(true));
-    });
-  dispatch(tryReturning());
-  tryReturningCustomerEmail(emailAddress).
-    then((r: any) => {
-      attachClientToCart({
-        emailAddresses: [{emailAddress}],
-        id: r.user_id,
-      }).
-        then(() => dispatch(tryReturningCustomerSuccess()))
-        .catch(error);
-    }).
-    catch(error);
+    }));
 }
 
-export function createNewCustomer(customerJson: any) {
-  const { cart } = store.getState().stateCart;
-  const {
-    createNewCustomer: createNew,
-    createNewCustomerError: createNewError,
-    createNewCustomerSuccess: createNewSuccess,
-  } = sliceNewCustomerForm.actions;
+const {
+  createNewCustomer: createNew,
+  createNewCustomerError: createNewError,
+  createNewCustomerSuccess: createNewSuccess,
+} = sliceNewCustomerForm.actions;
+
+export function actionCreateNewCustomer(urlApi: string, customerJson: any) {
+  const { cart } = getStore().stateCart;
   const domainId = cart && (cart as any).domain && (cart as any).domain.id;
   dispatch(createNew());
   const user = makeUser(
@@ -458,44 +400,13 @@ export function createNewCustomer(customerJson: any) {
       alertError(e.errorMessage);
       dispatch(createNewError(e.errorMessage));
     });
-  merchi.authenticatedFetch(
-    '/public_user_create/', {body: user.toFormData(), method: 'POST'}
-  ).then(
-    (r: any) => {
+  createNewCustomer(urlApi, {...customerJson, registeredUnderDomains: [{id: domainId}]})
+    .then((r: any) => {
       const { user: userJson } = r;
       attachClientToCart(userJson);
-    }
-  ).then(
-    () => dispatch(createNewSuccess())
-  ).catch(error);
-}
-
-export function facebookLoginSuccess(merchiJsSdkUser: any) {
-  const {
-    setReturningCustomerError,
-    tryReturningCustomerError,
-  } = sliceFormReturningCustomer.actions;
-  const p = merchiJsSdkUser.primaryPhoneNumberEntity();
-  const e = merchiJsSdkUser.primaryEmailAddressEntity();
-  const emailAddresses = e ?
-    [{emailAddress: e.emailAddress(),
-      id: e.id()}] : undefined;
-  const phoneNumbers = p ?
-    [{code: p.code(),
-      id: p.id(),
-      number: p.number()}] : undefined;
-  const error = (e: any) =>
-    batch(() => {
-      alertError(e.errorMessage);
-      dispatch(tryReturningCustomerError());
-      dispatch(setReturningCustomerError(true));
-    });
-  attachClientToCart({
-    id: merchiJsSdkUser.id(),
-    name: merchiJsSdkUser.name(),
-    emailAddresses,
-    phoneNumbers,
-  }).catch(error);
+    })
+    .then(() => dispatch(createNewSuccess()))
+    .catch(error);
 }
 
 const { creditCardPaySuccess } = sliceCartPayment.actions; 
@@ -534,7 +445,7 @@ function getCart(cartIdAndToken: Array<string>) {
         updateCartValues(cart);
       } else {
         console.error(
-         `${platformName} cart error: Stripe payment ` +
+         `MErhci cart error: Stripe payment ` +
           `options have not been correctly set up. ` +
           `Check the company profile payment options tab ` +
           `to set and edit stripe payment options.`);
@@ -546,7 +457,7 @@ function getCart(cartIdAndToken: Array<string>) {
     });
 }
 
-async function getCartCookieThenGetCart(domainId: number) {
+export async function getMerchiCart(domainId: number) {
   const cartIdAndToken = await getMerchiCartCookie(domainId);
   dispatch(setDomainId({ cartIdAndToken, domainId }));
   if (cartIdAndToken) {
@@ -556,40 +467,34 @@ async function getCartCookieThenGetCart(domainId: number) {
   }
 }
 
+export async function isMerchiCartFetching() {
+  return getStore().stateCart.fetchingCart;
+}
+
+export async function getMerchiCartValues() {
+  const { cart } = getStore().stateCart;
+  const { cartItems, currency, subtotalCost, taxAmount, totalCost } = (cart as any);
+  const cartItemsCount = cartItems ? cartItems.length : 0;
+  return {
+    cart,
+    cartItemsCount,
+    currency: currency || '',
+    subtotalCost: subtotalCost || 0,
+    taxAmount: taxAmount || 0,
+    totalCost: totalCost || 0,
+  };
+}
+
 export async function doCartComplete() {
   dispatch(sliceCartPayment.actions.doCardComplete());
   await cartAndCookie().then(() => location.reload());
 }
 
-export async function toggleCart() {
-  const cartToken = await getCartToken();
-  const { cart, modalCartOpen } = store.getState().stateCart;
-  const { id } = (cart as any);
-  toggleCartOpen();
-  if (!modalCartOpen) {
-    getCart([id, cartToken]);
-  }
-}
-
 export function initMerchiCart(domainId: number) {
-  getCartCookieThenGetCart(domainId);
-  (window as any).getCart = () => getCartCookieThenGetCart(domainId);
-  (window as any).isMerchiCartFetching = () =>
-    store.getState().stateCart.fetchingCart;
-  (window as any).openCart = toggleCartOpen;
-  (window as any).openMerchiCart = toggleCartOpen;
-  (window as any).getMerchiCartValues = () => {
-    const { cart } = store.getState().stateCart;
-    const { cartItems, currency, subtotalCost, taxAmount, totalCost } = (cart as any);
-    const cartItemsCount = cartItems ? cartItems.length : 0;
-    return {
-      cart,
-      cartItemsCount,
-      currency: currency ? currency : '',
-      subtotalCost: subtotalCost ? subtotalCost : 0,
-      taxAmount: taxAmount ? taxAmount : 0,
-      totalCost: totalCost ? totalCost : 0,
-    };
-  };
-  (window as any).cartItemAddedToCart = toggleCart;
+  getMerchiCart(domainId);
+  if ((window as any) && (window as any) !== undefined) {
+    (window as any).getCart = () => getMerchiCart(domainId);
+    (window as any).isMerchiCartFetching = isMerchiCartFetching;
+    (window as any).getMerchiCartValues = getMerchiCartValues;
+  }
 }
