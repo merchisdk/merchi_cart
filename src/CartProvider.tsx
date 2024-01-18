@@ -67,6 +67,7 @@ export interface PropsCart {
   googlePlacesLoaded?: boolean;
   includeTheme?: boolean,
   initialiseCart?: boolean;
+  onClickClose?: () => void;
   showUserTermsAndConditions?: boolean;
   productFormClassNames?: any;
   urlApi?: string;
@@ -93,7 +94,6 @@ const CartContext = createContext<PropsCart>({
   classNameBtnPay: undefined,
   classNameCartBody: undefined,
   classNameCartFooter: undefined,
-
   classNameCartFormCheckbox: undefined,
   classNameCartFormGroup: undefined,
   classNameCartFormGroupCheckbox: undefined,
@@ -106,7 +106,6 @@ const CartContext = createContext<PropsCart>({
   classNameCartTabItemLink: undefined,
   classNameCartGoogleSuggestList: undefined,
   classNameCartGoogleSuggestListItem: undefined,
-
   classNameCartHeader: undefined,
   classNameCartItemFeatureImage: undefined,
   classNameCartItemInfo: undefined,
@@ -140,6 +139,7 @@ const CartContext = createContext<PropsCart>({
   googlePlacesLoaded: false,
   includeTheme: false,
   initialiseCart: true,
+  onClickClose: undefined,
   productFormClassNames: {},
   showUserTermsAndConditions: undefined,
   urlApi: undefined,
@@ -169,7 +169,6 @@ interface PropsCartProvider {
   classNameBtnPay?: string;
   classNameCartBody?: string;
   classNameCartFooter?: string;
-
   classNameCartFormCheckbox?: string;
   classNameCartFormGroup?: string;
   classNameCartFormGroupCheckbox?: string;
@@ -182,7 +181,6 @@ interface PropsCartProvider {
   classNameCartTabItemLink?: string;
   classNameCartGoogleSuggestList?: string;
   classNameCartGoogleSuggestListItem?: string;
-
   classNameCartHeader?: string;
   classNameCartItemFeatureImage?: string;
   classNameCartItemInfo?: string;
@@ -216,6 +214,7 @@ interface PropsCartProvider {
   googlePlacesLoaded?: boolean;
   includeTheme?: boolean;
   initialiseCart?: boolean;
+  onClickClose?: () => void;
   productFormClassNames?: any;
   showUserTermsAndConditions?: boolean;
   urlApi?: string;
@@ -243,7 +242,6 @@ const CartProvider = ({
   classNameBtnPay = 'btn-lg btn-primary width-full',
   classNameCartBody = 'merchi-cart-body',
   classNameCartFooter = 'merchi-cart-footer', // add to sass
-
   classNameCartFormCheckbox = 'form-check-input',
   classNameCartFormGroup = 'form-group',
   classNameCartFormGroupCheckbox = 'form-check',
@@ -257,7 +255,6 @@ const CartProvider = ({
   classNameCartTabItemLink = 'nav-link merchi-nav-link',
   classNameCartGoogleSuggestList = 'list-group m-b-0',
   classNameCartGoogleSuggestListItem = 'list-group-item cursor-pointer',
-
   classNameCartHeader = 'merchi-cart-header', // add to sass
   classNameCartItemFeatureImage = 'img-rounded m-10',
   classNameCartItemInfo = 'text-muted font-weight-normal font-italic',
@@ -289,6 +286,7 @@ const CartProvider = ({
   domainId,
   includeTheme = false,
   initialiseCart = true,
+  onClickClose = () => console.log('close merchi cart!'),
   productFormClassNames = {},
   showUserTermsAndConditions = true,
   urlApi = 'https://api.merchi.co/v6/',
@@ -326,7 +324,6 @@ const CartProvider = ({
           classNameBtnPay,
           classNameCartBody,
           classNameCartFooter,
-
           classNameCartFormCheckbox,
           classNameCartFormGroup,
           classNameCartFormGroupCheckbox,
@@ -340,7 +337,6 @@ const CartProvider = ({
           classNameCartTabItemLink,
           classNameCartGoogleSuggestList,
           classNameCartGoogleSuggestListItem,
-
           classNameCartHeader,
           classNameCartItemFeatureImage,
           classNameCartItemInfo,
@@ -373,6 +369,7 @@ const CartProvider = ({
           googlePlacesLoaded,
           includeTheme,
           initialiseCart,
+          onClickClose,
           productFormClassNames,
           showUserTermsAndConditions,
           urlApi,

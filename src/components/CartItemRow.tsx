@@ -5,7 +5,7 @@ import { valueString } from '../utilities/variations';
 import { actionDeleteCartItem, setCartItem } from '../store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import Button from '../buttons';
+import { Button } from '../buttons';
 import { useCartContext } from '../CartProvider';
 
 interface VariationListItemProps {

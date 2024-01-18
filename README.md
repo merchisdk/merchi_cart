@@ -92,6 +92,7 @@ yarn add merchi_cart
 | `domainId`                                    | `number`   | `undefined`                                                                 | `The merchi domain/store id for the cart` |
 | `includeTheme`                                | `boolean?` | `false`                                                                     | `If true will fetch and apply the store theme to the page` |
 | `initialiseCart`                              | `boolean?` | `true`                                                                      | `If true will initial fetch cart and set cart function on window`|
+| `onClickClose`                                | `() => void?`| `() => console.log('close merchi cart!')`                                 | `a function to close the cart`        |
 | `productFormClassNames`                       | `obj`      | `{}`                                                                        | `An object to be passsed to the merchi_product_form `|
 | `showUserTermsAndConditions`                  | `boolean?` | `true`                                                                      | `Display the user t&cs for Merchi`    |
 | `urlApi`                                      | `string?`  | `'https://api.merchi.co/v6/'`                                               | `URL to connect to the Merchi API`    |
