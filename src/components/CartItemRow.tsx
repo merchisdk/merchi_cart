@@ -129,7 +129,7 @@ function CartItemRow({ cartItem, index, loading }: Props) {
           <FontAwesomeIcon icon={faEdit} />
         </Button>
         <Button
-          cclassName={classNameBtnLink}
+          className={classNameBtnLink}
           onClick={() => actionDeleteCartItem(index)}
         >
           <FontAwesomeIcon

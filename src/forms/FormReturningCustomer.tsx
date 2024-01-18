@@ -68,4 +68,4 @@ function FormReturningCustomer() {
   );
 }
 
-export default FormReturningCustomerActive;
+export default FormReturningCustomer;
