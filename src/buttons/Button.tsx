@@ -10,6 +10,8 @@ interface Props {
   type?: string;
 }
 
+type ButtonType = "button" | "reset" | "submit" | undefined;
+
 export default function Button({
   children,
   className = '',
@@ -25,7 +27,7 @@ export default function Button({
       disabled={disabled}
       form={form}
       onClick={onClick}
-      type={type}
+      type={(type as ButtonType)}
     >
       {children}
     </button>

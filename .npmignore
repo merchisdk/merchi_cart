@@ -11,4 +11,6 @@ yarn.lock
 
 # types
 types/
- 
+
+*.ts
+*.tsx

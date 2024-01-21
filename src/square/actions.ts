@@ -33,7 +33,7 @@ export async function actionSquarePaymentProcess(
     const r = await merchi.authenticatedFetch(url, fetchOptions);
     callbackPaymentSuccess(r.invoice);
     dispatch(actionSquarePaymentEnd());
-  } catch(e) {
+  } catch(e: any) {
     actionAlertError(dispatch, e);
     dispatch(actionSquarePaymentEnd());
   }

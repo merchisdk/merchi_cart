@@ -1,5 +1,5 @@
 import { batch } from 'react-redux';
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import {
   sliceCart,
   tabIdCheckout,
@@ -38,8 +38,6 @@ import { appendStyleSheetText } from './utilities/helpers';
 
 const merchi = new Merchi();
 
-const middleware = getDefaultMiddleware({ serializableCheck: false });
-
 const merchiCartReducer = {
   stateCartAlert: sliceCartAlert.reducer,
   stateCartItem: sliceCartItem.reducer,
@@ -57,7 +55,7 @@ const merchiCartReducer = {
 };
 
 export const store = configureStore({
-  middleware: [...middleware],
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
   reducer: merchiCartReducer,
 });
 

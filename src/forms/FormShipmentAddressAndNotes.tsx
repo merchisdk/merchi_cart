@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import InputsAddress from './InputsAddress';
@@ -105,7 +104,7 @@ function FormShipmentAddressAndNotes({
           name='receiverNotes'
           placeholder='Example - Leave at top of stairs'
           rows={4}
-          ref={register}
+          ref={(register as any)}
         >
         </textarea>
       </div>
