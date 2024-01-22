@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import CartItemRow from '../components/CartItemRow'
 import { tabIdItems } from '../slices/sliceCart';

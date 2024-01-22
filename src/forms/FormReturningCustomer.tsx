@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { tryReturningCustomer } from '../store';

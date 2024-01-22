@@ -7,16 +7,16 @@ import { closeAlert } from './store';
 import { useCartContext } from './CartProvider';
 
 function CartAlert() {
-  const {  classNameBtnClose } = useCartContext();
+  const { classNameBtnClose } = useCartContext();
   const { alert } = useSelector((s: any) => s.stateCartAlert);
-  const { icon, message, show, Title } = alert;
+  const { icon, message, show, title } = alert;
   return (
     <>
       {show && (
         <Alert alertType={alert.type}>
           {icon &&
             <FontAwesomeIcon icon={icon} />
-          } <strong>{Title}</strong> {message}
+          } <strong>{title}</strong> {message}
           <button
             type="button"
             className={classNameBtnClose}

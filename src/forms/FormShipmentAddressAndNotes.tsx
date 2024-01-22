@@ -101,10 +101,9 @@ function FormShipmentAddressAndNotes({
         <textarea
           className='form-control input'
           defaultValue={notes}
-          name='receiverNotes'
           placeholder='Example - Leave at top of stairs'
           rows={4}
-          ref={(register as any)}
+          {...register('receiverNotes')}
         >
         </textarea>
       </div>

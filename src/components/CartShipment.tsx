@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import Title from './Title';
 import { sliceCart, tabIdShipment } from '../slices/sliceCart';

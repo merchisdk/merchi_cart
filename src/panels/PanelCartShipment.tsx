@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { faTruck } from '@fortawesome/free-solid-svg-icons';
 import { ActiveFormShipmentAddressAndNotes } from '../forms/FormShipmentAddressAndNotes';
@@ -19,11 +18,9 @@ import CartNav from '../tabs/CartNav';
 
 function PanelCartShipment() {
   const {
-    stateCartShipment: {
-      fetchingShipmentGroups,
-      shipmentGroups,
-    },
-  } = useSelector((s: any) => s);
+    fetchingShipmentGroups,
+    shipmentGroups,
+  } = useSelector((s: any) => s.stateCartShipment);
   return (
     <CartTabPanel tabId={tabIdShipment}>
       <CartNav />

@@ -91,8 +91,6 @@ export default function Cart(props: PropsCart) {
     <CartProvider {...props}>
       <Provider store={store}>
         <CartComponents />
-        <CartHeader />
-        <CartAlert />
       </Provider>
     </CartProvider>
   );

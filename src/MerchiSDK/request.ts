@@ -7,7 +7,7 @@ const BACKEND_URI: string = (window as any) && (window as any).merchiBackendUri
 ? (window as any).merchiBackendUri
 : process && process.env.BACKEND_URL
 ? process.env.BACKEND_URL
-: 'https://api.merchi.co/';
+: 'https://api.staging.merchi.co/';
 
 export interface RequestOptions extends RequestInit {
   query?: string[][];

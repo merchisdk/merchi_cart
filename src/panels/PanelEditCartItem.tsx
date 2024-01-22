@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import MerchiProductForm from 'merchi_product_form';
 import { tabIdItem } from '../slices/sliceCart';

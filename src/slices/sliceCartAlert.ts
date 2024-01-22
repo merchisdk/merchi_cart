@@ -7,7 +7,7 @@ export const sliceCartAlert = createSlice({
       icon: faInfoCircle,
       message: '',
       show: false,
-      Title: '',
+      title: '',
       type: 'info',
     },
   },
