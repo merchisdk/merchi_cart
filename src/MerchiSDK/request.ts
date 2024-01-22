@@ -3,7 +3,11 @@ import { ErrorType, getErrorFromCode } from './constants/errors';
 
 /* this constant are expected to be defined in webpack (or provided as
    globals by some other means. */
-declare const BACKEND_URI: string;
+const BACKEND_URI: string = (window as any) && (window as any).merchiBackendUri
+? (window as any).merchiBackendUri
+: process && process.env.BACKEND_URL
+? process.env.BACKEND_URL
+: 'https://api.merchi.co/';
 
 export interface RequestOptions extends RequestInit {
   query?: string[][];
