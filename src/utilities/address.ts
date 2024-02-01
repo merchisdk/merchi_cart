@@ -1,4 +1,4 @@
-import { Merchi } from '../MerchiSDK/merchi';
+import { Merchi } from 'merchi_sdk_ts';
 
 const merchi = new Merchi();
 

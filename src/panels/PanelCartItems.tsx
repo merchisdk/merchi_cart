@@ -1,7 +1,6 @@
 import { useSelector } from 'react-redux';
 import CartItemRow from '../components/CartItemRow'
 import { tabIdItems } from '../slices/sliceCart';
-import CartNav from '../tabs/CartNav';
 import {
   CartBody,
   CartTabContent,
@@ -18,7 +17,6 @@ function PanelCartItems() {
   return (
     <CartTabPanel tabId={tabIdItems}>
       <CartBody>
-        <CartNav />
         <CartTabContent>
           {hasItems ? (
             <CartTableContainer>

@@ -3,6 +3,7 @@ import { Provider, useSelector } from 'react-redux';
 import { store } from './store';
 import CartAlert from './CartAlert';
 import CartHeader from './CartHeader';
+import CartNav from './tabs/CartNav';
 import CartTotals from './CartTotals';
 import CartProvider, { PropsCart, useCartContext } from './CartProvider';
 import {
@@ -32,6 +33,7 @@ import {
   actionFetchTheme,
   initMerchiCart,
 } from './store';
+import './styles/globals.css';
 
 function CartComponents() {
   const {
@@ -56,6 +58,7 @@ function CartComponents() {
     <>
       <CartHeader />
       <CartAlert />
+      <CartNav />
       {fetchingCart ? (
         <LoadingTemplate />
       ) : cartSettingsInvalid ? (

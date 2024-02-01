@@ -1,6 +1,5 @@
 import { useSelector } from 'react-redux';
 import { tabIdCheckout } from '../slices/sliceCart';
-import CartNav from '../tabs/CartNav';
 import {
   CheckoutContainer,
   InnerContainer,
@@ -24,7 +23,6 @@ function PanelClientCheckout() {
   const company = domain && domain.company;
   return (
     <CartTabPanel tabId={tabIdCheckout}>
-      <CartNav />
       <CartBody style={{ paddingTop: '2rem' }}>
         {client && client.id > -1 ?
           <>

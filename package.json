@@ -1,15 +1,17 @@
 {
   "name": "merchi_cart",
-  "version": "0.0.2-n",
+  "version": "0.0.7k",
   "description": "Merchi's cart",
+  "source": "src/index.ts",
   "main": "lib/index.js",
-  "module": "src/index.tsx",
-  "types": "lib/index.d.ts",
-  "typings": "index.d.ts",
-  "type": "module",
+  "module": "esm/index.js",
+  "types": "types/index.d.ts",
   "scripts": {
-    "build": "tsc && yarn copy-assets",
-    "copy-assets": "cp -r ./assets lib",
+    "build:esm": "babel src --out-dir esm --config-file ./babel.esm.config.cjs --extensions '.js,.ts,.tsx' --source-maps inline --verbose --copy-files && yarn copy-assets",
+    "build:lib": "babel src --out-dir lib --config-file ./babel.build.config.cjs --extensions '.js,.ts,.tsx' --source-maps inline --verbose --copy-files && yarn copy-assets",
+    "build": "yarn build:esm && yarn build:lib",
+    "copy-assets": "copyfiles -u 1 src/assets/**/* lib",
+    "sass": "sass src/styles/globals.scss lib/styles/globals.css",
     "start": "react-scripts start",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
@@ -34,7 +36,9 @@
   },
   "homepage": "https://github.com/merchisdk/merchi_cart#readme",
   "files": [
-    "lib"
+    "esm",
+    "lib",
+    "src"
   ],
   "peerDependencies": {
     "react": "^18.0.0",
@@ -43,7 +47,7 @@
   "devDependencies": {
     "@babel/cli": "^7.23.0",
     "@babel/core": "^7.23.0",
-    "@babel/plugin-transform-react-jsx": "^7.22.15",
+    "@babel/plugin-transform-react-jsx": "^7.23.4",
     "@babel/plugin-transform-runtime": "^7.23.3",
     "@babel/preset-env": "^7.23.3",
     "@babel/preset-react": "^7.23.3",
@@ -56,30 +60,36 @@
     "@types/uuid": "^9.0.5",
     "@typescript-eslint/eslint-plugin": "^5.0.0",
     "@typescript-eslint/parser": "^5.30.5",
+    "babel-plugin-module-resolver": "^5.0.0",
+    "babel-plugin-transform-typescript-metadata": "^0.3.2",
     "copyfiles": "^2.4.1",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.16",
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "@babel/plugin-proposal-decorators": "^7.23.7",
-    "@babel/plugin-syntax-decorators": "^7.23.3",
-    "@babel/plugin-transform-class-properties": "^7.23.3",
+    "@babel/plugin-proposal-export-default-from": "^7.23.3",
+    "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
+    "@babel/plugin-proposal-object-rest-spread": "^7.20.7",
+    "@babel/plugin-transform-modules-commonjs": "^7.23.3",
     "@fortawesome/fontawesome-free": "6.4.2",
     "@fortawesome/fontawesome-svg-core": "6.4.2",
     "@fortawesome/free-solid-svg-icons": "6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
     "@reduxjs/toolkit": "^2.0.1",
+    "@rollup/plugin-image": "^3.0.3",
     "@stripe/react-stripe-js": "^2.3.0",
     "@stripe/stripe-js": "^2.1.6",
     "@types/moment-timezone": "^0.5.30",
     "@types/node": "^20.11.5",
+    "babel-plugin-import-css-to-jss": "^3.1.1",
     "browser-or-node": "^3.0.0-pre.0",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.16",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "merchi_product_form": "^1.0.2",
+    "merchi_sdk_ts": "^1.0.2-v",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.44",
     "react": "18.2.0",
@@ -94,6 +104,8 @@
     "react-transition": "^1.0.3",
     "react-transition-group": "^4.4.5",
     "reflect-metadata": "^0.2.1",
+    "rollup-plugin-babel": "^4.4.0",
+    "sass": "^1.70.0",
     "typescript": "^5.1.6"
   }
 }

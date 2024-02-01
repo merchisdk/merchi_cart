@@ -15,7 +15,7 @@ import sliceNewCustomerForm from './slices/sliceNewCustomerForm';
 import sliceFormReturningCustomer from './slices/sliceFormReturningCustomer';
 import reducersSquare from './square/slices/reducersSquare';
 import sliceStripeCardForm from './stripe/slices/sliceStripeCardForm';
-import { Merchi } from './MerchiSDK/merchi';
+import { Merchi } from 'merchi_sdk_ts';
 import { cartEmbed } from './utilities/helpers';
 import { makeAddress } from './utilities/address';
 import {
@@ -151,8 +151,7 @@ export function actionFetchTheme(id: number) {
     });
 }
 
-async function cartAndCookie() {
-  const { domainId } = getStore().stateCart;
+async function cartAndCookie(domainId: number) {
   const cart = makeCart({domain: {id: domainId}}, true);
   return cart.create({embed: cartEmbed})
     .then((c: any) => {
@@ -166,21 +165,22 @@ async function cartAndCookie() {
     })
     .catch((e: any) => {
       batch(() => {
-        alertError(e.errorMessage);
+        alertError(e.errorMessage || 'Unable to fetch cart.');
         dispatch(fetchCartError());
       });
     });
 }
 
-export async function createAndSetNewCartCookie() {
+export async function createAndSetNewCartCookie(domainId: number) {
   dispatch(fetchCart());
-  await cartAndCookie();
+  await cartAndCookie(domainId);
 }
 
 export async function doClearCart() {
+  const { domainId } = getStore().stateCart;
   dispatch(setCart({}));
   closeClearCart();
-  await createAndSetNewCartCookie();
+  await createAndSetNewCartCookie((domainId as any));
 }
 
 export async function patchCartItem(cartItem: any) {
@@ -427,7 +427,7 @@ function updateCartValues(cartJson: any) {
   dispatch(initCartShipmentSlice(cartJson));
 }
 
-function getCart(cartIdAndToken: Array<string>) {
+function getCart(domainId: number, cartIdAndToken: Array<string>) {
   const {
     cartSettingsInvalid,
   } = sliceCart.actions;
@@ -451,17 +451,16 @@ function getCart(cartIdAndToken: Array<string>) {
       }
     })
     .catch((e: any) => {
-      createAndSetNewCartCookie();
+      createAndSetNewCartCookie(domainId);
     });
 }
 
-export async function getMerchiCart(domainId: number) {
+export async function actionGetMerchiCart(domainId: number) {
   const cartIdAndToken = await getMerchiCartCookie(domainId);
-  dispatch(setDomainId({ cartIdAndToken, domainId }));
   if (cartIdAndToken) {
-    getCart(cartIdAndToken);
+    getCart(domainId, cartIdAndToken);
   } else {
-    createAndSetNewCartCookie();
+    createAndSetNewCartCookie(domainId);
   }
 }
 
@@ -484,14 +483,16 @@ export async function getMerchiCartValues() {
 }
 
 export async function doCartComplete() {
+  const domainId: any = getStore().stateCart.domainId;
   dispatch(sliceCartPayment.actions.doCardComplete());
-  await cartAndCookie().then(() => location.reload());
+  await cartAndCookie(domainId).then(() => location.reload());
 }
 
 export function initMerchiCart(domainId: number) {
-  getMerchiCart(domainId);
+  dispatch(setDomainId(domainId));
+  actionGetMerchiCart(domainId);
   if ((window as any) && (window as any) !== undefined) {
-    (window as any).getCart = () => getMerchiCart(domainId);
+    (window as any).getCart = () => actionGetMerchiCart(domainId);
     (window as any).isMerchiCartFetching = isMerchiCartFetching;
     (window as any).getMerchiCartValues = getMerchiCartValues;
   }

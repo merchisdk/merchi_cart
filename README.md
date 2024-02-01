@@ -25,17 +25,17 @@ yarn add merchi_cart
   isMerchiCartFetching,
 
   components:
-  Cart
+  MerchiCart
 
 
 ### Props
 
 | Name                                          | Type       | Default                                                                     | Description                           |
 |-----------------------------------------------|------------|-----------------------------------------------------------------------------|---------------------------------------|
-| `classNameAlertError`                         | `string?`  | `"alert alert-error alert-dismissible"`                                     | `Class for alert error`               |
-| `classNameAlertInfo`                          | `string?`  | `"alert alert-info alert-dismissible"`                                      | `Class for alert info`                |
-| `classNameAlertSuccess`                       | `string?`  | `"alert alert-success alert-dismissible"`                                   | `Class for alert success`             |
-| `classNameAlertWarning`                       | `string?`  | `"alert alert-warning alert-dismissible"`                                   | `Class for alert warning`             |
+| `classNameAlertError`                         | `string?`  | `"alert alert-danger"`                                                      | `Class for alert error`               |
+| `classNameAlertInfo`                          | `string?`  | `"alert alert-info"`                                                        | `Class for alert info`                |
+| `classNameAlertSuccess`                       | `string?`  | `"alert alert-success"`                                                     | `Class for alert success`             |
+| `classNameAlertWarning`                       | `string?`  | `"alert alert-warning"`                                                     | `Class for alert warning`             |
 | `classNameBtn`                                | `string?`  | `"btn"`                                                                     | `Base class for button elements`      |
 | `classNameBtnBack`                            | `string?`  | `"btn-lg btn-default pull-left"`                                            | `Class for back button`               |
 | `classNameBtnCartClear`                       | `string?`  | `"btn-lg btn-danger mr-auto"`                                               | `Class for clear cart button`         |
@@ -56,7 +56,7 @@ yarn add merchi_cart
 | `classNameCartFormCheckbox`                   | `string?`  | `"form-check-input"`                                                        | `Class for form input checkbpx`       |
 | `classNameCartHeader`                         | `string?`  | `"merchi-cart-header"`                                                      | `Class for cart header container`     |
 | `classNameCartInputError`                     | `string?`  | `"text-danger"`                                                             | `Class for form error`                |
-| `classNameCartNav`                            | `string?`  | `"nav nav-tabs merchi-nav merchi-nav-fill merchi-nav-pills"`                | `Class for cart nav`                  |
+| `classNameCartNav`                            | `string?`  | `"nav merchi-nav-tabs merchi-nav merchi-nav-fill merchi-nav-pills"`                | `Class for cart nav`                  |
 | `classNameNoItems`                            | `string?`  | `"merchi-no-cart-items"`                                                    | `Class for no items in cart`          |
 | `classNameCartGoogleSuggestList`              | `string?`  | `"list-group m-b-0"`                                                        | `Class for google suggest list`       |
 | `classNameCartGoogleSuggestListItem`          | `string?`  | `"list-group-item cursor-pointer"`                                          | `Class for google suggest list item`  |
@@ -70,7 +70,7 @@ yarn add merchi_cart
 | `classNameTableContainer`                     | `string?`  | `"table-responsive"`                                                        | `Class for cart table container`      |
 | `classNameCartTab`                            | `string?`  | `"merchi-tab-content"`                                                      | `Class for cart tab container`        |
 | `classNameCartTabItem`                        | `string?`  | `"nav-item merchi-nav-item"`                                                | `Class for cart tab item`             |
-| `classNameCartTabItemLink`                    | `string?`  | `"nav-link merchi-nav-link"`                                                | `Class for cart tab item link         |` 
+| `classNameCartTabItemLink`                    | `string?`  | `"merchi-nav-link"`                                                | `Class for cart tab item link         |` 
 | `classNameCartTitle`                          | `string?`  | `"merchi-cart-title"`                                                       | `Class for cart Title container`      |
 | `classNameCartTotalContainer`                 | `string?`  | `"merchi-cart-total-container"`                                             | `Class for totals container elements` |
 | `classNameCartTotalItem`                      | `string?`  | `"merchi-cart-total-item"`                                                  | `Class for totals item elements`      |

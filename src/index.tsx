@@ -1,13 +1,13 @@
 import Cart from './Cart';
-import {
-  getMerchiCart,
-  getMerchiCartValues,
-  isMerchiCartFetching,
+import {  
+  actionGetMerchiCart as getMerchiCart,  
+  getMerchiCartValues,  
+  isMerchiCartFetching
 } from './store';
 
 export {
+  Cart,
   getMerchiCart,
   getMerchiCartValues,
-  isMerchiCartFetching,
-}
-export default Cart;
+  isMerchiCartFetching
+};

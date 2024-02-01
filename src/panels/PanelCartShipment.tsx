@@ -14,7 +14,6 @@ import {
   Title,
 } from '../components';
 import { tabIdShipment } from '../slices/sliceCart';
-import CartNav from '../tabs/CartNav';
 
 function PanelCartShipment() {
   const {
@@ -23,7 +22,6 @@ function PanelCartShipment() {
   } = useSelector((s: any) => s.stateCartShipment);
   return (
     <CartTabPanel tabId={tabIdShipment}>
-      <CartNav />
       <CartBody style={{ paddingTop: '2rem' }}>
         <div className='merchi-cart-tab-content'>
           <CheckoutContainer textAlign='left'>

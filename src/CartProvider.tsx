@@ -224,10 +224,10 @@ interface PropsCartProvider {
 
 const CartProvider = ({
   children,
-  classNameAlertError = 'alert alert-error alert-dismissible',
-  classNameAlertInfo = 'alert alert-info alert-dismissible',
-  classNameAlertSuccess = 'alert alert-success alert-dismissible',
-  classNameAlertWarning = 'alert alert-warning alert-dismissible',
+  classNameAlertError = 'alert alert-danger',
+  classNameAlertInfo = 'alert alert-info',
+  classNameAlertSuccess = 'alert alert-success',
+  classNameAlertWarning = 'alert alert-warning',
   classNameBtn = 'btn',
   classNameBtnBack = 'btn-lg btn-default pull-left',
   classNameBtnCartClear = 'btn-lg btn-danger mr-auto',
@@ -248,11 +248,11 @@ const CartProvider = ({
   classNameCartFormInput = 'form-control',
   classNameCartFormLabelCheckbox = '',
   classNameCartInputError = 'text-danger',
-  classNameCartNav = 'nav nav-tabs merchi-nav merchi-nav-fill merchi-nav-pills',
+  classNameCartNav = 'nav merchi-nav-tabs merchi-nav merchi-nav-fill merchi-nav-pills',
   classNameCartRow = 'merchi-row',
   classNameCartRowColumn = 'merchi-column',
   classNameCartTabItem = 'nav-item merchi-nav-item',
-  classNameCartTabItemLink = 'nav-link merchi-nav-link',
+  classNameCartTabItemLink = 'merchi-nav-link',
   classNameCartGoogleSuggestList = 'list-group m-b-0',
   classNameCartGoogleSuggestListItem = 'list-group-item cursor-pointer',
   classNameCartHeader = 'merchi-cart-header', // add to sass
