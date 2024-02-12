@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { setSelectedShipmentQuote } from '../store';
 import { addressInOneLine } from '../utilities/address';

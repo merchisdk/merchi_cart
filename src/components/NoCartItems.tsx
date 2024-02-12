@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useCartContext } from '../CartProvider';
 import pngProductNotFound from '../assets/product-not-found.png';
 
