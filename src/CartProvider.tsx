@@ -49,6 +49,7 @@ export interface PropsCart {
   classNameCartTotalItemPrice?: string;
   classNameClearCartContainer?: string;
   classNameClearCartText?: string;
+  classNameCartToggleIconButton?: string;
   classNameListClientInfo?: string;
   classNameListContainer?: string;
   classNameListItem?: string;
@@ -119,6 +120,7 @@ const CartContext = createContext<PropsCart>({
   classNameCartTotalContainer: undefined,
   classNameCartTotalItem: undefined,
   classNameCartTotalItemPrice: undefined,
+  classNameCartToggleIconButton: undefined,
   classNameClearCartContainer: undefined,
   classNameClearCartText: undefined,
   classNameListClientInfo: undefined,
@@ -193,6 +195,7 @@ interface PropsCartProvider {
   classNameCartTotalContainer?: string;
   classNameCartTotalItem?: string;
   classNameCartTotalItemPrice?: string;
+  classNameCartToggleIconButton?: string;
   classNameClearCartContainer?: string;
   classNameClearCartText?: string;
   classNameListClientInfo?: string;
@@ -253,6 +256,7 @@ const CartProvider = ({
   classNameCartRowColumn = 'merchi-column',
   classNameCartTabItem = 'nav-item merchi-nav-item',
   classNameCartTabItemLink = 'merchi-nav-link',
+  classNameCartToggleIconButton = 'cart-icon-button-class',
   classNameCartGoogleSuggestList = 'list-group m-b-0',
   classNameCartGoogleSuggestListItem = 'list-group-item cursor-pointer',
   classNameCartHeader = 'merchi-cart-header', // add to sass
@@ -335,6 +339,7 @@ const CartProvider = ({
           classNameCartRowColumn,
           classNameCartTabItem,
           classNameCartTabItemLink,
+          classNameCartToggleIconButton,
           classNameCartGoogleSuggestList,
           classNameCartGoogleSuggestListItem,
           classNameCartHeader,

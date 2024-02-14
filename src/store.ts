@@ -29,12 +29,14 @@ import {
   makeCartShipmentQuote,
   stripeIsValidAndActive,
 } from './utilities/cart';
+import { makeProduct } from './utilities/product';
 import {
   makeUser,
   createNewCustomer,
   tryReturningCustomerEmail,
 } from './utilities/user';
 import { appendStyleSheetText } from './utilities/helpers';
+import { makeJob } from './utilities/job';
 
 const merchi = new Merchi();
 
@@ -181,6 +183,33 @@ export async function doClearCart() {
   dispatch(setCart({}));
   closeClearCart();
   await createAndSetNewCartCookie((domainId as any));
+}
+
+export async function addCartItem(
+  jobJson: any,
+  onSuccess: (cartItem: any) => void,
+  onError: (e: any) => void,
+) {
+  const jobEnt = makeJob(jobJson, true);
+  const data = getStore();
+  const cartToken = await getCartToken();
+  const { cart } = data.stateCart;
+  const cartEnt = makeCart(cart, false, cartToken);
+  const cartItemEnt = makeCartItem({}, true);
+  const cartItemProduct = makeProduct({ id: (jobEnt.product as any).id });
+  cartItemEnt.cart = cartEnt;
+  cartItemEnt.quantity = jobEnt.quantity;
+  cartItemEnt.product = cartItemProduct;
+  cartItemEnt.variations = jobEnt.variations;
+  cartItemEnt.variationsGroups = jobEnt.variationsGroups;
+  cartItemEnt.taxType = jobEnt.taxType;
+  try {
+    const item = await cartItemEnt.create();
+    const itemJson = await item.toJson();
+    onSuccess(itemJson);
+  } catch(e: any) {
+    onError(e);
+  }
 }
 
 export async function patchCartItem(cartItem: any) {
@@ -462,6 +491,10 @@ export async function actionGetMerchiCart(domainId: number) {
   } else {
     createAndSetNewCartCookie(domainId);
   }
+}
+
+export function toggleCartOpen() {
+  dispatch(sliceCart.actions.toggleCartOpen());
 }
 
 export async function isMerchiCartFetching() {

@@ -20,12 +20,25 @@ yarn add merchi_cart
 
 ### Usage
   functions:
-  getMerchiCart,
-  getMerchiCartValues,
-  isMerchiCartFetching,
+  doAddCartItem(jobJson, onSuccess, onError) - Takes Merchi job entity as json, creates a cart item and appends the cart item to the cart.
+  doCartComplete - Resets the cart
+  doToggleCartOpen - Toggles the MerchiCartModal components
+  getMerchiCart - returns the cart
+  getMerchiCartValues - retruns the following:
+    cart
+    cartItemsCount
+    currency
+    subtotalCost
+    taxAmount
+    totalCost
+  isMerchiCartFetching - checks the fetching state of the cart
 
   components:
+  ButtonOpenCart
+  ButtonListWrappedOpenCart
   MerchiCart
+  MerchiCartModal
+  MerchiShoppingCartModal
 
 
 ### Props
@@ -73,6 +86,7 @@ yarn add merchi_cart
 | `classNameCartTabItemLink`                    | `string?`  | `"merchi-nav-link"`                                                | `Class for cart tab item link         |` 
 | `classNameCartTitle`                          | `string?`  | `"merchi-cart-title"`                                                       | `Class for cart Title container`      |
 | `classNameCartTotalContainer`                 | `string?`  | `"merchi-cart-total-container"`                                             | `Class for totals container elements` |
+| `classNameCartToggleIconButton`               | `string?`  | `"cart-icon-button-class"`                                                  | `Class for toggle modal button`       |
 | `classNameCartTotalItem`                      | `string?`  | `"merchi-cart-total-item"`                                                  | `Class for totals item elements`      |
 | `classNameCartTotalItemPrice`                 | `string?`  | `"merchi-cart-total-item-price"`                                            | `Class for totals item price elements`|
 | `classNameClearCartContainer`                 | `string?`  | `"merchi-cart-clear-container"`                                             | `Class cart clear container`          |
