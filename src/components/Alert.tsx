@@ -24,7 +24,7 @@ export default function Alert({ alertType, children }: Props) {
     className = classNameAlertWarning;
   }
   return (
-    <div className={className}>
+    <div className={`merchi-cart-modal-alert ${className}`}>
       {children}
     </div>
   );

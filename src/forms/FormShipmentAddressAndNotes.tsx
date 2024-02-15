@@ -81,10 +81,10 @@ function FormShipmentAddressAndNotes({
     >
       {showHeadings && 
         <CheckoutContainer>
-          <InnerContainer paddingBottom='1rem'>
+          <InnerContainer paddingBottom='0px'>
             <Title
               icon={showIcon ? faMapMarkerAlt : null}
-              Title='Delivery / billing address'
+              title='Delivery / billing address'
             />
           </InnerContainer>
         </CheckoutContainer>

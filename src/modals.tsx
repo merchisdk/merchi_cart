@@ -1,9 +1,16 @@
-import Cart from './Cart';
+import { useEffect } from 'react';
+import { CartComponents } from './Cart';
 import { useSelector } from 'react-redux';
-import { toggleCartOpen } from './store';
+import {
+  actionFetchTheme,
+  initMerchiCart,
+  store,
+  toggleCartOpen,
+} from './store';
 import { Modal } from 'reactstrap';
 import { ButtonListWrappedOpenCart } from './buttons/ButtonOpenCartMerchiCartModal';
-import { PropsCart } from './CartProvider';
+import CartProvider, { PropsCart } from './CartProvider';
+import { Provider } from 'react-redux';
 
 interface Props extends PropsCart {
   cartButtonWrappedInContainer?: boolean;
@@ -18,15 +25,27 @@ interface Props extends PropsCart {
   storeId?: number;
 }
 
-export function MerchiCartModal(props: Props) {
+function CartModal(props: Props) {
   const { modalCartOpen } = useSelector((s: any) => s.stateCart);
   const {
     cartButtonWrappedInContainer = true,
+    includeTheme,
+    initialiseCart,
+    domainId,
     listContainerClass,
     listItemClass,
     showOpenCartButton = true,
     size = 'xl',
   } = props;
+  // Init cart and token on mount
+  useEffect(() => {
+    if (initialiseCart && domainId) {
+      if (includeTheme) {
+        actionFetchTheme(domainId);
+      }
+      initMerchiCart(domainId);
+    }
+  }, [domainId, includeTheme, initialiseCart]);
   return (
     <>
       {showOpenCartButton && (
@@ -42,9 +61,19 @@ export function MerchiCartModal(props: Props) {
         isOpen={modalCartOpen}
         toggle={toggleCartOpen}
       >
-        <Cart {...props} />
+        <CartComponents />
       </Modal>
     </>
+  );
+}
+
+export function MerchiCartModal(props: Props) {
+  return (
+    <Provider store={store}>
+      <CartProvider {...props}>
+        <CartModal {...props} />
+      </CartProvider>
+    </Provider>
   );
 }
 

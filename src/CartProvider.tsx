@@ -13,6 +13,7 @@ export interface PropsCart {
   classNameBtnDanger?: string;
   classNameBtnDefault?: string;
   classNameBtnDownloadInvoice?: string;
+  classNameBtnEditCartItem?: string;
   classNameBtnPrimary?: string;
   classNameBtnLink?: string;
   classNameBtnNext?: string;
@@ -23,6 +24,7 @@ export interface PropsCart {
 
   classNameCartFormCheckbox?: string;
   classNameCartFormGroup?: string;
+  classNameCartFormGroupButton?: string;
   classNameCartFormGroupCheckbox?: string;
   classNameCartFormInput?: string;
   classNameCartFormLabelCheckbox?: string;
@@ -71,7 +73,7 @@ export interface PropsCart {
   onClickClose?: () => void;
   showUserTermsAndConditions?: boolean;
   productFormClassNames?: any;
-  urlApi?: string;
+  apiUrl?: string;
   urlFrontend?: string;
   urlTrackingPage?: string;
 }
@@ -88,6 +90,7 @@ const CartContext = createContext<PropsCart>({
   classNameBtnDanger: undefined,
   classNameBtnDefault: undefined,
   classNameBtnDownloadInvoice: undefined,
+  classNameBtnEditCartItem: undefined,
   classNameBtnPrimary: undefined,
   classNameBtnLink: undefined,
   classNameBtnNext: undefined,
@@ -97,6 +100,7 @@ const CartContext = createContext<PropsCart>({
   classNameCartFooter: undefined,
   classNameCartFormCheckbox: undefined,
   classNameCartFormGroup: undefined,
+  classNameCartFormGroupButton: undefined,
   classNameCartFormGroupCheckbox: undefined,
   classNameCartFormInput: undefined,
   classNameCartInputError: undefined,
@@ -144,7 +148,7 @@ const CartContext = createContext<PropsCart>({
   onClickClose: undefined,
   productFormClassNames: {},
   showUserTermsAndConditions: undefined,
-  urlApi: undefined,
+  apiUrl: undefined,
   urlFrontend: undefined,
   urlTrackingPage: undefined,
 });
@@ -164,6 +168,7 @@ interface PropsCartProvider {
   classNameBtnDanger?: string;
   classNameBtnDefault?: string;
   classNameBtnDownloadInvoice?: string;
+  classNameBtnEditCartItem?: string;
   classNameBtnPrimary?: string;
   classNameBtnNext?: string;
   classNameBtnNextComplete?: string;
@@ -173,6 +178,7 @@ interface PropsCartProvider {
   classNameCartFooter?: string;
   classNameCartFormCheckbox?: string;
   classNameCartFormGroup?: string;
+  classNameCartFormGroupButton?: string;
   classNameCartFormGroupCheckbox?: string;
   classNameCartFormInput?: string;
   classNameCartFormLabelCheckbox?: string;
@@ -220,33 +226,35 @@ interface PropsCartProvider {
   onClickClose?: () => void;
   productFormClassNames?: any;
   showUserTermsAndConditions?: boolean;
-  urlApi?: string;
+  apiUrl?: string;
   urlFrontend?: string;
   urlTrackingPage?: string;
 }
 
 const CartProvider = ({
   children,
-  classNameAlertError = 'alert alert-danger',
-  classNameAlertInfo = 'alert alert-info',
-  classNameAlertSuccess = 'alert alert-success',
-  classNameAlertWarning = 'alert alert-warning',
+  classNameAlertError = 'alert-danger',
+  classNameAlertInfo = 'alert-info',
+  classNameAlertSuccess = 'alert-success',
+  classNameAlertWarning = 'alert-warning',
   classNameBtn = 'btn',
-  classNameBtnBack = 'btn-lg btn-default pull-left',
-  classNameBtnCartClear = 'btn-lg btn-danger mr-auto',
-  classNameBtnClose = 'btn-close',
+  classNameBtnBack = 'btn-lg btn-default',
+  classNameBtnCartClear = 'btn-lg btn-danger',
+  classNameBtnClose = 'merchi-btn-close',
   classNameBtnDanger = 'btn btn-md btn-danger',
   classNameBtnDefault = 'btn btn-md btn-default',
   classNameBtnDownloadInvoice = 'btn btn-lg btn-primary',
+  classNameBtnEditCartItem = 'btn btn-lg btn-primary ml-auto',
   classNameBtnPrimary = 'btn btn-md btn-primary',
   classNameBtnLink = 'btn-md btn-link',
-  classNameBtnNext = 'btn-lg btn-primary',
-  classNameBtnNextComplete = 'btn-lg btn-success',
+  classNameBtnNext = 'btn-lg btn-primary ml-auto',
+  classNameBtnNextComplete = 'btn-lg btn-success ml-auto',
   classNameBtnPay = 'btn-lg btn-primary width-full',
   classNameCartBody = 'merchi-cart-body',
-  classNameCartFooter = 'merchi-cart-footer', // add to sass
+  classNameCartFooter = 'merchi-cart-footer',
   classNameCartFormCheckbox = 'form-check-input',
-  classNameCartFormGroup = 'form-group',
+  classNameCartFormGroup = 'form-group merchi-form-group',
+  classNameCartFormGroupButton = 'merchi-form-group-button',
   classNameCartFormGroupCheckbox = 'form-check',
   classNameCartFormInput = 'form-control',
   classNameCartFormLabelCheckbox = '',
@@ -259,7 +267,7 @@ const CartProvider = ({
   classNameCartToggleIconButton = 'cart-icon-button-class',
   classNameCartGoogleSuggestList = 'list-group m-b-0',
   classNameCartGoogleSuggestListItem = 'list-group-item cursor-pointer',
-  classNameCartHeader = 'merchi-cart-header', // add to sass
+  classNameCartHeader = 'merchi-cart-header',
   classNameCartItemFeatureImage = 'img-rounded m-10',
   classNameCartItemInfo = 'text-muted font-weight-normal font-italic',
   classNameCartItemInfoCell = 'border-0 align-middle',
@@ -267,13 +275,13 @@ const CartProvider = ({
   classNameCartItemInfoContainer = 'ml-3 d-inline-block align-middle',
   classNameCartTab = 'merchi-tab-content',
   classNameCartTabPanel = 'merchi-tab-panel',
-  classNameCartTitle = 'merchi-cart-title', // add to sass // paddingBottom: '0.5rem', paddingTop: '0.5rem', textAlign: 'center',
-  classNameCartTotalContainer = 'merchi-cart-total-container', // add to sass
-  classNameCartTotalItem = 'merchi-cart-total-item', // add to sass; original text-right cart-cell-width-subtotal
-  classNameCartTotalItemPrice = 'merchi-cart-total-item-price', // add to sass: original text-right
+  classNameCartTitle = 'merchi-cart-title',
+  classNameCartTotalContainer = 'merchi-cart-total-container',
+  classNameCartTotalItem = 'merchi-cart-total-item',
+  classNameCartTotalItemPrice = 'merchi-cart-total-item-price',
   classNameClearCartContainer = 'merchi-cart-clear-container',
   classNameClearCartText = 'merchi-cart-clear-text',
-  classNameListClientInfo = 'merchi-cart-client-info-list', // add to sass: original className='list-unstyled text-center' fontSize: '15px', listStyle: 'none', paddingBottom: '0px', paddingLeft: '0px'
+  classNameListClientInfo = 'merchi-cart-client-info-list',
   classNameList = 'list-group',
   classNameListInline = 'list-inline',
   classNameListUnstyled = 'list-unstyled',
@@ -283,17 +291,17 @@ const CartProvider = ({
   classNameLoadingTemplateContainer = 'merchi-loading-template-container',
   classNameNoItems = 'merchi-no-cart-items',
   classNameShipmentOption = 'merchi-shipment-option',
-  classNameTable = 'table table-bordered',
+  classNameTable = 'table',
   classNameTableContainer = 'table-responsive',
   classNameVariationsList = 'list-unstyled list-inline',
   customSuccessMessage,
   domainId,
   includeTheme = false,
   initialiseCart = true,
-  onClickClose = () => console.log('close merchi cart!'),
+  onClickClose,
   productFormClassNames = {},
   showUserTermsAndConditions = true,
-  urlApi = 'https://api.merchi.co/v6/',
+  apiUrl = 'https://api.merchi.co/v6/',
   urlFrontend = 'https://merchi.co/',
   urlTrackingPage,
 }: PropsCartProvider) => {
@@ -321,6 +329,7 @@ const CartProvider = ({
           classNameBtnDanger,
           classNameBtnDefault,
           classNameBtnDownloadInvoice,
+          classNameBtnEditCartItem,
           classNameBtnPrimary,
           classNameBtnLink,
           classNameBtnNext,
@@ -330,6 +339,7 @@ const CartProvider = ({
           classNameCartFooter,
           classNameCartFormCheckbox,
           classNameCartFormGroup,
+          classNameCartFormGroupButton,
           classNameCartFormGroupCheckbox,
           classNameCartFormInput,
           classNameCartFormLabelCheckbox,
@@ -377,7 +387,7 @@ const CartProvider = ({
           onClickClose,
           productFormClassNames,
           showUserTermsAndConditions,
-          urlApi,
+          apiUrl,
           urlFrontend,
           urlTrackingPage,
         } as PropsCart

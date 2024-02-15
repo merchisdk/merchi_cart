@@ -13,9 +13,9 @@ function CartAlert() {
     <>
       {show && (
         <Alert alertType={alert.type}>
-          {icon &&
-            <FontAwesomeIcon icon={icon} />
-          } <strong>{title}</strong> {message}
+          <h5>
+            {icon && <FontAwesomeIcon icon={icon} />} <strong>{title}</strong> {message}
+          </h5>
           <button
             type="button"
             className={classNameBtnClose}

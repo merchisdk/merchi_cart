@@ -16,8 +16,9 @@ export function FormCustomerNew() {
   const {
     classNameBtnPrimary,
     classNameCartFormGroup,
+    classNameCartFormGroupButton,
     showUserTermsAndConditions,
-    urlApi,
+    apiUrl,
   } = useCartContext();
   const {
     creatingNewCustomer: loading,
@@ -35,7 +36,7 @@ export function FormCustomerNew() {
   });
 
   async function onSubmit(values: any) {
-    await actionCreateNewCustomer((urlApi as string), { ...values });
+    await actionCreateNewCustomer((apiUrl as string), { ...values });
   }
 
   // Basic validation for phone. Checking that phone is a number. Can make more complex if we want.
@@ -103,7 +104,7 @@ export function FormCustomerNew() {
         </div>
       )}
       <InputError error={error || {}} />
-      <div className={classNameCartFormGroup}>
+      <div className={classNameCartFormGroupButton}>
         <Button
           className={classNameBtnPrimary}
           disabled={loading}

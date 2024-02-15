@@ -36,7 +36,7 @@ function CartClient({ client }: Props) {
   }
   return (
     <div>
-      <Title icon={faUserCircle} Title='Checkout as' />
+      <Title icon={faUserCircle} title='Checkout as' />
       <ClientInfo client={client} />
       <Button onClick={clearClient}>
         <FontAwesomeIcon icon={faUserTimes} /> Change

@@ -29,6 +29,23 @@ function PanelCartShipment() {
               <ActiveFormShipmentAddressAndNotes />
             </InnerContainer>
           </CheckoutContainer>
+          <CheckoutContainer textAlign='center'>
+            <InnerContainer
+              paddingBottom='0px'
+              width={700}
+            >
+              <Title
+                icon={faTruck}
+                title={
+                  shipmentGroups.length > 1 ?
+                    'Select shipment methods'
+                  : shipmentGroups.length ?
+                    'Select a shipment method'
+                  : ''
+                }
+              />
+            </InnerContainer>
+          </CheckoutContainer>
           {fetchingShipmentGroups ? (
             <CheckoutContainer>
               <InnerContainer width={700}>
@@ -37,48 +54,27 @@ function PanelCartShipment() {
               </InnerContainer>
             </CheckoutContainer>
           ) : (
-            <>
-              <CheckoutContainer textAlign='left'>
-                <InnerContainer
-                  paddingBottom='1rem'
-                  width={700}
-                >
-                  <Title
-                    icon={faTruck}
-                    title={
-                      shipmentGroups.length > 1 ?
-                        'Select shipment methods'
-                      : shipmentGroups.length ?
-                        'Select a shipment method'
-                      : ''
-                    }
-                  />
-                </InnerContainer>
-              </CheckoutContainer>
-              <CheckoutContainer
-                textAlign='left'
+            <CheckoutContainer textAlign='left'>
+              <InnerContainer
+                paddingBottom='1rem'
+                width={700}
               >
-                <InnerContainer
-                  paddingBottom='1rem'
-                  width={700}
-                >
-                  {shipmentGroups.length > 1 &&
-                    <Alert alertType='warning'>
-                      Items within this cart are warehoused in different locations
-                      and will be shipped separately. Please select how you would
-                      like your items to be shipped.
-                    </Alert>
-                  }
-                  {shipmentGroups.map((group: any, index: number) =>
-                    <ShipmentGroupCard
-                      group={group}
-                      groupIndex={index}
-                      key={`${index}-shipment-group`}
-                    />)
-                  }
-                </InnerContainer>
-              </CheckoutContainer>
-            </>
+                {shipmentGroups.length > 1 &&
+                  <Alert alertType='warning'>
+                    Items within this cart are warehoused in different locations
+                    and will be shipped separately. Please select how you would
+                    like your items to be shipped.
+                  </Alert>
+                }
+                {shipmentGroups.map((group: any, index: number) =>
+                  <ShipmentGroupCard
+                    group={group}
+                    groupIndex={index}
+                    key={`${index}-shipment-group`}
+                  />)
+                }
+              </InnerContainer>
+            </CheckoutContainer>
           )}
         </div>
       </CartBody>

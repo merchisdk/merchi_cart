@@ -15,6 +15,7 @@ export default function ButtonShipmentTabNext() {
       className={classNameBtnNext}
       form={shipmentFormId}
       disabled={savingShipmentAddress}
+      type='submit'
     >
       <FontAwesomeIcon icon={icon} spin={savingShipmentAddress} />
       <span style={{marginLeft: '5px'}}>

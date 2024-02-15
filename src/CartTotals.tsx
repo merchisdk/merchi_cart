@@ -74,7 +74,7 @@ function CartTotals() {
   const cartItems = cart.cartItems ? cart.cartItems : [];
   return (
     <div className={classNameCartTotalContainer}>
-      <Table>
+      <Table className='merchi-cart-total-table'>
         <tbody>
           <CostsTableRow
             attr='cartItemsTotalCost'

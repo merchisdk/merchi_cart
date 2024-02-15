@@ -1,13 +1,13 @@
 import { PaymentRequestPaymentMethodEvent } from '@stripe/stripe-js';
 
-export async function stripeInitPromise(urlApi: string) {
+export async function stripeInitPromise(apiUrl: string) {
   return await fetch(
-    `${urlApi}stripe/master_publishable_key/`,
+    `${apiUrl}stripe/master_publishable_key/`,
     { method: 'GET', mode: 'cors' }
   ).then((response: any) => response.key);
 }
 
-async function createPaymentIntent(urlApi: string, cart: any, paymentMethodType?: string) {
+async function createPaymentIntent(apiUrl: string, cart: any, paymentMethodType?: string) {
   const { id, token } = cart;
   const fetchOptions: any = {
     method: 'GET',
@@ -21,7 +21,7 @@ async function createPaymentIntent(urlApi: string, cart: any, paymentMethodType?
 
   const queryString = new URLSearchParams(queryParams).toString();
   const uri = `stripe/payment_intent/cart/${id}/`
-  const url = `${urlApi}${uri}?${queryString}`;
+  const url = `${apiUrl}${uri}?${queryString}`;
 
   const response = await fetch(url, fetchOptions);
 
@@ -32,7 +32,7 @@ async function createPaymentIntent(urlApi: string, cart: any, paymentMethodType?
   return await response.json();
 }
 
-async function checkPaymentIntnetIsComplete(urlApi: string, cart: any) {
+async function checkPaymentIntnetIsComplete(apiUrl: string, cart: any) {
   const url = `stripe/payment_intent/cart/complete/${cart.id}/`;
   const fetchOptions: any = {
     method: 'GET',
@@ -40,32 +40,32 @@ async function checkPaymentIntnetIsComplete(urlApi: string, cart: any) {
   };
   const queryString = new URLSearchParams({cart_token: cart.token}).toString();
 
-  const response = await fetch(`${urlApi}${url}?${queryString}`, fetchOptions);
+  const response = await fetch(`${apiUrl}${url}?${queryString}`, fetchOptions);
   
   if (!response.ok) {
     throw new Error("Failed to check if payment intent is complete.");
   }
-
-  return await response.json();
+  const i = await response.json();
+  return i.invoice;
 }
 
-export async function stripeCardFormSubmit(urlApi: string, stripe: any, card: any, cart: any) {
+export async function stripeCardFormSubmit(apiUrl: string, stripe: any, card: any, cart: any) {
   try {
-    const intent = await createPaymentIntent(urlApi, cart);
+    const intent = await createPaymentIntent(apiUrl, cart);
     const stripePayment = await stripe.confirmCardPayment(intent.stripeClientSecret, { payment_method: { card } });
 
     if (stripePayment.error) {
       throw new Error(stripePayment.error.message || 'Stripe connect unknown error');
     }
 
-    return await checkPaymentIntnetIsComplete(urlApi, cart);
+    return await checkPaymentIntnetIsComplete(apiUrl, cart);
   } catch (e) {
     throw e;
   }
 }
 
 export async function stripePaymentButtonSubmit(
-  urlApi: string,
+  apiUrl: string,
   stripe: any,
   cart: any,
   paymentMethodEvent: PaymentRequestPaymentMethodEvent
@@ -73,7 +73,7 @@ export async function stripePaymentButtonSubmit(
   const { complete, paymentMethod } = paymentMethodEvent;
 
   try {
-    const intent = await createPaymentIntent(urlApi, cart);
+    const intent = await createPaymentIntent(apiUrl, cart);
     const stripePayment = await stripe.confirmCardPayment(
       intent.stripeClientSecret,
       { payment_method: paymentMethod.id },
@@ -85,7 +85,7 @@ export async function stripePaymentButtonSubmit(
     }
 
     complete('success');
-    return await checkPaymentIntnetIsComplete(urlApi, cart);
+    return await checkPaymentIntnetIsComplete(apiUrl, cart);
 
   } catch (e) {
     complete('fail');

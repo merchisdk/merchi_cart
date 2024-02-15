@@ -35,7 +35,7 @@ import {
 } from './store';
 import './styles/globals.css';
 
-function CartComponents() {
+export function CartComponents() {
   const {
     domainId,
     includeTheme,
@@ -73,12 +73,10 @@ function CartComponents() {
           <PanelPaymentSuccess />
           {![tabIdItem, tabIdClearCart, tabIdPaymentSuccess].includes(activeTab) &&
             <>
+              <CartTotals />
               <CartFooter>
-                <CartTotals />
-              </CartFooter>
-              <CartFooter>
-                <ButtonClearCart />
                 <ButtonBack />
+                <ButtonClearCart />
                 <ButtonNextDynamic />
               </CartFooter>
             </>
@@ -91,10 +89,10 @@ function CartComponents() {
 
 export default function Cart(props: PropsCart) {
   return (
-    <CartProvider {...props}>
-      <Provider store={store}>
+    <Provider store={store}>
+      <CartProvider {...props}>
         <CartComponents />
-      </Provider>
-    </CartProvider>
+      </CartProvider>
+    </Provider>
   );
 }

@@ -59,10 +59,12 @@ yarn add merchi_cart
 | `classNameBtnNext`                            | `string?`  | `"btn-lg btn-primary"`                                                      | `Class for next button`               |
 | `classNameBtnNextComplete`                    | `string?`  | `"btn-lg btn-success"`                                                      | `Class for next button completed`     |
 | `classNameBtnPay`                             | `string?`  | `"btn-lg btn-primary width-full"`                                           | `Class for pay button completed`      |
-| `classNameBtnPrimary`                         | `string?`  | `"btn btn-md btn-primary"`                                                  | `Class for primary button completed`  |
+| `classNameBtnPrimary`                         | `string?`  | `"btn btn-md btn-primary"`                                                  | `Class for edit cart item button`     |
+| `classNameBtnEditCartItem`                    | `string?`  | `"btn btn-md btn-primary ml-auto"`                                          | `Class for primary button completed`  |
 | `classNameCartBody`                           | `string?`  | `"merchi-cart-body"`                                                        | `Class for cart body container`       |
 | `classNameCartFooter`                         | `string?`  | `"merchi-cart-footer"`                                                      | `Class for cart footer container`     |
-| `classNameCartFormGroup`                      | `string?`  | `"form-group"`                                                              | `Class for form group element`        |
+| `classNameCartFormGroup`                      | `string?`  | `"form-group merchi-form-group"`                                            | `Class for form group element`        |
+| `classNameCartFormGroupButton`                | `string?`  | `"merchi-form-group-button"`                                                | `Class for form group button`         |
 | `classNameCartFormGroupCheckbox`              | `string?`  | `"form-check"`                                                              | `Class for form group checkbox`       |
 | `classNameCartFormInput`                      | `string?`  | `"form-control"`                                                            | `Class for form input`                |
 | `classNameCartFormLabelCheckbox`              | `string?`  | `""`                                                                        | `Class for form input checkbpx label` |
@@ -100,7 +102,7 @@ yarn add merchi_cart
 | `classNameLoadingTemplate`                    | `string?`  | `"merchi-loading-template"`                                                 | `Class for loading elements`          |
 | `classNameLoadingTemplateContainer`           | `string?`  | `"merchi-loading-template-container"`                                       | `Class for loading container elements`|
 | `classNameShipmentOption`                     | `string?`  | `"merchi-shipment-option"`                                                  | `Class for shipment option element`   |
-| `classNameTable`                              | `string?`  | `"table table-bordered"`                                                    | `Class for table elements`            |
+| `classNameTable`                              | `string?`  | `"table"`                                                    | `Class for table elements`            |
 | `classNameVariationsList`                     | `string?`  | `"list-unstyled list-inline"`                                               | `Class for variation info`            |
 | `customSuccessMessage`                        | `string?`  | `undefined`                                                                 | `A message to display on payment success` |
 | `domainId`                                    | `number`   | `undefined`                                                                 | `The merchi domain/store id for the cart` |
@@ -109,6 +111,6 @@ yarn add merchi_cart
 | `onClickClose`                                | `() => void?`| `() => console.log('close merchi cart!')`                                 | `a function to close the cart`        |
 | `productFormClassNames`                       | `obj`      | `{}`                                                                        | `An object to be passsed to the merchi_product_form `|
 | `showUserTermsAndConditions`                  | `boolean?` | `true`                                                                      | `Display the user t&cs for Merchi`    |
-| `urlApi`                                      | `string?`  | `'https://api.merchi.co/v6/'`                                               | `URL to connect to the Merchi API`    |
+| `apiUrl`                                      | `string?`  | `'https://api.merchi.co/v6/'`                                               | `URL to connect to the Merchi API`    |
 | `urlFrontend`                                 | `string?`  | `'https://merchi.co/'`                                                      | `URL to redirect users to a frontend` |
 | `urlTrackingPage`                             | `string?`  | `undefined`                                                                 | `URL used on the thankyou page for tracking`|

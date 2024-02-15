@@ -27,9 +27,7 @@ function PanelClientCheckout() {
         {client && client.id > -1 ?
           <>
             <CheckoutContainer>
-              <InnerContainer
-                paddingBottom='3rem'
-              >
+              <InnerContainer paddingBottom='3rem'>
                 <CartClient client={client} />
               </InnerContainer>
             </CheckoutContainer>
@@ -61,23 +59,19 @@ function PanelClientCheckout() {
         :
           <>
             <CheckoutContainer>
-              <InnerContainer
-                paddingBottom='3rem'
-              >
+              <InnerContainer paddingBottom='0px'>
                 <Title
                   icon={faUserPlus}
-                  Title='Checkout as new customer'
+                  title='Checkout as new customer'
                 />
                 <FormNewCustomer />
               </InnerContainer>
             </CheckoutContainer>
             <CheckoutContainer>
-              <InnerContainer
-                paddingBottom='3rem'
-              >
+              <InnerContainer paddingBottom='0px'>
                 <Title
                   icon={faUserTag}
-                  Title='Checkout as returning customer'
+                  title='Checkout as returning customer'
                 />
                 <FormReturningCustomer />
               </InnerContainer>
