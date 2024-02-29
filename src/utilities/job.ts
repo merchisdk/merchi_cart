@@ -1,4 +1,4 @@
-import { Merchi } from 'MerchiSDK/merchi';
+import { Merchi } from 'merchi_sdk_ts';
 
 export function makeJob(
   jobJson: any, makeDirty?: boolean, arrayValueStrict?: boolean
