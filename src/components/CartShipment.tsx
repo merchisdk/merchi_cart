@@ -1,5 +1,5 @@
 import { useDispatch } from 'react-redux';
-import Title from './Title';
+import Title from './CartTitle';
 import { sliceCart, tabIdShipment } from '../slices/sliceCart';
 import { addressInOneLine } from '../utilities/address';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
