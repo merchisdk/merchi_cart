@@ -1,5 +1,4 @@
-import { Merchi } from '../MerchiSDK/merchi';
-import { encodeMerchiApiData } from './helpers';
+import { Merchi } from 'merchi_sdk_ts';
 
 const merchi = new Merchi()
 
@@ -18,21 +17,17 @@ export function primaryPhone(user: any) {
   return phoneNumbers[0] ? phoneNumbers[0].internationalFormatNumber : '';
 }
 
-export async function tryReturningCustomerEmail(urlApi: string, emailAddress: string) {
-  const queryString = new URLSearchParams({email_address: emailAddress}).toString();
-  const fetchOptions: any = {method: 'POST'};
 
-  return await fetch(
-    `${urlApi}user-check-email/?${queryString}`,
-    fetchOptions,
-  );
+export async function tryReturningCustomerEmail(emailAddress: string) {
+  const merchi = new Merchi();
+  const query: Array<any> = [];
+  query.push(['email_address', emailAddress]);
+  return await merchi.authenticatedFetch('/user-check-email/', {method: 'POST', query});
 }
 
-export async function createNewCustomer(urlApi: string, customerJson: any) {
-  const formData = encodeMerchiApiData(customerJson);
-  const fetchOptions: any = {method: 'POST', body: formData}
-  return await fetch(
-    `${urlApi}public_user_create/`,
-    fetchOptions,
-  );
+export async function createNewCustomer(customerJson: any) {
+  const user = makeUser(customerJson, true);
+  return merchi.authenticatedFetch(
+    '/public_user_create/', {body: user.toFormData(), method: 'POST'}
+  )
 }

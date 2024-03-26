@@ -1,8 +1,7 @@
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import MerchiProductForm from 'merchi_product_form';
 import { tabIdItem } from '../slices/sliceCart';
-import { patchCartItem } from '../store';
+import { actionCartItemEdit } from '../store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import { Button, ButtonBack } from '../buttons';
@@ -16,22 +15,23 @@ import { useCartContext } from '../CartProvider';
 function PanelEditCartItem() {
   const {
     productFormClassNames,
-    classNameBtnPrimary,
-    urlApi,
+    classNameBtnEditCartItem,
+    apiUrl,
   } = useCartContext();
   const { cartItem, savingCartItem } = useSelector((s: any) => s.stateCartItem);
+  const { activeTab } = useSelector((s: any) => s.stateCart);
   const formId = 'edit-cart-item-form';
-  function onSubmit(data: any) {
-    patchCartItem(data.job);
+  function onSubmit(jobJson: any) {
+    actionCartItemEdit(jobJson);
   }
   return (
     <CartTabPanel tabId={tabIdItem}>
       <CartBody style={{padding: '2rem'}}>
-        {cartItem.id &&
+        {activeTab === tabIdItem && cartItem && cartItem.id && cartItem.product && cartItem.product.id &&
           <MerchiProductForm
-            apiHost={urlApi}
+            apiUrl={apiUrl}
             isCartItem={true}
-            job={cartItem}
+            initJob={cartItem}
             initProduct={cartItem.product}
             onSubmit={onSubmit}
             productFormId={formId}
@@ -44,9 +44,10 @@ function PanelEditCartItem() {
       <CartFooter>
         <ButtonBack />
         <Button
-          className={classNameBtnPrimary}
+          className={classNameBtnEditCartItem}
           disabled={savingCartItem}
           form={formId}
+          type='submit'
         >
           {savingCartItem && <FontAwesomeIcon icon={faCircleNotch} spin />}
           {savingCartItem ? ' Loading...' : 'Save'}

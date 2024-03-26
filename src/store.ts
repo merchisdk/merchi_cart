@@ -1,5 +1,5 @@
 import { batch } from 'react-redux';
-import { configureStore, getDefaultMiddleware } from '@reduxjs/toolkit';
+import { configureStore } from '@reduxjs/toolkit';
 import {
   sliceCart,
   tabIdCheckout,
@@ -15,7 +15,7 @@ import sliceNewCustomerForm from './slices/sliceNewCustomerForm';
 import sliceFormReturningCustomer from './slices/sliceFormReturningCustomer';
 import reducersSquare from './square/slices/reducersSquare';
 import sliceStripeCardForm from './stripe/slices/sliceStripeCardForm';
-import { Merchi } from './MerchiSDK/merchi';
+import { Merchi } from 'merchi_sdk_ts';
 import { cartEmbed } from './utilities/helpers';
 import { makeAddress } from './utilities/address';
 import {
@@ -29,16 +29,16 @@ import {
   makeCartShipmentQuote,
   stripeIsValidAndActive,
 } from './utilities/cart';
+import { makeProduct } from './utilities/product';
 import {
   makeUser,
   createNewCustomer,
   tryReturningCustomerEmail,
 } from './utilities/user';
 import { appendStyleSheetText } from './utilities/helpers';
+import { makeJob } from './utilities/job';
 
 const merchi = new Merchi();
-
-const middleware = getDefaultMiddleware({ serializableCheck: false });
 
 const merchiCartReducer = {
   stateCartAlert: sliceCartAlert.reducer,
@@ -57,7 +57,7 @@ const merchiCartReducer = {
 };
 
 export const store = configureStore({
-  middleware: [...middleware],
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ serializableCheck: false }),
   reducer: merchiCartReducer,
 });
 
@@ -99,10 +99,11 @@ export function setCartItem(cartItem: any, index: number) {
   batch(() => {
     if (cartItem && cartItem.id) {
       setActiveTab(tabIdItem);
+      dispatch(sliceCartItem.actions.setCartItem({ cartItem, index }));
     } else {
       setActiveTab(tabIdItems);
+      dispatch(sliceCartItem.actions.setCartItem({ cartItem: null, index }));
     }
-    dispatch(sliceCartItem.actions.setCartItem({ cartItem, index }));
   });
 }
 
@@ -153,8 +154,7 @@ export function actionFetchTheme(id: number) {
     });
 }
 
-async function cartAndCookie() {
-  const { domainId } = getStore().stateCart;
+async function cartAndCookie(domainId: number) {
   const cart = makeCart({domain: {id: domainId}}, true);
   return cart.create({embed: cartEmbed})
     .then((c: any) => {
@@ -168,62 +168,113 @@ async function cartAndCookie() {
     })
     .catch((e: any) => {
       batch(() => {
-        alertError(e.errorMessage);
+        alertError(e.errorMessage || 'Unable to fetch cart.');
         dispatch(fetchCartError());
       });
     });
 }
 
-export async function createAndSetNewCartCookie() {
+export async function createAndSetNewCartCookie(domainId: number) {
   dispatch(fetchCart());
-  await cartAndCookie();
+  await cartAndCookie(domainId);
 }
 
 export async function doClearCart() {
+  const { domainId } = getStore().stateCart;
   dispatch(setCart({}));
   closeClearCart();
-  await createAndSetNewCartCookie();
+  await createAndSetNewCartCookie((domainId as any));
 }
 
-export async function patchCartItem(cartItem: any) {
+export async function addCartItem(
+  jobJson: any,
+  onSuccess: (cartItem: any) => void,
+  onError: (e: any) => void,
+) {
+  const jobEnt = makeJob(jobJson, true);
   const data = getStore();
-  const {
-    patchCartItem: doPatch,
-    patchCartItemError: doPatchError,
-    patchCartItemSuccess: doPatchSuccess,
-  } = sliceCartItem.actions;
   const cartToken = await getCartToken();
-  const {
-    stateCart: { cart },
-    stateCartItem: { cartItem: stateCartItem, index }
-  } = data;
+  const { cart } = data.stateCart;
   const cartEnt = makeCart(cart, false, cartToken);
-  const cartItemEnt = makeCartItem(cartItem, true);
-  cartItemEnt.id = (stateCartItem as any).id;
-  (cartEnt as any).cartItems[index] = cartItemEnt;
-  dispatch(doPatch());
-  cartEnt.save({embed: cartEmbed}).
-    then(
-      (c: any) => {
-        batch(() => {
-          alertSuccess('Item updated.');
-          dispatch(setCart(c.toJson()));
-          dispatch(doPatchSuccess());
-          setActiveTab(tabIdItems);
-        });
-      }
-    ).
-    then(() => {
-      setCartItem({}, 0);
-    }).
-    catch(
-      (e: any) => {
-        batch(() => {
-          alertError(e.errorMessage);
-          dispatch(doPatchError());
-        });
-      }
-    );
+  const cartItemEnt = makeCartItem({}, true);
+  const cartItemProduct = makeProduct({ id: (jobEnt.product as any).id });
+  cartItemEnt.cart = cartEnt;
+  cartItemEnt.quantity = jobEnt.quantity;
+  cartItemEnt.product = cartItemProduct;
+  cartItemEnt.variations = jobEnt.variations;
+  cartItemEnt.variationsGroups = jobEnt.variationsGroups;
+  cartItemEnt.taxType = jobEnt.taxType;
+  try {
+    const item = await cartItemEnt.create();
+    const itemJson = await item.toJson();
+    onSuccess(itemJson);
+  } catch(e: any) {
+    onError(e);
+  }
+}
+
+async function refetchCart(cartEnt: any) {
+  merchi.cartToken = cartEnt.token;
+  await merchi.Cart.get(cartEnt.id, {embed: cartEmbed}).
+    then(convertToJson).
+    then(updateCartValues)
+}
+
+const {
+  patchCartItem,
+  patchCartItemError,
+  patchCartItemSuccess,
+} = sliceCartItem.actions;
+
+function cleanVariation(variation: any) {
+  return {
+    id: variation.id,
+    value: variation.value,
+    variationFiles: variation.variationFiles.map((f: any) => ({id: f.id}))
+  };
+}
+
+export async function actionCartItemEdit(cartItem: any) {
+  dispatch(patchCartItem());
+  const data = getStore();
+  const cartToken = await getCartToken();
+  const { cart } = data.stateCart;
+  const { cartItem: stateCartItem, index } = data.stateCartItem;
+  const { product, taxType, variations = [], variationsGroups = [] } = cartItem;
+  const cleanVariations = variations.map(cleanVariation);
+  const cleanVariationsGroups = variationsGroups.map((g: any) => ({
+    id: g.id,
+    quantity: g.quantity,
+    variations: g.variations?.map(cleanVariation) || []
+  }));
+  const cleanProduct = product ? {id: product.id} : undefined;
+  const cleanTaxType = taxType ? {id: taxType.id} : undefined;
+  const cartEnt = makeCart(cart, false, cartToken);
+  const jobEnt = makeJob(cartItem);
+  const cartItemEnt = makeCartItem({
+    ...cartItem,
+    id: (stateCartItem as any).id,
+    cart: {id: (cart as any).id},
+    product: cleanProduct,
+    taxType: cleanTaxType,
+    quantity: (cartItem as any).quantity,
+    variations: cleanVariations,
+    variationsGroups: cleanVariationsGroups
+  }, true, cartToken);
+  cartItemEnt.save().
+  then(() => refetchCart(cartEnt)).
+  then(() => {
+    alertSuccess('Item updated.');
+    dispatch(patchCartItemSuccess());
+    setActiveTab(tabIdItems);
+  }).
+  then(() => {
+    setCartItem({}, 0);
+  }).
+  catch((e: any) => {
+    alertError(e.errorMessage);
+    dispatch(patchCartItemError());
+  });
 }
 
 export async function actionDeleteCartItem(index: number) {
@@ -320,11 +371,11 @@ async function attachClientToCart(clientJson: any) {
     createNewCustomerSuccess: createNewSuccess,
   } = sliceNewCustomerForm.actions;
   const cartToken = await getCartToken();
-  const { stateCart: { cart } } = getStore();
+  const { cart } = getStore().stateCart;
   const clientEnt = makeUser({id: clientJson.id});
-  const cartEnt = makeCart(cart, false, cartToken);
+  const cartEnt = makeCart({...cart}, false, cartToken);
   cartEnt.client = clientEnt;
-  return cartEnt.save({embed: cartEmbed}).
+  cartEnt.save({embed: cartEmbed}).
     then((c: any) => {
       dispatch(setCart(c.toJson()));
       dispatch(createNewSuccess());
@@ -363,21 +414,20 @@ const {
   tryReturningCustomerSuccess,
 } = sliceFormReturningCustomer.actions;
 
-export function tryReturningCustomer(urlApi: string, data: any) {
-  const { emailAddress } = data;
+export async function tryReturningCustomer(emailAddress: string) {
   dispatch(tryReturning());
-  tryReturningCustomerEmail(urlApi, emailAddress)
-  .then((r: any) => attachClientToCart({
+  try {
+    const user: any = await tryReturningCustomerEmail(emailAddress);
+    await attachClientToCart({
       emailAddresses: [{emailAddress}],
-      id: r.user_id,
-    }))
-  .then(() => dispatch(tryReturningCustomerSuccess()))
-  .catch((e: any) =>
-    batch(() => {
-      alertError(e.errorMessage);
-      dispatch(tryReturningCustomerError());
-      dispatch(setReturningCustomerError(true));
-    }));
+      id: user.user_id,
+    });
+    dispatch(tryReturningCustomerSuccess());
+  } catch(e: any) {
+    alertError(e.errorMessage);
+    dispatch(tryReturningCustomerError());
+    dispatch(setReturningCustomerError(true));
+  };
 }
 
 const {
@@ -386,27 +436,18 @@ const {
   createNewCustomerSuccess: createNewSuccess,
 } = sliceNewCustomerForm.actions;
 
-export function actionCreateNewCustomer(urlApi: string, customerJson: any) {
+export function actionCreateNewCustomer(apiUrl: string, customerJson: any) {
   const { cart } = getStore().stateCart;
   const domainId = cart && (cart as any).domain && (cart as any).domain.id;
   dispatch(createNew());
-  const user = makeUser(
-    {...customerJson,
-      registeredUnderDomains: [{id: domainId}]},
-    true
-  );
-  const error = (e: any) => batch(
-    () => {
-      alertError(e.errorMessage);
-      dispatch(createNewError(e.errorMessage));
-    });
-  createNewCustomer(urlApi, {...customerJson, registeredUnderDomains: [{id: domainId}]})
-    .then((r: any) => {
-      const { user: userJson } = r;
-      attachClientToCart(userJson);
-    })
-    .then(() => dispatch(createNewSuccess()))
-    .catch(error);
+  createNewCustomer({...customerJson, registeredUnderDomains: [{id: domainId}]}).
+  then((r: any) => r.user).
+  then(attachClientToCart).
+  then(() => dispatch(createNewSuccess())).
+  catch((e: any) => {
+    alertError(e.errorMessage);
+    dispatch(createNewError(e.errorMessage));
+  });
 }
 
 const { creditCardPaySuccess } = sliceCartPayment.actions; 
@@ -429,7 +470,7 @@ function updateCartValues(cartJson: any) {
   dispatch(initCartShipmentSlice(cartJson));
 }
 
-function getCart(cartIdAndToken: Array<string>) {
+function getCart(domainId: number, cartIdAndToken: Array<string>) {
   const {
     cartSettingsInvalid,
   } = sliceCart.actions;
@@ -453,18 +494,21 @@ function getCart(cartIdAndToken: Array<string>) {
       }
     })
     .catch((e: any) => {
-      createAndSetNewCartCookie();
+      createAndSetNewCartCookie(domainId);
     });
 }
 
-export async function getMerchiCart(domainId: number) {
+export async function actionGetMerchiCart(domainId: number) {
   const cartIdAndToken = await getMerchiCartCookie(domainId);
-  dispatch(setDomainId({ cartIdAndToken, domainId }));
   if (cartIdAndToken) {
-    getCart(cartIdAndToken);
+    getCart(domainId, cartIdAndToken);
   } else {
-    createAndSetNewCartCookie();
+    createAndSetNewCartCookie(domainId);
   }
+}
+
+export function toggleCartOpen() {
+  dispatch(sliceCart.actions.toggleCartOpen());
 }
 
 export async function isMerchiCartFetching() {
@@ -486,14 +530,16 @@ export async function getMerchiCartValues() {
 }
 
 export async function doCartComplete() {
+  const domainId: any = getStore().stateCart.domainId;
   dispatch(sliceCartPayment.actions.doCardComplete());
-  await cartAndCookie().then(() => location.reload());
+  await cartAndCookie(domainId).then(() => location.reload());
 }
 
 export function initMerchiCart(domainId: number) {
-  getMerchiCart(domainId);
+  dispatch(setDomainId(domainId));
+  actionGetMerchiCart(domainId);
   if ((window as any) && (window as any) !== undefined) {
-    (window as any).getCart = () => getMerchiCart(domainId);
+    (window as any).getCart = () => actionGetMerchiCart(domainId);
     (window as any).isMerchiCartFetching = isMerchiCartFetching;
     (window as any).getMerchiCartValues = getMerchiCartValues;
   }

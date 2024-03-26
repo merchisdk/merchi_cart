@@ -1,6 +1,3 @@
-# Source files
-src/
-
 # Configuration files
 tsconfig.json
 
@@ -11,4 +8,6 @@ yarn.lock
 
 # types
 types/
- 
+
+*.ts
+*.tsx

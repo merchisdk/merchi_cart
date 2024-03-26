@@ -3,6 +3,7 @@ import { Provider, useSelector } from 'react-redux';
 import { store } from './store';
 import CartAlert from './CartAlert';
 import CartHeader from './CartHeader';
+import CartNav from './tabs/CartNav';
 import CartTotals from './CartTotals';
 import CartProvider, { PropsCart, useCartContext } from './CartProvider';
 import {
@@ -32,8 +33,9 @@ import {
   actionFetchTheme,
   initMerchiCart,
 } from './store';
+import './styles/globals.css';
 
-function CartComponents() {
+export function CartComponents() {
   const {
     domainId,
     includeTheme,
@@ -56,6 +58,7 @@ function CartComponents() {
     <>
       <CartHeader />
       <CartAlert />
+      <CartNav />
       {fetchingCart ? (
         <LoadingTemplate />
       ) : cartSettingsInvalid ? (
@@ -70,12 +73,10 @@ function CartComponents() {
           <PanelPaymentSuccess />
           {![tabIdItem, tabIdClearCart, tabIdPaymentSuccess].includes(activeTab) &&
             <>
+              <CartTotals />
               <CartFooter>
-                <CartTotals />
-              </CartFooter>
-              <CartFooter>
-                <ButtonClearCart />
                 <ButtonBack />
+                <ButtonClearCart />
                 <ButtonNextDynamic />
               </CartFooter>
             </>
@@ -88,12 +89,10 @@ function CartComponents() {
 
 export default function Cart(props: PropsCart) {
   return (
-    <CartProvider {...props}>
-      <Provider store={store}>
+    <Provider store={store}>
+      <CartProvider {...props}>
         <CartComponents />
-        <CartHeader />
-        <CartAlert />
-      </Provider>
-    </CartProvider>
+      </CartProvider>
+    </Provider>
   );
 }

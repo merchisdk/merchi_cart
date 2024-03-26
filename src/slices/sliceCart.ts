@@ -146,9 +146,8 @@ export const sliceCart = createSlice({
     setCartClient: (state: any, action: PayloadAction<any>) => {
       state.cart.client = action.payload;
     },
-    setDomainId: (state: any, action: PayloadAction<any>) => {
-      const { domainId } = action.payload;
-      state.domainId = domainId;
+    setDomainId: (state: any, action: PayloadAction<number>) => {
+      state.domainId = action.payload;
     },
     toggleCartOpen: (state: any) => {
       state.modalCartOpen = !state.modalCartOpen;

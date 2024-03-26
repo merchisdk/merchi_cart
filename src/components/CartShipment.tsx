@@ -1,6 +1,5 @@
-import * as React from 'react';
 import { useDispatch } from 'react-redux';
-import Title from './Title';
+import Title from './CartTitle';
 import { sliceCart, tabIdShipment } from '../slices/sliceCart';
 import { addressInOneLine } from '../utilities/address';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -28,14 +27,14 @@ function CartShipment({ cart }: Props) {
     <div className={classNameListContainer}>
       <Title
         icon={faTruck}
-        Title='Ship to'
+        title='Ship to'
       />
       <ul
         className={classNameListUnstyled}
         style={{fontSize: '15px', marginBottom: '1rem'}}
       >
         <li>
-          <span style={{display: 'inline-block', marginLeft: 28}}>
+          <span style={{display: 'inline-block'}}>
             {address ? addressInOneLine(address) : 'Shipping address not set'}
           </span>
         </li>

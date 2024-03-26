@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useController } from 'react-hook-form';
 import { useCartContext } from '../CartProvider';
 import InputError from './InputError';

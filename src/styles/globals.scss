@@ -1,17 +1,31 @@
+.merchi-cart-header {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+}
+.merchi-cart-header h5 {
+  margin-bottom: 0;
+  line-height: 1.5;
+  font-size: 20px;
+  margin-top: 0px;
+}
+.merchi-cart-footer {
+  display: flex;
+  padding: 1rem;
+}
 .merchi-cart-body {
   display: block;
-  align-items: center;
-  display: flex;
-  justify-content: center;
-  min-height: 100px;
-  height: 450px;
+  min-height: 450px;
+}
+.merchi-cart-title {
+  margin-bottom: 2rem;
 }
 .merchi-loading-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: var(--bs-height-md, 100px);
+  height: var(--bs-height-md, 500px);
 }
 .merchi-loading-container-text {
   font-size: 1.2rem;
@@ -28,7 +42,6 @@
 }
 .merchi-tab-panel {
   display: none;
-  padding: 1rem;
 }
 .merchi-cart-tab-content {
   padding: 15px;
@@ -39,10 +52,22 @@
 .merchi-cart-tab-content > .active {
   display: block;
 }
-.merchi-cart-clear-container {
+.merchi-cart-total-container {
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: flex-end;
+  border-bottom-right-radius: calc(0.3rem - 1px);
+  border-bottom-left-radius: calc(0.3rem - 1px);
+}
+.merchi-cart-total-table {
+  width: 100%;
+  margin-bottom: 20px;
+  max-width: 400px;
+  margin-bottom: 0px;
+}
+.merchi-cart-clear-container {
+  display: block;
+  text-align: center;
 }
 .merchi-cart-clear-text {
   font-size: 16px;
@@ -51,20 +76,20 @@
 }
 .merchi-cart-item-table-head {
   border: none;
-  background-color: #f8f9fa;
   padding: 0.5rem;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
   text-transform: uppercase;
+  border-bottom: 0px !important;
 }
 .merchi-cart-item-table-head-right {
   border: none;
-  background-color: #f8f9fa;
   padding: 0.5rem;
   padding-left: 0.75rem;
   padding-right: 0.75rem;
   text-transform: uppercase;
   text-align: right;
+  border-bottom: 0px !important;
 }
 .merchi-cart-success-message {
   font-size: 16px;
@@ -113,7 +138,16 @@
 .merchi-nav-link {
   cursor: pointer;
   display: block;
-  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  padding: 10px 15px;
+  width: 100%;
+  border: 0px;
+}
+
+.merchi-cart-client-info-list {
+  list-style: none;
+  margin-left: 0px;
+  padding-left: 0px;
 }
 
 .merchi-nav-link:hover, .merchi-nav-link:focus {
@@ -126,16 +160,16 @@
   cursor: default;
 }
 
-.merchi-nav-tabs {
-  border-bottom: 1px solid #dee2e6;
-}
+.merchi-nav-tabs {}
 
 .merchi-nav-tabs .merchi-nav-item {
   margin-bottom: -1px;
 }
+button.merchi-nav-link {
+  background: #fff;
+}
 
 .merchi-nav-tabs .merchi-nav-link {
-  border: 1px solid transparent;
   border-top-left-radius: 0.25rem;
   border-top-right-radius: 0.25rem;
 }
@@ -164,7 +198,7 @@
 .merchi-nav-pills .merchi-nav-link.active,
 .merchi-nav-pills .show > .merchi-nav-link {
   color: #fff;
-  background-color: #007bff;
+  background-color: #303dbf;
 }
 
 .merchi-nav-fill .merchi-nav-item {
@@ -173,7 +207,53 @@
 }
 .merchi-no-cart-items {
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  align-content: center;
   height: 450px;
+}
+
+.merchi-btn-close {
+  background: transparent;
+  border: 0px;
+  cursor: pointer;
+  color: inherit;
+  margin-left: auto;
+}
+
+.merchi-loading-template {
+  height: 500px;
+  background: url('../assets/merchi-monster-loader.gif');
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 150px 150px;
+}
+
+/* Badge.css */
+
+.merchi-cart-badge {
+  display: inline-block;
+  padding: .25em .4em;
+  font-size: 75%;
+  font-weight: 700;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: .25rem;
+}
+.merchi-cart-modal-alert {
+  align-items: center;
+  display: flex;
+  padding: 15px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.merchi-form-group {
+  text-align: left;
+}
+.merchi-form-group-button {
+  text-align: center;
+  margin-bottom: 15px;
 }

@@ -1,4 +1,4 @@
-import { Merchi } from 'MerchiSDK/merchi';
+import { Merchi } from 'merchi_sdk_ts';
 import sliceSquareAlerts from './slices/sliceSquareAlerts';
 import sliceSquareForm from './slices/sliceSquareForm';
 
@@ -33,7 +33,7 @@ export async function actionSquarePaymentProcess(
     const r = await merchi.authenticatedFetch(url, fetchOptions);
     callbackPaymentSuccess(r.invoice);
     dispatch(actionSquarePaymentEnd());
-  } catch(e) {
+  } catch(e: any) {
     actionAlertError(dispatch, e);
     dispatch(actionSquarePaymentEnd());
   }

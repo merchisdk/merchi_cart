@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useSelector } from 'react-redux';
-import { shipmentFormId } from '../slices/slice_cart_shipment';
+import { shipmentFormId } from '../slices/sliceCartShipment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowRight, faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import Button from './Button';
@@ -15,6 +15,7 @@ export default function ButtonShipmentTabNext() {
       className={classNameBtnNext}
       form={shipmentFormId}
       disabled={savingShipmentAddress}
+      type='submit'
     >
       <FontAwesomeIcon icon={icon} spin={savingShipmentAddress} />
       <span style={{marginLeft: '5px'}}>

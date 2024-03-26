@@ -7,7 +7,7 @@ export const sliceCartAlert = createSlice({
       icon: faInfoCircle,
       message: '',
       show: false,
-      Title: '',
+      title: '',
       type: 'info',
     },
   },
@@ -20,16 +20,20 @@ export const sliceCartAlert = createSlice({
       state.alert = action.payload;
     },
     showAlertDanger: (state: any, action: PayloadAction<any>) => {
-      state.alert = action.payload;
-      state.alert.icon = faExclamationTriangle;
-      state.alert.show = true;
-      state.alert.type = 'danger';
+      state.alert = {
+        ...action.payload,
+        icon: faExclamationTriangle,
+        show: true,
+        type: 'danger',
+      };
     },
     showAlertSuccess: (state: any, action: PayloadAction<any>) => {
-      state.alert = action.payload;
-      state.alert.icon = faCheckCircle;
-      state.alert.show = true;
-      state.alert.type = 'success';
+      state.alert = {
+        ...action.payload,
+        icon: faCheckCircle,
+        show: true,
+        type: 'success',
+      };
     },
   },
 });

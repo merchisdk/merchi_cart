@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useCartContext } from '../CartProvider';
 
 interface Props {
-  alertType?: 'success' | 'error' | 'warning' | 'info';
+  alertType?: 'success' | 'danger' | 'warning' | 'info';
   children: any;
 }
 
@@ -17,14 +17,14 @@ export default function Alert({ alertType, children }: Props) {
   if (alertType === 'success') {
     className = classNameAlertSuccess;
   }
-  if (alertType === 'error') {
+  if (alertType === 'danger') {
     className = classNameAlertError;
   }
   if (alertType === 'warning') {
     className = classNameAlertWarning;
   }
   return (
-    <div className={className}>
+    <div className={`merchi-cart-modal-alert ${className}`}>
       {children}
     </div>
   );

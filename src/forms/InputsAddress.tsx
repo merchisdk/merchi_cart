@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useEffect, useRef } from 'react';
 import Geosuggest from 'react-geosuggest';
 import { CountryDropdown, RegionDropdown } from 'react-country-region-selector';

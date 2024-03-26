@@ -10,7 +10,7 @@ import { alertError } from '../store';
 function ButtonInvoiceDownload() {
   const {
     classNameBtnDownloadInvoice,
-    urlApi,
+    apiUrl,
   } = useCartContext();
   const {
     invoice = {},
@@ -20,7 +20,7 @@ function ButtonInvoiceDownload() {
   async function generate(receipt?: boolean) {
     setLoading(true);
     try {
-      await generatePublicInvoicePdf((urlApi as string), invoice, receipt);
+      await generatePublicInvoicePdf((apiUrl as string), invoice, receipt);
       setLoading(false);
     } catch (e: any) {
       alertError(e.message);

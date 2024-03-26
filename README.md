@@ -20,22 +20,35 @@ yarn add merchi_cart
 
 ### Usage
   functions:
-  getMerchiCart,
-  getMerchiCartValues,
-  isMerchiCartFetching,
+  doAddCartItem(jobJson, onSuccess, onError) - Takes Merchi job entity as json, creates a cart item and appends the cart item to the cart.
+  doCartComplete - Resets the cart
+  doToggleCartOpen - Toggles the MerchiCartModal components
+  getMerchiCart - returns the cart
+  getMerchiCartValues - retruns the following:
+    cart
+    cartItemsCount
+    currency
+    subtotalCost
+    taxAmount
+    totalCost
+  isMerchiCartFetching - checks the fetching state of the cart
 
   components:
-  Cart
+  ButtonOpenCart
+  ButtonListWrappedOpenCart
+  MerchiCart
+  MerchiCartModal
+  MerchiShoppingCartModal
 
 
 ### Props
 
 | Name                                          | Type       | Default                                                                     | Description                           |
 |-----------------------------------------------|------------|-----------------------------------------------------------------------------|---------------------------------------|
-| `classNameAlertError`                         | `string?`  | `"alert alert-error alert-dismissible"`                                     | `Class for alert error`               |
-| `classNameAlertInfo`                          | `string?`  | `"alert alert-info alert-dismissible"`                                      | `Class for alert info`                |
-| `classNameAlertSuccess`                       | `string?`  | `"alert alert-success alert-dismissible"`                                   | `Class for alert success`             |
-| `classNameAlertWarning`                       | `string?`  | `"alert alert-warning alert-dismissible"`                                   | `Class for alert warning`             |
+| `classNameAlertError`                         | `string?`  | `"alert alert-danger"`                                                      | `Class for alert error`               |
+| `classNameAlertInfo`                          | `string?`  | `"alert alert-info"`                                                        | `Class for alert info`                |
+| `classNameAlertSuccess`                       | `string?`  | `"alert alert-success"`                                                     | `Class for alert success`             |
+| `classNameAlertWarning`                       | `string?`  | `"alert alert-warning"`                                                     | `Class for alert warning`             |
 | `classNameBtn`                                | `string?`  | `"btn"`                                                                     | `Base class for button elements`      |
 | `classNameBtnBack`                            | `string?`  | `"btn-lg btn-default pull-left"`                                            | `Class for back button`               |
 | `classNameBtnCartClear`                       | `string?`  | `"btn-lg btn-danger mr-auto"`                                               | `Class for clear cart button`         |
@@ -46,17 +59,19 @@ yarn add merchi_cart
 | `classNameBtnNext`                            | `string?`  | `"btn-lg btn-primary"`                                                      | `Class for next button`               |
 | `classNameBtnNextComplete`                    | `string?`  | `"btn-lg btn-success"`                                                      | `Class for next button completed`     |
 | `classNameBtnPay`                             | `string?`  | `"btn-lg btn-primary width-full"`                                           | `Class for pay button completed`      |
-| `classNameBtnPrimary`                         | `string?`  | `"btn btn-md btn-primary"`                                                  | `Class for primary button completed`  |
+| `classNameBtnPrimary`                         | `string?`  | `"btn btn-md btn-primary"`                                                  | `Class for edit cart item button`     |
+| `classNameBtnEditCartItem`                    | `string?`  | `"btn btn-md btn-primary ml-auto"`                                          | `Class for primary button completed`  |
 | `classNameCartBody`                           | `string?`  | `"merchi-cart-body"`                                                        | `Class for cart body container`       |
 | `classNameCartFooter`                         | `string?`  | `"merchi-cart-footer"`                                                      | `Class for cart footer container`     |
-| `classNameCartFormGroup`                      | `string?`  | `"form-group"`                                                              | `Class for form group element`        |
+| `classNameCartFormGroup`                      | `string?`  | `"form-group merchi-form-group"`                                            | `Class for form group element`        |
+| `classNameCartFormGroupButton`                | `string?`  | `"merchi-form-group-button"`                                                | `Class for form group button`         |
 | `classNameCartFormGroupCheckbox`              | `string?`  | `"form-check"`                                                              | `Class for form group checkbox`       |
 | `classNameCartFormInput`                      | `string?`  | `"form-control"`                                                            | `Class for form input`                |
 | `classNameCartFormLabelCheckbox`              | `string?`  | `""`                                                                        | `Class for form input checkbpx label` |
 | `classNameCartFormCheckbox`                   | `string?`  | `"form-check-input"`                                                        | `Class for form input checkbpx`       |
 | `classNameCartHeader`                         | `string?`  | `"merchi-cart-header"`                                                      | `Class for cart header container`     |
 | `classNameCartInputError`                     | `string?`  | `"text-danger"`                                                             | `Class for form error`                |
-| `classNameCartNav`                            | `string?`  | `"nav nav-tabs merchi-nav merchi-nav-fill merchi-nav-pills"`                | `Class for cart nav`                  |
+| `classNameCartNav`                            | `string?`  | `"nav merchi-nav-tabs merchi-nav merchi-nav-fill merchi-nav-pills"`                | `Class for cart nav`                  |
 | `classNameNoItems`                            | `string?`  | `"merchi-no-cart-items"`                                                    | `Class for no items in cart`          |
 | `classNameCartGoogleSuggestList`              | `string?`  | `"list-group m-b-0"`                                                        | `Class for google suggest list`       |
 | `classNameCartGoogleSuggestListItem`          | `string?`  | `"list-group-item cursor-pointer"`                                          | `Class for google suggest list item`  |
@@ -70,9 +85,10 @@ yarn add merchi_cart
 | `classNameTableContainer`                     | `string?`  | `"table-responsive"`                                                        | `Class for cart table container`      |
 | `classNameCartTab`                            | `string?`  | `"merchi-tab-content"`                                                      | `Class for cart tab container`        |
 | `classNameCartTabItem`                        | `string?`  | `"nav-item merchi-nav-item"`                                                | `Class for cart tab item`             |
-| `classNameCartTabItemLink`                    | `string?`  | `"nav-link merchi-nav-link"`                                                | `Class for cart tab item link         |` 
+| `classNameCartTabItemLink`                    | `string?`  | `"merchi-nav-link"`                                                | `Class for cart tab item link         |` 
 | `classNameCartTitle`                          | `string?`  | `"merchi-cart-title"`                                                       | `Class for cart Title container`      |
 | `classNameCartTotalContainer`                 | `string?`  | `"merchi-cart-total-container"`                                             | `Class for totals container elements` |
+| `classNameCartToggleIconButton`               | `string?`  | `"cart-icon-button-class"`                                                  | `Class for toggle modal button`       |
 | `classNameCartTotalItem`                      | `string?`  | `"merchi-cart-total-item"`                                                  | `Class for totals item elements`      |
 | `classNameCartTotalItemPrice`                 | `string?`  | `"merchi-cart-total-item-price"`                                            | `Class for totals item price elements`|
 | `classNameClearCartContainer`                 | `string?`  | `"merchi-cart-clear-container"`                                             | `Class cart clear container`          |
@@ -86,14 +102,15 @@ yarn add merchi_cart
 | `classNameLoadingTemplate`                    | `string?`  | `"merchi-loading-template"`                                                 | `Class for loading elements`          |
 | `classNameLoadingTemplateContainer`           | `string?`  | `"merchi-loading-template-container"`                                       | `Class for loading container elements`|
 | `classNameShipmentOption`                     | `string?`  | `"merchi-shipment-option"`                                                  | `Class for shipment option element`   |
-| `classNameTable`                              | `string?`  | `"table table-bordered"`                                                    | `Class for table elements`            |
+| `classNameTable`                              | `string?`  | `"table"`                                                    | `Class for table elements`            |
 | `classNameVariationsList`                     | `string?`  | `"list-unstyled list-inline"`                                               | `Class for variation info`            |
 | `customSuccessMessage`                        | `string?`  | `undefined`                                                                 | `A message to display on payment success` |
 | `domainId`                                    | `number`   | `undefined`                                                                 | `The merchi domain/store id for the cart` |
 | `includeTheme`                                | `boolean?` | `false`                                                                     | `If true will fetch and apply the store theme to the page` |
 | `initialiseCart`                              | `boolean?` | `true`                                                                      | `If true will initial fetch cart and set cart function on window`|
+| `onClickClose`                                | `() => void?`| `() => console.log('close merchi cart!')`                                 | `a function to close the cart`        |
 | `productFormClassNames`                       | `obj`      | `{}`                                                                        | `An object to be passsed to the merchi_product_form `|
 | `showUserTermsAndConditions`                  | `boolean?` | `true`                                                                      | `Display the user t&cs for Merchi`    |
-| `urlApi`                                      | `string?`  | `'https://api.merchi.co/v6/'`                                               | `URL to connect to the Merchi API`    |
+| `apiUrl`                                      | `string?`  | `'https://api.merchi.co/v6/'`                                               | `URL to connect to the Merchi API`    |
 | `urlFrontend`                                 | `string?`  | `'https://merchi.co/'`                                                      | `URL to redirect users to a frontend` |
 | `urlTrackingPage`                             | `string?`  | `undefined`                                                                 | `URL used on the thankyou page for tracking`|

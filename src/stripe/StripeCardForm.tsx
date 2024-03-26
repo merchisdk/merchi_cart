@@ -29,7 +29,7 @@ const badgeTestMode = <div style={{color: 'red'}}>Test mode</div>;
 
 function StripeCardForm() {
   const { cart } = useSelector((s: any) => s.stateCart);
-  const { urlApi } = useCartContext();
+  const { apiUrl } = useCartContext();
   const { domain } = cart;
   const company = domain.company;
   const hasCompanyPubKey = Boolean(company.isStripeValid && companyStripePubKeyOrTestPubKey(company));
@@ -37,7 +37,7 @@ function StripeCardForm() {
   const canUseConnect = !!company.stripeAccountId;
   const [loadingStripePayment, setLoadingStripePayment] = useState(false);
   const [loadingStripePaymentButtons, setLoadingStripePaymentButtons] = useState(false);
-  const url: string = urlApi || '';
+  const url: string = apiUrl || '';
   async function doStripePayment(r: any) {
     setLoadingStripePayment(true);
     try {

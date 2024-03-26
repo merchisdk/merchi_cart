@@ -1,4 +1,4 @@
-import { Merchi } from '../MerchiSDK/merchi';
+import { Merchi } from 'merchi_sdk_ts';
 import { companyStripePubKeyOrTestPubKey } from './company';
 
 const merchi = new Merchi();
@@ -10,11 +10,11 @@ export const makeCart = (json: any, makeDirty?: boolean, cartToken?: string) => 
   return cart.fromJson(json, { makeDirty });
 };
 
-export const makeCartItem = (json: any, makeDirty?: boolean, cartToken?: string) => {
+export const makeCartItem = (cartItemJson: any, makeDirty?: boolean, cartToken?: string) => {
   const merchi = new Merchi();
   if (cartToken) merchi.cartToken = cartToken;
   const cartItem = new merchi.CartItem();
-  return cartItem.fromJson(json, { makeDirty });
+  return cartItem.fromJson(cartItemJson, { makeDirty });
 };
 
 export function makeCartShipmentQuote(json: any, makeDirty?: boolean) {

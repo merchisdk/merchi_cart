@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useCartContext } from '../CartProvider';
 
@@ -8,10 +7,16 @@ interface Props {
 }
 
 export default function CartTabPanel({ children, tabId }: Props) {
-  const { stateCart: { activeTab, tabs }} = useSelector((s: any) => s);
+  const { activeTab, tabs } = useSelector((s: any) => s.stateCart);
   const { classNameCartTabPanel } = useCartContext();
   const activeTabValues = tabs[activeTab];
-  const display = tabId === activeTabValues.tabId ? 'block' : 'none';
+  const display = tabId === -1 && activeTab === -1
+    ? 'block'
+    : tabId === -2 && activeTab === -2
+    ? 'block'
+    : activeTabValues && tabId === activeTabValues.tabId
+    ? 'block'
+    : 'none';
   return (
     <div className={classNameCartTabPanel} style={{ display }}>
       {children}

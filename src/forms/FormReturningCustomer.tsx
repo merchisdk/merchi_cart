@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { tryReturningCustomer } from '../store';
@@ -13,7 +12,7 @@ function FormReturningCustomer() {
     classNameBtnPrimary,
     classNameCartFormGroup,
     classNameCartFormInput,
-    urlApi
+    classNameCartFormGroupButton,
   } = useCartContext();
   const {
     returningCustomerError,
@@ -28,10 +27,7 @@ function FormReturningCustomer() {
   } = hookForm;
   async function submit() {
     const values = getValues();
-    await tryReturningCustomer(
-      (urlApi as string),
-      values.emailAddress
-    );
+    await tryReturningCustomer(values.emailAddress);
   }
   return (
     <form onSubmit={handleSubmit(submit)}>
@@ -55,7 +51,7 @@ function FormReturningCustomer() {
         <InputError error={errors.emailAddress} />
         {returningCustomerError && <InputError error={returningCustomerError} />}
       </div>
-      <div className={classNameCartFormGroup}>
+      <div className={classNameCartFormGroupButton}>
         <Button
           className={classNameBtnPrimary}
           disabled={returningCustomerLoading}
@@ -68,4 +64,4 @@ function FormReturningCustomer() {
   );
 }
 
-export default FormReturningCustomerActive;
+export default FormReturningCustomer;

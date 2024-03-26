@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import InputsAddress from './InputsAddress';
@@ -82,10 +81,10 @@ function FormShipmentAddressAndNotes({
     >
       {showHeadings && 
         <CheckoutContainer>
-          <InnerContainer paddingBottom='1rem'>
+          <InnerContainer paddingBottom='0px'>
             <Title
               icon={showIcon ? faMapMarkerAlt : null}
-              Title='Delivery / billing address'
+              title='Delivery / billing address'
             />
           </InnerContainer>
         </CheckoutContainer>
@@ -102,10 +101,9 @@ function FormShipmentAddressAndNotes({
         <textarea
           className='form-control input'
           defaultValue={notes}
-          name='receiverNotes'
           placeholder='Example - Leave at top of stairs'
           rows={4}
-          ref={register}
+          {...register('receiverNotes')}
         >
         </textarea>
       </div>

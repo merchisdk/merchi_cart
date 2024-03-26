@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { formatCurrency } from './utilities/currency';
 import { cartRequiresShipment } from './utilities/cart';
@@ -11,19 +10,16 @@ interface Props {
   attribute: string;
 }
 
-function CartTotal(props: Props) {
-  const { attribute } = props;
+function CartTotal({ attribute }: Props) {
   const {
-    stateCart: {
-      cart,
-      fetchingCart,
-      loading,
-    },
-    stateCartShipment: {
-      fetchingShipmentGroups,
-      fetchingShipmentQuote,
-    },
-  } = useSelector((s: any) => s);
+    cart,
+    fetchingCart,
+    loading,
+  } = useSelector((s: any) => s.stateCart);
+  const {
+    fetchingShipmentGroups,
+    fetchingShipmentQuote,
+  } = useSelector((s: any) => s.stateCartShipment);
   const { domain } = cart;
   const company = domain ? domain.company : null;
   const currency = company ? company.defaultCurrency : 'AUD';
@@ -78,7 +74,7 @@ function CartTotals() {
   const cartItems = cart.cartItems ? cart.cartItems : [];
   return (
     <div className={classNameCartTotalContainer}>
-      <Table>
+      <Table className='merchi-cart-total-table'>
         <tbody>
           <CostsTableRow
             attr='cartItemsTotalCost'

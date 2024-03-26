@@ -8,7 +8,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUserCircle, faUserTimes } from '@fortawesome/free-solid-svg-icons';
 import Button from '../buttons/Button';
-import Title from './Title';
+import Title from './CartTitle';
 import { useCartContext } from '../CartProvider';
 
 export function ClientInfo({ client }: any) {
@@ -36,7 +36,7 @@ function CartClient({ client }: Props) {
   }
   return (
     <div>
-      <Title icon={faUserCircle} Title='Checkout as' />
+      <Title icon={faUserCircle} title='Checkout as' />
       <ClientInfo client={client} />
       <Button onClick={clearClient}>
         <FontAwesomeIcon icon={faUserTimes} /> Change

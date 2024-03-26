@@ -1,12 +1,19 @@
-import * as React from 'react';
 import { useSelector } from 'react-redux';
 import { setSelectedShipmentQuote } from '../store';
-import Icon from '../../components/icons/Icon';
-import { addressInOneLine } from '../../ts_helpers/address';
-import { currencyTaxAndCost } from '../../ts_helpers/currency';
-import { NoCartShipmentOptionsFound } from '../../list-utility';
-import { ListGroup, ListGroupItem } from 'reactstrap';
+import { addressInOneLine } from '../utilities/address';
+import { currencyTaxAndCost } from '../utilities/currency';
 import { useCartContext } from '../CartProvider';
+import pngProductNotFound from '../assets/product-not-found.png';
+
+function NoCartShipmentOptionsFound() {
+  const { classNameNoItems } = useCartContext();
+  return (
+    <div className={classNameNoItems}>
+      <img src={pngProductNotFound.src} width={276} height={215} />
+      <p>No cart items.</p>
+    </div>
+  );
+}
 
 interface PropsPickupInfo {
   originAddress: any;

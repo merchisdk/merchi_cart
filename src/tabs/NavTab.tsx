@@ -25,7 +25,7 @@ function NavTab({ disabled, icon, name, tabId }: Props) {
   return (
     <div className={classNameCartTabItem}>
       <button
-        className={`${classNameCartTabItemLink} ${active ? 'active' : ''} disClass`}
+        className={`${classNameCartTabItemLink} ${active ? 'active' : ''}`}
         onClick={toggle}
         disabled={disabled}
       >

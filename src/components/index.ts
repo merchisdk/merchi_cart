@@ -10,7 +10,7 @@ import LoadingTemplate, { LoadingTemplateSm } from './LoadingTemplate';
 import NoCartItems from './NoCartItems';
 import ShipmentGroupCard from './ShipmentGroupCard';
 import Table from './Table';
-import Title from './Title';
+import Title from './CartTitle';
 
 export {
   Alert,
