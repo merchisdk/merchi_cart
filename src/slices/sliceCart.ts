@@ -79,10 +79,10 @@ export const sliceCart = createSlice({
       state.cart = cart;
       state.needsShipping = needsShipping;
       if (cart.cartItems.length === 0) {
-        state.tabs = initTabs;
+        state.tabs = [...initTabs];
       } else {
         if (needsShipping) {
-          state.tabs = tabsWithShipment;
+          state.tabs = [...tabsWithShipment];
           if (cart.cartItems.length) {
             const tabs = [...state.tabs];
             tabs[1] = setDisableTab(tabShipment, false);
@@ -92,7 +92,7 @@ export const sliceCart = createSlice({
             state.tabs = tabs;
           }
         } else {
-          state.tabs = initTabs;
+          state.tabs = [...initTabs];
         }
       }
     },
@@ -108,7 +108,7 @@ export const sliceCart = createSlice({
       state.cart = cart;
       state.needsShipping = needsShipping;
       if (needsShipping) {
-        state.tabs = tabsWithShipment;
+        state.tabs = [...tabsWithShipment];
         if (cart.cartItems.length) {
           const tabs = [...state.tabs];
           tabs[1] = setDisableTab(tabShipment, false);
@@ -118,7 +118,7 @@ export const sliceCart = createSlice({
           state.tabs = tabs;
         }
       } else {
-        state.tabs = initTabs;
+        state.tabs = [...initTabs];
       }
       state.activeTab = 0;
       state.fetchingCart = false;
