@@ -84,10 +84,12 @@ export const sliceCart = createSlice({
         if (needsShipping) {
           state.tabs = tabsWithShipment;
           if (cart.cartItems.length) {
-            state.tabs[1] = setDisableTab(tabShipment, false);
+            const tabs = [...state.tabs];
+            tabs[1] = setDisableTab(tabShipment, false);
             if (cartHasShippmentGroupsAndAllHaveSelectedGroups(cart)) {
-              state.tabs[2] = setDisableTab(tabCheckout, false);
+              tabs[2] = setDisableTab(tabCheckout, false);
             }
+            state.tabs = tabs;
           }
         } else {
           state.tabs = initTabs;
@@ -106,14 +108,15 @@ export const sliceCart = createSlice({
       state.cart = cart;
       state.needsShipping = needsShipping;
       if (needsShipping) {
-        const initShipment = [...tabsWithShipment];
+        state.tabs = tabsWithShipment;
         if (cart.cartItems.length) {
-          initShipment[1] = setDisableTab(tabShipment, false);
+          const tabs = [...state.tabs];
+          tabs[1] = setDisableTab(tabShipment, false);
           if (cartHasShippmentGroupsAndAllHaveSelectedGroups(cart)) {
-            initShipment[2] = setDisableTab(tabCheckout, false);
+            tabs[2] = setDisableTab(tabCheckout, false);
           }
+          state.tabs = tabs;
         }
-        state.tabs = initShipment;
       } else {
         state.tabs = initTabs;
       }
