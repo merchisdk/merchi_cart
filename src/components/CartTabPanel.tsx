@@ -9,7 +9,8 @@ interface Props {
 export default function CartTabPanel({ children, tabId }: Props) {
   const { activeTab, tabs } = useSelector((s: any) => s.stateCart);
   const { classNameCartTabPanel } = useCartContext();
-  const activeTabValues = tabs[activeTab];
+  const currentTabIndex = tabs.findIndex((t: any) => t.tabId === activeTab);
+  const activeTabValues = tabs[currentTabIndex];
   const display = tabId === -1 && activeTab === -1
     ? 'block'
     : tabId === -2 && activeTab === -2
