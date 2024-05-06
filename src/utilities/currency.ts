@@ -204,9 +204,9 @@ export function calculateTotalWithTax(total: number, tax: any) {
 }
 
 export function cartItemCurrencyAndCost(cartItem: any) {
-  const { currency, subtotalCost, taxType } = cartItem;
+  const { currency, totalCost, taxType } = cartItem;
   const tax = taxType ? formatCountryTax(taxType) : '';
-  return`${currency} ${formatCurrency(subtotalCost, { currency, showCodeIfNoSymbol: false })} ${tax}`;
+  return`${currency} ${formatCurrency(totalCost, { currency, showCodeIfNoSymbol: false })} ${tax}`;
 }
 
 export function currencyTaxAndCost(currency: string, tax: any, theCost: number) {
