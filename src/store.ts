@@ -450,7 +450,7 @@ export function actionCreateNewCustomer(apiUrl: string, customerJson: any) {
   });
 }
 
-const { creditCardPaySuccess } = sliceCartPayment.actions; 
+const { creditCardPaySuccess } = sliceCartPayment.actions;
 
 export function callbackCreditCardPaymentSuccess(invoiceJson: any) {
   batch(() => {
@@ -542,5 +542,6 @@ export function initMerchiCart(domainId: number) {
     (window as any).getCart = () => actionGetMerchiCart(domainId);
     (window as any).isMerchiCartFetching = isMerchiCartFetching;
     (window as any).getMerchiCartValues = getMerchiCartValues;
+    (window as any).toggleCartOpen = toggleCartOpen;
   }
 }
