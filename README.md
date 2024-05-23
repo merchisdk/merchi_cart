@@ -106,6 +106,7 @@ yarn add merchi_cart
 | `classNameVariationsList`                     | `string?`  | `"list-unstyled list-inline"`                                               | `Class for variation info`            |
 | `customSuccessMessage`                        | `string?`  | `undefined`                                                                 | `A message to display on payment success` |
 | `domainId`                                    | `number`   | `undefined`                                                                 | `The merchi domain/store id for the cart` |
+| `hideHead`                                    | `boolean`  | `false`                                                                     | `hides the cart head title and close` |
 | `includeTheme`                                | `boolean?` | `false`                                                                     | `If true will fetch and apply the store theme to the page` |
 | `initialiseCart`                              | `boolean?` | `true`                                                                      | `If true will initial fetch cart and set cart function on window`|
 | `onClickClose`                                | `() => void?`| `() => console.log('close merchi cart!')`                                 | `a function to close the cart`        |

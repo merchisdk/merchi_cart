@@ -38,6 +38,7 @@ import './styles/globals.css';
 export function CartComponents() {
   const {
     domainId,
+    hideHead,
     includeTheme,
     initialiseCart
   } = useCartContext();
@@ -56,7 +57,7 @@ export function CartComponents() {
   }, [domainId, includeTheme, initialiseCart]);
   return (
     <>
-      <CartHeader />
+      {!hideHead && <CartHeader />}
       <CartAlert />
       <CartNav />
       {fetchingCart ? (
