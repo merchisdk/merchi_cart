@@ -7,7 +7,8 @@ import {
   toggleCartOpen as doToggleCartOpen,
   doCartComplete,
   getMerchiCartValues,  
-  isMerchiCartFetching
+  isMerchiCartFetching,
+  merchiCartFetchAndSet,
 } from './store';
 
 export {
@@ -20,6 +21,7 @@ export {
   getMerchiCart,
   getMerchiCartValues,
   isMerchiCartFetching,
+  merchiCartFetchAndSet,
   MerchiCartModal,
   MerchiShoppingCartModal,
 };

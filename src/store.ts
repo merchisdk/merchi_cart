@@ -450,7 +450,7 @@ export function actionCreateNewCustomer(apiUrl: string, customerJson: any) {
   });
 }
 
-const { creditCardPaySuccess } = sliceCartPayment.actions;
+const { creditCardPaySuccess } = sliceCartPayment.actions; 
 
 export function callbackCreditCardPaymentSuccess(invoiceJson: any) {
   batch(() => {
@@ -544,4 +544,12 @@ export function initMerchiCart(domainId: number) {
     (window as any).getMerchiCartValues = getMerchiCartValues;
     (window as any).toggleCartOpen = toggleCartOpen;
   }
+}
+
+interface PropsMerchiCartFetchAndSet {
+  cartJson: any;
+}
+
+export async function merchiCartFetchAndSet(cartJson: PropsMerchiCartFetchAndSet) {
+  await refetchCart(cartJson);
 }
