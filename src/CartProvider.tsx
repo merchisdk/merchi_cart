@@ -68,6 +68,7 @@ export interface PropsCart {
   customSuccessMessage?: string;
   domainId?: number;
   googlePlacesLoaded?: boolean;
+  hideHead?: boolean;
   includeTheme?: boolean,
   initialiseCart?: boolean;
   onClickClose?: () => void;
@@ -143,6 +144,7 @@ const CartContext = createContext<PropsCart>({
   customSuccessMessage: undefined,
   domainId: undefined,
   googlePlacesLoaded: false,
+  hideHead: false,
   includeTheme: false,
   initialiseCart: true,
   onClickClose: undefined,
@@ -221,6 +223,7 @@ interface PropsCartProvider {
   customSuccessMessage?: string;
   domainId?: number;
   googlePlacesLoaded?: boolean;
+  hideHead?: boolean;
   includeTheme?: boolean;
   initialiseCart?: boolean;
   onClickClose?: () => void;
@@ -296,6 +299,7 @@ const CartProvider = ({
   classNameVariationsList = 'list-unstyled list-inline',
   customSuccessMessage,
   domainId,
+  hideHead = false,
   includeTheme = false,
   initialiseCart = true,
   onClickClose,
@@ -382,6 +386,7 @@ const CartProvider = ({
           customSuccessMessage,
           domainId,
           googlePlacesLoaded,
+          hideHead,
           includeTheme,
           initialiseCart,
           onClickClose,
