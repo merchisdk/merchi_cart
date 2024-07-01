@@ -1,3 +1,4 @@
+import React from 'react';
 import { useSelector } from 'react-redux';
 import { setSelectedShipmentQuote } from '../store';
 import { addressInOneLine } from '../utilities/address';
@@ -10,7 +11,7 @@ function NoCartShipmentOptionsFound() {
   return (
     <div className={classNameNoItems}>
       <img src={pngProductNotFound.src} width={276} height={215} />
-      <p>No cart items.</p>
+      <p>No shipment options found.</p>
     </div>
   );
 }
