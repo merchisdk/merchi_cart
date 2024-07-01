@@ -257,3 +257,24 @@ button.merchi-nav-link {
   text-align: center;
   margin-bottom: 15px;
 }
+
+.merchi-content-container {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.merchi-discount-group-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+.merchi-cart-stripe-input-container {
+  display: flex;
+  -webkit-box-orient: vertical !important;
+  -webkit-box-direction: normal !important;
+  -ms-flex-direction: column !important;
+  flex-direction: column !important;
+  gap: 1rem !important;
+}

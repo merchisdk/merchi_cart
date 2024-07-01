@@ -55,6 +55,7 @@ function PanelClientCheckout() {
             {Boolean(company) && company.acceptSquare &&
               <CheckoutContainer>
                 <InnerContainer
+                  paddingTop='3rem'
                   paddingBottom='3rem'
                 >
                   <FormSquarePayment />
@@ -62,7 +63,9 @@ function PanelClientCheckout() {
               </CheckoutContainer>
             }
             <CheckoutContainer>
-              <InnerContainer>
+              <InnerContainer
+                paddingBottom='3rem'
+              >
                 <FormStripePayment />
               </InnerContainer>
             </CheckoutContainer>

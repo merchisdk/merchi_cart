@@ -8,12 +8,10 @@ import { useCartContext } from '../CartProvider';
 import { actionPatchCart } from '../store';
 
 export default function DiscountInputGroup() {
-  const {
-    cart,
-  } = useSelector((s: any) => s.stateCart);
+  const { cart } = useSelector((s: any) => s.stateCart);
   const {
     discountButtonText = 'Apply',
-    discountClassName = 'row g-3 align-items-end',
+    discountClassName = 'merchi-discount-group-container',
     discountClassNameButton = 'btn btn-primary',
     discountClassNameButtonContainer = 'col-auto',
     discountClassNameButtonItemRemove = 'btn btn-sm btn-link',
@@ -24,7 +22,7 @@ export default function DiscountInputGroup() {
     discountClassNameListItem = 'list-group-item d-flex align-items-center justify-content-between mt-2',
     discountClassNameListItems = 'list-group',
     discountClassNameMainContainer,
-    discountLabel,
+    discountLabel = 'Discount Codes',
     discountShowAppliedItems,
   } = useCartContext();
   const merchi = new Merchi();

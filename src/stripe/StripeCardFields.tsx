@@ -86,7 +86,7 @@ function InnerForm({
             <label>
               <strong>Card details</strong>
             </label>
-            <div className='d-flex flex-column gap-1'>
+            <div className='merchi-cart-stripe-input-container'>
               <CardNumberElement
                 className={inputClass}
                 {...CARD_ELEMENT_OPTIONS}
