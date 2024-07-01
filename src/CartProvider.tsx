@@ -66,6 +66,24 @@ export interface PropsCart {
   classNameTableContainer?: string;
   classNameVariationsList?: string;
   customSuccessMessage?: string;
+
+  // Discount code input props
+  discountButtonText?: string;
+  discountClassName?: string;
+  discountClassNameMainContainer?: string;
+  discountClassNameButtonItemRemove?: string;
+  discountClassNameButton?: string;
+  discountClassNameButtonContainer?: string;
+  discountClassNameErrorMessage?: string;
+  discountClassNameInput?: string;
+  discountClassNameListItem?: string;
+  discountClassNameListItems?: string;
+  discountClassNameInputContainer?: string;
+  discountClassNameInputdiscountLabel?: string;
+  discountLabel?: string;
+  discountShowAppliedItems?: boolean;
+  showDiscountCode?: boolean;
+
   domainId?: number;
   googlePlacesLoaded?: boolean;
   hideHead?: boolean;
@@ -142,6 +160,24 @@ const CartContext = createContext<PropsCart>({
   classNameTableContainer: undefined,
   classNameVariationsList: undefined,
   customSuccessMessage: undefined,
+
+  // Discount code input props
+  discountButtonText: undefined,
+  discountClassName: undefined,
+  discountClassNameButton: undefined,
+  discountClassNameButtonContainer: undefined,
+  discountClassNameButtonItemRemove: undefined,
+  discountClassNameErrorMessage: undefined,
+  discountClassNameInput: undefined,
+  discountClassNameInputContainer: undefined,
+  discountClassNameInputdiscountLabel: undefined,
+  discountClassNameListItem: undefined,
+  discountClassNameListItems: undefined,
+  discountClassNameMainContainer: undefined,
+  discountLabel: undefined,
+  discountShowAppliedItems: true,
+  showDiscountCode: true,
+
   domainId: undefined,
   googlePlacesLoaded: false,
   hideHead: false,
@@ -221,6 +257,24 @@ interface PropsCartProvider {
   classNameTableContainer?: string;
   classNameVariationsList?: string;
   customSuccessMessage?: string;
+
+  // Discount code input props
+  discountButtonText?: string;
+  discountClassName?: string;
+  discountClassNameMainContainer?: string;
+  discountClassNameButtonItemRemove?: string;
+  discountClassNameButton?: string;
+  discountClassNameButtonContainer?: string;
+  discountClassNameErrorMessage?: string;
+  discountClassNameInput?: string;
+  discountClassNameListItem?: string;
+  discountClassNameListItems?: string;
+  discountClassNameInputContainer?: string;
+  discountClassNameInputdiscountLabel?: string;
+  discountLabel?: string;
+  discountShowAppliedItems?: boolean;
+  showDiscountCode?: boolean;
+
   domainId?: number;
   googlePlacesLoaded?: boolean;
   hideHead?: boolean;
@@ -299,6 +353,24 @@ const CartProvider = ({
   classNameVariationsList = 'list-unstyled list-inline',
   customSuccessMessage,
   domainId,
+
+  // Discount code input props
+  discountButtonText = 'Apply',
+  discountClassName = 'row g-3 align-items-end',
+  discountClassNameButton = 'btn btn-primary',
+  discountClassNameButtonContainer = 'col-auto',
+  discountClassNameButtonItemRemove = 'btn btn-sm btn-link',
+  discountClassNameErrorMessage = 'text-danger',
+  discountClassNameInput = 'form-control',
+  discountClassNameInputContainer,
+  discountClassNameInputdiscountLabel = 'visually-hidden',
+  discountClassNameListItem = 'list-group-item d-flex align-items-center justify-content-between mt-2',
+  discountClassNameListItems = 'list-group',
+  discountClassNameMainContainer,
+  discountLabel,
+  discountShowAppliedItems = true,
+  showDiscountCode = true,
+
   hideHead = false,
   includeTheme = false,
   initialiseCart = true,
@@ -384,6 +456,23 @@ const CartProvider = ({
           classNameTableContainer,
           classNameVariationsList,
           customSuccessMessage,
+
+          discountButtonText,
+          discountClassName,
+          discountClassNameButton,
+          discountClassNameButtonContainer,
+          discountClassNameButtonItemRemove,
+          discountClassNameErrorMessage,
+          discountClassNameInput,
+          discountClassNameInputContainer,
+          discountClassNameInputdiscountLabel,
+          discountClassNameListItem,
+          discountClassNameListItems,
+          discountClassNameMainContainer,
+          discountLabel,
+          discountShowAppliedItems,
+          showDiscountCode,
+
           domainId,
           googlePlacesLoaded,
           hideHead,

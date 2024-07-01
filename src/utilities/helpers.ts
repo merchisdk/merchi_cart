@@ -191,6 +191,7 @@ export const cartEmbed: any = {
     emailAddresses: {}, profilePicture: {},
   },
   clientCompany: {},
+  discountItems: {},
   domain: {
     company: {
       defaultTaxType: {},
@@ -206,4 +207,3 @@ export const cartEmbed: any = {
     selectedQuote: cartShipmentQuote,
   },
 };
-

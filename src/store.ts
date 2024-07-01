@@ -75,6 +75,8 @@ const {
   fetchTheme,
   fetchThemeError,
   fetchThemeSuccess,
+  patchCart,
+  patchCartDone,
   setCart,
   setCartClient,
   setDomainId,
@@ -364,6 +366,20 @@ export async function saveCartShipmentAddressAndGoToNextTab(values: any) {
         dispatch(saveShipmentAddressError());
       });
     });
+}
+
+export async function actionPatchCart(cartJson: any) {
+  const cartToken = await getCartToken();
+  const cartEnt = makeCart({cartJson}, true, cartToken);
+  dispatch(patchCart());
+  try {
+    const cart = await cartEnt.save({embed: cartEmbed});
+    dispatch(setCart(cart.toJson()));
+  } catch (e: any) {
+    alertError(e.errorMessage || e.message || 'nknown server error.');
+  } finally {
+    dispatch(patchCartDone());
+  }
 }
 
 async function attachClientToCart(clientJson: any) {
