@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useDispatch } from 'react-redux';
 import { axtionSetCartClient } from '../store';
 import {
   primaryEmail,
@@ -30,7 +29,9 @@ interface Props {
 }
 
 function CartClient({ client }: Props) {
-  const dispatch = useDispatch();
+  const {
+    classNameBtnDefault,
+  } = useCartContext();
   function clearClient() {
     axtionSetCartClient(null);
   }
@@ -38,7 +39,10 @@ function CartClient({ client }: Props) {
     <div>
       <Title icon={faUserCircle} title='Checkout as' />
       <ClientInfo client={client} />
-      <Button onClick={clearClient}>
+      <Button
+        className={classNameBtnDefault}
+        onClick={clearClient}
+      >
         <FontAwesomeIcon icon={faUserTimes} /> Change
       </Button>
     </div>

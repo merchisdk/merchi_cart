@@ -95,7 +95,9 @@ yarn add merchi_cart
 | `classNameClearCartText`                      | `string?`  | `"merchi-cart-clear-text"`                                                  | `Class cart clear text container`     |
 | `classNameListClientInfo`                     | `string?`  | `"merchi-cart-client-info-list"`                                            | `Class for client info list`          |
 | `classNameListContainer`                      | `string?`  | `"pb-2"`                                                                    | `Class for list conatiner element`    |
+| `classNameCartTotaListContainer`              | `string?`  | `"merchi-cart-total-list-container"`                                        | `Class for list conatiner for cart totlas element`|
 | `classNameListItem`                           | `string?`  | `"list-group-item"`                                                         | `Class for list item elements`        |
+| `classNameListItemCartTotals`                 | `string?`  | `"list-group-item d-flex justify-content-between align-items-center"`       | `Class for list item cart totals elements`|
 | `classNameList`                               | `string?`  | `"list-group"`                                                              | `Class for list elements`             |
 | `classNameListInline`                         | `string?`  | `"list-inline"`                                                             | `Class for list inline elements`      |
 | `classNameListUnstyles`                       | `string?`  | `"list-unstyled"`                                                           | `Class for list unstyled elements`    |

@@ -31,6 +31,7 @@ function StripeCardForm() {
   const { cart } = useSelector((s: any) => s.stateCart);
   const { apiUrl } = useCartContext();
   const { domain } = cart;
+  const [error, setError] = useState(({} as any));
   const company = domain.company;
   const hasCompanyPubKey = Boolean(company.isStripeValid && companyStripePubKeyOrTestPubKey(company));
   const companyPubKey = hasCompanyPubKey ? companyStripePubKeyOrTestPubKey(company) : '';
@@ -40,6 +41,7 @@ function StripeCardForm() {
   const url: string = apiUrl || '';
   async function doStripePayment(r: any) {
     setLoadingStripePayment(true);
+    setError({});
     try {
       const response = await stripeCardFormSubmit(url, r.stripe, r.card, cart);
       callbackCreditCardPaymentSuccess(response);
@@ -47,12 +49,14 @@ function StripeCardForm() {
     } catch (e: any) {
       setLoadingStripePayment(false);
       alertError(e.message);
+      setError({message: e.errorMessage || e.message || 'Unable to process card.'});
     }
   }
   async function doStripePaymentRequestForButton(
     stripe: any, event: PaymentRequestPaymentMethodEvent
   ) {
     setLoadingStripePaymentButtons(true);
+    setError({});
     try {
       const response = await stripePaymentButtonSubmit(url, stripe, cart, event);
       callbackCreditCardPaymentSuccess(response);
@@ -60,6 +64,7 @@ function StripeCardForm() {
     } catch (e: any) {
       setLoadingStripePaymentButtons(false);
       alertError(e.message);
+      setError({message: e.errorMessage || e.message || 'Unable to process card.'});
     }
   }
   const [stripePublicKey, setStripePublicKey] = useState(companyPubKey);
@@ -73,6 +78,7 @@ function StripeCardForm() {
         doStripePayment={doStripePayment}
         doStripePaymentRequestForButton={doStripePaymentRequestForButton}
         cart={cart}
+        error={error}
         loadingStripePayment={loadingStripePayment}
         loadingStripePaymentButtons={loadingStripePaymentButtons}
         PaymentButton={PaymentButton}

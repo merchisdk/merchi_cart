@@ -15,9 +15,10 @@ import FormNewCustomer from '../forms/FormNewCustomer';
 import FormReturningCustomer from '../forms/FormReturningCustomer';
 import FormSquarePayment from '../forms/FormSquarePayment';
 import FormStripePayment from '../forms/FormStripePayment';
-import { faUserPlus, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faCreditCard, faUserPlus, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { useCartContext } from '../CartProvider';
 import DiscountInputGroup from '../components/DiscountInputGroup';
+import CartTotalsListGroup from '../components/CartTotalsListGroup';
 
 function PanelClientCheckout() {
   const { showDiscountCode } = useCartContext();
@@ -66,6 +67,21 @@ function PanelClientCheckout() {
               <InnerContainer
                 paddingBottom='3rem'
               >
+                <Title
+                  icon={faCoins}
+                  title='Cart total'
+                />
+                <CartTotalsListGroup />
+              </InnerContainer>
+            </CheckoutContainer>
+            <CheckoutContainer>
+              <InnerContainer
+                paddingBottom='3rem'
+              >
+               <Title
+                  icon={faCreditCard}
+                  title='Credit card payment'
+                />
                 <FormStripePayment />
               </InnerContainer>
             </CheckoutContainer>

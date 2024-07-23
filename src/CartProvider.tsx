@@ -48,6 +48,7 @@ export interface PropsCart {
   classNameCartTitle?: string;
   classNameCartTotalContainer?: string;
   classNameCartTotalItem?: string;
+  classNameCartTotaListContainer?: string;
   classNameCartTotalItemPrice?: string;
   classNameClearCartContainer?: string;
   classNameClearCartText?: string;
@@ -55,6 +56,7 @@ export interface PropsCart {
   classNameListClientInfo?: string;
   classNameListContainer?: string;
   classNameListItem?: string;
+  classNameListItemCartTotals?: string;
   classNameList?: string;
   classNameListInline?: string;
   classNameListUnstyled?: string;
@@ -79,8 +81,6 @@ export interface PropsCart {
   discountClassNameListItem?: string;
   discountClassNameListItems?: string;
   discountClassNameInputContainer?: string;
-  discountClassNameInputdiscountLabel?: string;
-  discountLabel?: string;
   discountShowAppliedItems?: boolean;
   showDiscountCode?: boolean;
 
@@ -142,6 +142,7 @@ const CartContext = createContext<PropsCart>({
   classNameCartTitle: undefined,
   classNameCartTotalContainer: undefined,
   classNameCartTotalItem: undefined,
+  classNameCartTotaListContainer: undefined,
   classNameCartTotalItemPrice: undefined,
   classNameCartToggleIconButton: undefined,
   classNameClearCartContainer: undefined,
@@ -149,6 +150,7 @@ const CartContext = createContext<PropsCart>({
   classNameListClientInfo: undefined,
   classNameListContainer: undefined,
   classNameListItem: undefined,
+  classNameListItemCartTotals: undefined,
   classNameList: undefined,
   classNameListInline: undefined,
   classNameListUnstyled: undefined,
@@ -170,11 +172,9 @@ const CartContext = createContext<PropsCart>({
   discountClassNameErrorMessage: undefined,
   discountClassNameInput: undefined,
   discountClassNameInputContainer: undefined,
-  discountClassNameInputdiscountLabel: undefined,
   discountClassNameListItem: undefined,
   discountClassNameListItems: undefined,
   discountClassNameMainContainer: undefined,
-  discountLabel: undefined,
   discountShowAppliedItems: true,
   showDiscountCode: true,
 
@@ -238,6 +238,7 @@ interface PropsCartProvider {
   classNameCartTitle?: string;
   classNameCartTotalContainer?: string;
   classNameCartTotalItem?: string;
+  classNameCartTotaListContainer?: string;
   classNameCartTotalItemPrice?: string;
   classNameCartToggleIconButton?: string;
   classNameClearCartContainer?: string;
@@ -248,6 +249,7 @@ interface PropsCartProvider {
   classNameListInline?: string;
   classNameListContainer?: string;
   classNameListItem?: string;
+  classNameListItemCartTotals?: string;
   classNameListUnstyled?: string;
   classNameLoadingTemplate?: string;
   classNameLoadingTemplateContainer?: string;
@@ -270,8 +272,6 @@ interface PropsCartProvider {
   discountClassNameListItem?: string;
   discountClassNameListItems?: string;
   discountClassNameInputContainer?: string;
-  discountClassNameInputdiscountLabel?: string;
-  discountLabel?: string;
   discountShowAppliedItems?: boolean;
   showDiscountCode?: boolean;
 
@@ -334,6 +334,7 @@ const CartProvider = ({
   classNameCartTabPanel = 'merchi-tab-panel',
   classNameCartTitle = 'merchi-cart-title',
   classNameCartTotalContainer = 'merchi-cart-total-container',
+  classNameCartTotaListContainer = 'merchi-cart-total-list-container',
   classNameCartTotalItem = 'merchi-cart-total-item',
   classNameCartTotalItemPrice = 'merchi-cart-total-item-price',
   classNameClearCartContainer = 'merchi-cart-clear-container',
@@ -344,6 +345,7 @@ const CartProvider = ({
   classNameListUnstyled = 'list-unstyled',
   classNameListContainer = 'pb-2',
   classNameListItem = 'list-group-item',
+  classNameListItemCartTotals = 'list-group-item d-flex justify-content-between align-items-center',
   classNameLoadingTemplate = 'merchi-loading-template',
   classNameLoadingTemplateContainer = 'merchi-loading-template-container',
   classNameNoItems = 'merchi-no-cart-items',
@@ -356,18 +358,16 @@ const CartProvider = ({
 
   // Discount code input props
   discountButtonText = 'Apply',
-  discountClassName = 'row g-3 align-items-end',
-  discountClassNameButton = 'btn btn-primary',
+  discountClassName = 'merchi-discount-group-container',
+  discountClassNameButton = 'btn btn-primary btn-lg',
   discountClassNameButtonContainer = 'col-auto',
   discountClassNameButtonItemRemove = 'btn btn-sm btn-link',
   discountClassNameErrorMessage = 'text-danger',
-  discountClassNameInput = 'form-control',
+  discountClassNameInput = 'form-control input-lg',
   discountClassNameInputContainer,
-  discountClassNameInputdiscountLabel = 'visually-hidden',
   discountClassNameListItem = 'list-group-item d-flex align-items-center justify-content-between mt-2',
   discountClassNameListItems = 'list-group',
   discountClassNameMainContainer,
-  discountLabel,
   discountShowAppliedItems = true,
   showDiscountCode = true,
 
@@ -439,6 +439,7 @@ const CartProvider = ({
           classNameCartTitle,
           classNameCartTotalContainer,
           classNameCartTotalItem,
+          classNameCartTotaListContainer,
           classNameCartTotalItemPrice,
           classNameClearCartContainer,
           classNameClearCartText,
@@ -447,6 +448,7 @@ const CartProvider = ({
           classNameListInline,
           classNameListContainer,
           classNameListItem,
+          classNameListItemCartTotals,
           classNameListUnstyled,
           classNameLoadingTemplate,
           classNameLoadingTemplateContainer,
@@ -465,11 +467,9 @@ const CartProvider = ({
           discountClassNameErrorMessage,
           discountClassNameInput,
           discountClassNameInputContainer,
-          discountClassNameInputdiscountLabel,
           discountClassNameListItem,
           discountClassNameListItems,
           discountClassNameMainContainer,
-          discountLabel,
           discountShowAppliedItems,
           showDiscountCode,
 

@@ -3,9 +3,10 @@ import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { Merchi } from 'merchi_sdk_ts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleNotch, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCircleNotch, faTags, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useCartContext } from '../CartProvider';
 import { actionPatchCart } from '../store';
+import Title from './CartTitle';
 
 export default function DiscountInputGroup() {
   const { cart } = useSelector((s: any) => s.stateCart);
@@ -14,15 +15,13 @@ export default function DiscountInputGroup() {
     discountClassName = 'merchi-discount-group-container',
     discountClassNameButton = 'btn btn-primary',
     discountClassNameButtonContainer = 'col-auto',
-    discountClassNameButtonItemRemove = 'btn btn-sm btn-link',
+    discountClassNameButtonItemRemove = 'btn btn-lg btn-link',
     discountClassNameErrorMessage = 'text-danger',
-    discountClassNameInput = 'form-control',
+    discountClassNameInput = 'form-control input-lg',
     discountClassNameInputContainer,
-    discountClassNameInputdiscountLabel = 'visually-hidden',
     discountClassNameListItem = 'list-group-item d-flex align-items-center justify-content-between mt-2',
     discountClassNameListItems = 'list-group',
     discountClassNameMainContainer,
-    discountLabel = 'Discount Codes',
     discountShowAppliedItems,
   } = useCartContext();
   const merchi = new Merchi();
@@ -80,9 +79,9 @@ export default function DiscountInputGroup() {
 
   return (
     <div className={discountClassNameMainContainer}>
+      <Title icon={faTags} title='Apply discount code' />
       <div className={discountClassName}>
         <div className={discountClassNameInputContainer}>
-          {discountLabel && <label className={discountClassNameInputdiscountLabel}>{discountLabel}</label>}
           <input
             type="text"
             className={discountClassNameInput}

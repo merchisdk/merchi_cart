@@ -38,9 +38,11 @@ function CartShipment({ cart }: Props) {
             {address ? addressInOneLine(address) : 'Shipping address not set'}
           </span>
         </li>
-        <li>
-          {receiverNotes}
-        </li>
+        {receiverNotes && (
+          <li>
+            {receiverNotes}
+          </li>
+        )}
       </ul>
       <Button
         onClick={openShipmentTab}

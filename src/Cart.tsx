@@ -25,6 +25,7 @@ import {
   PanelPaymentSuccess,
 }from './panels';
 import {
+  tabIdCheckout,
   tabIdClearCart,
   tabIdItem,
   tabIdPaymentSuccess,
@@ -74,7 +75,7 @@ export function CartComponents() {
           <PanelPaymentSuccess />
           {![tabIdItem, tabIdClearCart, tabIdPaymentSuccess].includes(activeTab) &&
             <>
-              <CartTotals />
+              {activeTab !== tabIdCheckout && (<CartTotals />)}
               <CartFooter>
                 <ButtonBack />
                 <ButtonClearCart />

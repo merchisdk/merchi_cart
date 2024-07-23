@@ -10,7 +10,7 @@ interface Props {
   attribute: string;
 }
 
-function CartTotal({ attribute }: Props) {
+export function CartTotal({ attribute }: Props) {
   const {
     cart,
     fetchingCart,
