@@ -83,7 +83,7 @@ const {
   setCartShipmentGroups,
 } = sliceCart.actions;
 
-async function getCartToken() {
+export async function getCartToken() {
   const { domainId } = getStore().stateCart;
   const cartIdAndToken = domainId ? await getMerchiCartCookie(Number(domainId)) : undefined;
   return cartIdAndToken && cartIdAndToken[1] ? cartIdAndToken[1] : undefined;
@@ -377,9 +377,7 @@ export async function saveCartShipmentAddressAndGoToNextTab(values: any) {
 }
 
 // Patch cart
-export async function actionPatchCart(cartJson: any) {
-  const cartToken = await getCartToken();
-  const cartEnt = makeCart({cartJson}, true, cartToken);
+export async function actionPatchCart(cartEnt: any) {
   dispatch(patchCart());
   try {
     const cart = await cartEnt.save({embed: cartEmbed});

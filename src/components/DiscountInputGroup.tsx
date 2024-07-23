@@ -5,8 +5,9 @@ import { Merchi } from 'merchi_sdk_ts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faTags, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useCartContext } from '../CartProvider';
-import { actionPatchCart } from '../store';
+import { actionPatchCart, getCartToken } from '../store';
 import Title from './CartTitle';
+import { makeCart } from '../utilities/cart';
 
 export default function DiscountInputGroup() {
   const { cart } = useSelector((s: any) => s.stateCart);
@@ -49,14 +50,21 @@ export default function DiscountInputGroup() {
     const query: Array<any> = [['codes', codes]];
     setLoading(true);
     setError({});
+    const cartToken = await getCartToken();
     try {
       let url = `/carts/${cart.id}/check_discount_code/`;
       const r = await merchi.authenticatedFetch(url, { query });
       setItems(r.items || []);
-      actionPatchCart({...cart, discountItems: r.items || []});
+      const cartEnt = makeCart({...cart, discountItems: r.items || []}, false, cartToken);
+      const discountItems = cartEnt.discountItems;
+      cartEnt.discountItems = discountItems;
+      actionPatchCart(cartEnt);
     } catch (e: any) {
       setError({message: `Error: ${e.errorMessage || e.message || 'Unexpected error.'}`});
-      actionPatchCart({...cart, discountItems: []});
+      const cartEnt = makeCart({...cart, discountItems: []}, false, cartToken);
+      const discountItems = cartEnt.discountItems;
+      cartEnt.discountItems = discountItems;
+      actionPatchCart(cartEnt);
     } finally {
       setLoading(false);
     }
