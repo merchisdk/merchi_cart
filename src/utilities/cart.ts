@@ -4,18 +4,25 @@ import { companyStripePubKeyOrTestPubKey } from './company';
 const merchi = new Merchi();
 
 export const makeCart = (json: any, makeDirty?: boolean, cartToken?: string) => {
-  const merchi = new Merchi();
   if (cartToken) merchi.cartToken = cartToken;
   const cart = new merchi.Cart();
   return cart.fromJson(json, { makeDirty });
 };
 
 export const makeCartItem = (cartItemJson: any, makeDirty?: boolean, cartToken?: string) => {
-  const merchi = new Merchi();
   if (cartToken) merchi.cartToken = cartToken;
   const cartItem = new merchi.CartItem();
   return cartItem.fromJson(cartItemJson, { makeDirty });
 };
+
+export function makeDiscountItem(itemJson: any, makeDirty?: boolean) {
+  const item = new merchi.Item();
+  if (makeDirty) {
+    return item.fromJson(itemJson, {makeDirty: true});
+  } else {
+    return item.fromJson(itemJson);
+  }
+}
 
 export function makeCartShipmentQuote(json: any, makeDirty?: boolean) {
   const cartShipmentQuote = new merchi.CartShipmentQuote();

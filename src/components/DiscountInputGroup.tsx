@@ -7,7 +7,7 @@ import { faCircleNotch, faTags, faTimes } from '@fortawesome/free-solid-svg-icon
 import { useCartContext } from '../CartProvider';
 import { actionPatchCart, getCartToken } from '../store';
 import Title from './CartTitle';
-import { makeCart } from '../utilities/cart';
+import { makeCart, makeDiscountItem } from '../utilities/cart';
 
 export default function DiscountInputGroup() {
   const { cart } = useSelector((s: any) => s.stateCart);
@@ -54,10 +54,12 @@ export default function DiscountInputGroup() {
     try {
       let url = `/carts/${cart.id}/check_discount_code/`;
       const r = await merchi.authenticatedFetch(url, { query });
-      setItems(r.items || []);
-      const cartEnt = makeCart({...cart, discountItems: r.items || []}, false, cartToken);
-      const discountItems = cartEnt.discountItems;
-      cartEnt.discountItems = discountItems;
+      const updatedItems = r.items || [];
+      setItems(updatedItems);
+      const cartEnt = makeCart({...cart}, false, cartToken);
+      cartEnt.discountItems = updatedItems.map(
+        (r: any) => makeDiscountItem({...r}, true)
+      );
       actionPatchCart(cartEnt);
     } catch (e: any) {
       setError({message: `Error: ${e.errorMessage || e.message || 'Unexpected error.'}`});

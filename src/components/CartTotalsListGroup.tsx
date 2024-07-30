@@ -39,10 +39,14 @@ function CartTotalsListGroup() {
   return (
     <div className={classNameCartTotaListContainer}>
       <ul className={classNameList}>
-        <CostsListItem attr="cartItemsTotalCost" name="Subtotal" />
+        {!!Number(cart.discountedAmount) && (
+          <CostsListItem attr="discountedAmount" name="Discount" />
+        )}
+        <CostsListItem attr="cartItemsSubtotalCost" name="Subtotal" />
         {cartRequiresShipment({ ...cart, cartItems }) && (
           <CostsListItem attr="shipmentTotalCost" name="Shipping" />
         )}
+        {!!cart.taxAmount && (<CostsListItem attr="taxAmount" name="Tax" />)}
         <CostsListItem attr="totalCost" name="Total" />
         <li className={classNameListItem}>
           <div className={classNameCartTotalItemPrice}>Total price includes taxes</div>
