@@ -15,9 +15,13 @@ import FormNewCustomer from '../forms/FormNewCustomer';
 import FormReturningCustomer from '../forms/FormReturningCustomer';
 import FormSquarePayment from '../forms/FormSquarePayment';
 import FormStripePayment from '../forms/FormStripePayment';
-import { faUserPlus, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faCreditCard, faUserPlus, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { useCartContext } from '../CartProvider';
+import DiscountInputGroup from '../components/DiscountInputGroup';
+import CartTotalsListGroup from '../components/CartTotalsListGroup';
 
 function PanelClientCheckout() {
+  const { showDiscountCode } = useCartContext();
   const { cart, needsShipping } = useSelector((s: any) => s.stateCart);
   const { client, domain } = cart;
   const company = domain && domain.company;
@@ -40,9 +44,19 @@ function PanelClientCheckout() {
                 </InnerContainer>
               </CheckoutContainer>
             }
+            {showDiscountCode && (
+              <CheckoutContainer>
+                <InnerContainer
+                  paddingBottom='3rem'
+                >
+                  <DiscountInputGroup />
+                </InnerContainer>
+              </CheckoutContainer>
+            )}
             {Boolean(company) && company.acceptSquare &&
               <CheckoutContainer>
                 <InnerContainer
+                  paddingTop='3rem'
                   paddingBottom='3rem'
                 >
                   <FormSquarePayment />
@@ -50,7 +64,24 @@ function PanelClientCheckout() {
               </CheckoutContainer>
             }
             <CheckoutContainer>
-              <InnerContainer>
+              <InnerContainer
+                paddingBottom='3rem'
+              >
+                <Title
+                  icon={faCoins}
+                  title='Cart total'
+                />
+                <CartTotalsListGroup />
+              </InnerContainer>
+            </CheckoutContainer>
+            <CheckoutContainer>
+              <InnerContainer
+                paddingBottom='3rem'
+              >
+               <Title
+                  icon={faCreditCard}
+                  title='Credit card payment'
+                />
                 <FormStripePayment />
               </InnerContainer>
             </CheckoutContainer>

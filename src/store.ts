@@ -75,13 +75,15 @@ const {
   fetchTheme,
   fetchThemeError,
   fetchThemeSuccess,
+  patchCart,
+  patchCartDone,
   setCart,
   setCartClient,
   setDomainId,
   setCartShipmentGroups,
 } = sliceCart.actions;
 
-async function getCartToken() {
+export async function getCartToken() {
   const { domainId } = getStore().stateCart;
   const cartIdAndToken = domainId ? await getMerchiCartCookie(Number(domainId)) : undefined;
   return cartIdAndToken && cartIdAndToken[1] ? cartIdAndToken[1] : undefined;
@@ -139,39 +141,35 @@ function alertSuccess(message: string) {
     { message, title: 'Success!' }));
 }
 
-export function actionFetchTheme(id: number) {
+
+// Fetch the associated cart theme via the cart domain.
+export async function actionFetchTheme(id: number) {
   dispatch(fetchTheme())
-  merchi.Domain.get(id, {embed: {activeTheme: {mainCss: {}}}})
-    .then((domain: any) => {
-      return domain.activeTheme;
-    })
-    .then((theme: any) => {
-      appendStyleSheetText(theme.mainCss, () => dispatch(fetchThemeSuccess()));
-    })
-    .catch((e: any) => {
-      alertError(e.errorMessage);
-      dispatch(fetchThemeError());
-    });
+  try {
+    const domain = await merchi.Domain.get(id, {embed: {activeTheme: {mainCss: {}}}});
+    const theme = domain.activeTheme;
+    await appendStyleSheetText(theme.mainCss, () => dispatch(fetchThemeSuccess()));
+  } catch (e: any) {
+    alertError(e.errorMessage || e.message || 'Error fetching domain theme.');
+    dispatch(fetchThemeError());
+  }
 }
 
+// Create cart and save cart cookie
 async function cartAndCookie(domainId: number) {
-  const cart = makeCart({domain: {id: domainId}}, true);
-  return cart.create({embed: cartEmbed})
-    .then((c: any) => {
-      if (domainId) {
-        setCartCookie(Number(domainId), c.toJson(), undefined);
-      }
-      return c.toJson();
-    })
-    .then((cJson: any) => {
-      dispatch(fetchCartSuccess(cJson));
-    })
-    .catch((e: any) => {
-      batch(() => {
-        alertError(e.errorMessage || 'Unable to fetch cart.');
-        dispatch(fetchCartError());
-      });
-    });
+  try {
+    const cart = makeCart({domain: {id: domainId}}, true);
+    await cart.create({embed: cartEmbed});
+    const cartJson = await cart.toJson();
+    if (domainId) {
+      setCartCookie(Number(domainId), cartJson, undefined);
+    }
+    dispatch(fetchCartSuccess(cartJson));
+    return cartJson;
+  } catch (e: any) {
+    alertError(e.errorMessage || e.message || 'Unable to fetch cart.');
+    dispatch(fetchCartError());
+  }
 }
 
 export async function createAndSetNewCartCookie(domainId: number) {
@@ -186,6 +184,8 @@ export async function doClearCart() {
   await createAndSetNewCartCookie((domainId as any));
 }
 
+// This action tajkes job json from the product from and creates a
+// cart item, which is then attached to the cart.
 export async function addCartItem(
   jobJson: any,
   onSuccess: (cartItem: any) => void,
@@ -220,88 +220,97 @@ async function refetchCart(cartEnt: any) {
     then(updateCartValues)
 }
 
-const {
-  patchCartItem,
-  patchCartItemError,
-  patchCartItemSuccess,
-} = sliceCartItem.actions;
-
 function cleanVariation(variation: any) {
+  const { variationField = {} } = variation;
   return {
+    ...variation,
     id: variation.id,
     value: variation.value,
-    variationFiles: variation.variationFiles.map((f: any) => ({id: f.id}))
+    variationField: {id: variationField.id},
+    variationFiles: variation.variationFiles.map((f: any) => ({id: f.id})),
   };
 }
 
+function cleanVariationGroups(variationsGroup: any) {
+  const { id, quantity = 0, variations = [] } = variationsGroup;
+  return {
+    id,
+    quantity,
+    variations: variations?.map(cleanVariation),
+  };
+}
+
+// This action patches the cart item
 export async function actionCartItemEdit(cartItem: any) {
-  dispatch(patchCartItem());
+  dispatch(sliceCartItem.actions.patchCartItem());
   const data = getStore();
   const cartToken = await getCartToken();
   const { cart } = data.stateCart;
-  const { cartItem: stateCartItem, index } = data.stateCartItem;
-  const { product, taxType, variations = [], variationsGroups = [] } = cartItem;
-  const cleanVariations = variations.map(cleanVariation);
-  const cleanVariationsGroups = variationsGroups.map((g: any) => ({
-    id: g.id,
-    quantity: g.quantity,
-    variations: g.variations?.map(cleanVariation) || []
-  }));
-  const cleanProduct = product ? {id: product.id} : undefined;
-  const cleanTaxType = taxType ? {id: taxType.id} : undefined;
-  const cartEnt = makeCart(cart, false, cartToken);
-  const jobEnt = makeJob(cartItem);
-  const cartItemEnt = makeCartItem({
-    ...cartItem,
-    id: (stateCartItem as any).id,
-    cart: {id: (cart as any).id},
-    product: cleanProduct,
-    taxType: cleanTaxType,
-    quantity: (cartItem as any).quantity,
-    variations: cleanVariations,
-    variationsGroups: cleanVariationsGroups
-  }, true, cartToken);
-  cartItemEnt.save().
-  then(() => refetchCart(cartEnt)).
-  then(() => {
+  const { cartItem: stateCartItem } = data.stateCartItem;
+  try {
+    const {
+      product,
+      quantity = 0,
+      taxType,
+      variations = [],
+      variationsGroups = [],
+    } = cartItem;
+
+    const cartItemEnt = makeCartItem({
+      ...cartItem,
+      id: (stateCartItem as any).id,
+      cart: {id: (cart as any).id},
+      product: product ? {id: product.id} : undefined,
+      taxType: taxType ? {id: taxType.id} : undefined,
+      quantity,
+      variations: variations.map(cleanVariation),
+      variationsGroups: variationsGroups.map(cleanVariationGroups),
+    }, true, cartToken);
+
+    // Save changes to the Cart Item
+    await cartItemEnt.save();
+
+    // Refetch the Cart and all it's relationships
+    await refetchCart({...cart});
+
+    // Show success alert
     alertSuccess('Item updated.');
-    dispatch(patchCartItemSuccess());
+
+    // Stop loading
+    dispatch(sliceCartItem.actions.patchCartItemSuccess());
+
+    // Set active Cart tab
     setActiveTab(tabIdItems);
-  }).
-  then(() => {
+
+    // Clear Cart Item from state
     setCartItem({}, 0);
-  }).
-  catch((e: any) => {
-    alertError(e.errorMessage);
-    dispatch(patchCartItemError());
-  });
+  } catch (e: any) {
+    alertError(e.errorMessage || e.message || 'Unable to edit Cart Item.');
+    dispatch(sliceCartItem.actions.patchCartItemError());
+  };
 }
 
+// Delete an item from the cart by index
 export async function actionDeleteCartItem(index: number) {
   const data = getStore();
   const cartToken = await getCartToken();
-  const { stateCart: { cart } } = data;
-  const cartEnt = makeCart(cart, false, cartToken);
-  const cartItems = (cartEnt as any).cartItems;
-  cartItems.splice(index, 1);
-  (cartEnt as any).cartItems = cartItems;
-  dispatch(deleteCartItem(index));
-  cartEnt.save({embed: cartEmbed}).
-    then(
-      (c: any) => {
-        dispatch(deleteCartItemSuccess(c.toJson()));
-      }
-    ).
-    catch(
-      (e: any) => {
-        batch(() => {
-          alertError(e.errorMessage);
-          dispatch(deleteCartItemError());
-        });
-      }
-    );
+  const { cart } = data.stateCart;
+  try {
+    const cartEnt = makeCart(cart, false, cartToken);
+    const cartItems = (cartEnt as any).cartItems;
+    cartItems.splice(index, 1);
+    (cartEnt as any).cartItems = cartItems;
+    dispatch(deleteCartItem(index));
+    const r = await cartEnt.save({embed: cartEmbed});
+    const cartJson = r.toJson();
+    dispatch(deleteCartItemSuccess(cartJson));
+  } catch(e: any) {
+    alertError(e.errorMessage || e.message || 'Unable to remove item from cart.');
+    dispatch(deleteCartItemError());
+  }
 }
 
+// Patch the clients 
 export async function updateCartShipmentAddress() {
   const {
     updateShipmentAddressError,
@@ -335,6 +344,7 @@ export async function updateCartShipmentAddress() {
     });
 }
 
+// Save the client shipment address and then opens next tab
 export async function saveCartShipmentAddressAndGoToNextTab(values: any) {
   const { receiverAddress: address, receiverNotes } = values;
   const {
@@ -366,20 +376,17 @@ export async function saveCartShipmentAddressAndGoToNextTab(values: any) {
     });
 }
 
-async function attachClientToCart(clientJson: any) {
-  const {
-    createNewCustomerSuccess: createNewSuccess,
-  } = sliceNewCustomerForm.actions;
-  const cartToken = await getCartToken();
-  const { cart } = getStore().stateCart;
-  const clientEnt = makeUser({id: clientJson.id});
-  const cartEnt = makeCart({...cart}, false, cartToken);
-  cartEnt.client = clientEnt;
-  cartEnt.save({embed: cartEmbed}).
-    then((c: any) => {
-      dispatch(setCart(c.toJson()));
-      dispatch(createNewSuccess());
-    });
+// Patch cart
+export async function actionPatchCart(cartEnt: any) {
+  dispatch(patchCart());
+  try {
+    const cart = await cartEnt.save({embed: cartEmbed});
+    dispatch(setCart(cart.toJson()));
+  } catch (e: any) {
+    alertError(e.errorMessage || e.message || 'nknown server error.');
+  } finally {
+    dispatch(patchCartDone());
+  }
 }
 
 export async function setSelectedShipmentQuote(groupIndex: number, quote: any) {
@@ -407,47 +414,57 @@ export async function setSelectedShipmentQuote(groupIndex: number, quote: any) {
     });
 }
 
-const {
-  setReturningCustomerError,
-  tryReturningCustomer: tryReturning,
-  tryReturningCustomerError,
-  tryReturningCustomerSuccess,
-} = sliceFormReturningCustomer.actions;
+async function attachClientToCart(clientJson: any) {
+  try {
+    const cartToken = await getCartToken();
+    const { cart } = getStore().stateCart;
+    const clientEnt = makeUser({id: clientJson.id});
+    const cartEnt = makeCart({...cart}, false, cartToken);
+    cartEnt.client = clientEnt;
+    const r = await cartEnt.save({embed: cartEmbed});
+    const cartJson = r.toJson();
+    dispatch(setCart(cartJson));
+    dispatch(sliceNewCustomerForm.actions.createNewCustomerSuccess());
+  } catch (e: any) {
+    throw e;
+  }
+}
 
+// This action is used to check if a users already exists in Merchi and
+// attaches them to the cart if they do
 export async function tryReturningCustomer(emailAddress: string) {
-  dispatch(tryReturning());
+  dispatch(sliceFormReturningCustomer.actions.tryReturningCustomer());
   try {
     const user: any = await tryReturningCustomerEmail(emailAddress);
     await attachClientToCart({
       emailAddresses: [{emailAddress}],
       id: user.user_id,
     });
-    dispatch(tryReturningCustomerSuccess());
+    dispatch(sliceFormReturningCustomer.actions.tryReturningCustomerSuccess());
   } catch(e: any) {
     alertError(e.errorMessage);
-    dispatch(tryReturningCustomerError());
-    dispatch(setReturningCustomerError(true));
+    dispatch(sliceFormReturningCustomer.actions.tryReturningCustomerError());
+    dispatch(sliceFormReturningCustomer.actions.setReturningCustomerError(true));
   };
 }
 
-const {
-  createNewCustomer: createNew,
-  createNewCustomerError: createNewError,
-  createNewCustomerSuccess: createNewSuccess,
-} = sliceNewCustomerForm.actions;
-
-export function actionCreateNewCustomer(apiUrl: string, customerJson: any) {
+// This action attaches creates a new client and attaches them to the cart
+export async function actionCreateNewCustomer(customerJson: any) {
   const { cart } = getStore().stateCart;
   const domainId = cart && (cart as any).domain && (cart as any).domain.id;
-  dispatch(createNew());
-  createNewCustomer({...customerJson, registeredUnderDomains: [{id: domainId}]}).
-  then((r: any) => r.user).
-  then(attachClientToCart).
-  then(() => dispatch(createNewSuccess())).
-  catch((e: any) => {
-    alertError(e.errorMessage);
-    dispatch(createNewError(e.errorMessage));
-  });
+  dispatch(sliceNewCustomerForm.actions.createNewCustomer());
+  try {
+    const r = await createNewCustomer(
+      {...customerJson, registeredUnderDomains: [{id: domainId}]}
+    );
+    const { user } = r;
+    await attachClientToCart(user);
+    dispatch(sliceNewCustomerForm.actions.createNewCustomerSuccess());
+  } catch (e: any) {
+    const msg = e.errorMessage || e.message || 'Unable to attach client to cart.';
+    alertError(msg);
+    dispatch(sliceNewCustomerForm.actions.createNewCustomerError(msg));
+  };
 }
 
 const { creditCardPaySuccess } = sliceCartPayment.actions; 
@@ -470,7 +487,7 @@ function updateCartValues(cartJson: any) {
   dispatch(initCartShipmentSlice(cartJson));
 }
 
-function getCart(domainId: number, cartIdAndToken: Array<string>) {
+async function getCart(domainId: number, cartIdAndToken: Array<string>) {
   const {
     cartSettingsInvalid,
   } = sliceCart.actions;
@@ -479,23 +496,22 @@ function getCart(domainId: number, cartIdAndToken: Array<string>) {
     merchi.cartToken = cartIdAndToken[1];
   }
   dispatch(fetchCart());
-  merchi.Cart.get(id, {embed: cartEmbed})
-    .then(convertToJson)
-    .then((cart: any) => {
-      if (stripeIsValidAndActive(cart)) {
-        updateCartValues(cart);
-      } else {
-        console.error(
-         `MErhci cart error: Stripe payment ` +
-          `options have not been correctly set up. ` +
-          `Check the company profile payment options tab ` +
-          `to set and edit stripe payment options.`);
-        dispatch(cartSettingsInvalid());
-      }
-    })
-    .catch((e: any) => {
-      createAndSetNewCartCookie(domainId);
-    });
+  try {
+    const cart = await merchi.Cart.get(id, {embed: cartEmbed});
+    const cartJson = await cart.toJson();
+    if (stripeIsValidAndActive(cartJson)) {
+        updateCartValues(cartJson);
+    } else {
+      console.error(
+        `MErhci cart error: Stripe payment ` +
+        `options have not been correctly set up. ` +
+        `Check the company profile payment options tab ` +
+        `to set and edit stripe payment options.`);
+      dispatch(cartSettingsInvalid());
+    }
+  } catch(e: any){
+    createAndSetNewCartCookie(domainId);
+  }
 }
 
 export async function actionGetMerchiCart(domainId: number) {

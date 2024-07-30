@@ -48,6 +48,7 @@ export interface PropsCart {
   classNameCartTitle?: string;
   classNameCartTotalContainer?: string;
   classNameCartTotalItem?: string;
+  classNameCartTotaListContainer?: string;
   classNameCartTotalItemPrice?: string;
   classNameClearCartContainer?: string;
   classNameClearCartText?: string;
@@ -55,6 +56,7 @@ export interface PropsCart {
   classNameListClientInfo?: string;
   classNameListContainer?: string;
   classNameListItem?: string;
+  classNameListItemCartTotals?: string;
   classNameList?: string;
   classNameListInline?: string;
   classNameListUnstyled?: string;
@@ -66,6 +68,22 @@ export interface PropsCart {
   classNameTableContainer?: string;
   classNameVariationsList?: string;
   customSuccessMessage?: string;
+
+  // Discount code input props
+  discountButtonText?: string;
+  discountClassName?: string;
+  discountClassNameMainContainer?: string;
+  discountClassNameButtonItemRemove?: string;
+  discountClassNameButton?: string;
+  discountClassNameButtonContainer?: string;
+  discountClassNameErrorMessage?: string;
+  discountClassNameInput?: string;
+  discountClassNameListItem?: string;
+  discountClassNameListItems?: string;
+  discountClassNameInputContainer?: string;
+  discountShowAppliedItems?: boolean;
+  showDiscountCode?: boolean;
+
   domainId?: number;
   googlePlacesLoaded?: boolean;
   hideHead?: boolean;
@@ -124,6 +142,7 @@ const CartContext = createContext<PropsCart>({
   classNameCartTitle: undefined,
   classNameCartTotalContainer: undefined,
   classNameCartTotalItem: undefined,
+  classNameCartTotaListContainer: undefined,
   classNameCartTotalItemPrice: undefined,
   classNameCartToggleIconButton: undefined,
   classNameClearCartContainer: undefined,
@@ -131,6 +150,7 @@ const CartContext = createContext<PropsCart>({
   classNameListClientInfo: undefined,
   classNameListContainer: undefined,
   classNameListItem: undefined,
+  classNameListItemCartTotals: undefined,
   classNameList: undefined,
   classNameListInline: undefined,
   classNameListUnstyled: undefined,
@@ -142,6 +162,22 @@ const CartContext = createContext<PropsCart>({
   classNameTableContainer: undefined,
   classNameVariationsList: undefined,
   customSuccessMessage: undefined,
+
+  // Discount code input props
+  discountButtonText: undefined,
+  discountClassName: undefined,
+  discountClassNameButton: undefined,
+  discountClassNameButtonContainer: undefined,
+  discountClassNameButtonItemRemove: undefined,
+  discountClassNameErrorMessage: undefined,
+  discountClassNameInput: undefined,
+  discountClassNameInputContainer: undefined,
+  discountClassNameListItem: undefined,
+  discountClassNameListItems: undefined,
+  discountClassNameMainContainer: undefined,
+  discountShowAppliedItems: true,
+  showDiscountCode: true,
+
   domainId: undefined,
   googlePlacesLoaded: false,
   hideHead: false,
@@ -202,6 +238,7 @@ interface PropsCartProvider {
   classNameCartTitle?: string;
   classNameCartTotalContainer?: string;
   classNameCartTotalItem?: string;
+  classNameCartTotaListContainer?: string;
   classNameCartTotalItemPrice?: string;
   classNameCartToggleIconButton?: string;
   classNameClearCartContainer?: string;
@@ -212,6 +249,7 @@ interface PropsCartProvider {
   classNameListInline?: string;
   classNameListContainer?: string;
   classNameListItem?: string;
+  classNameListItemCartTotals?: string;
   classNameListUnstyled?: string;
   classNameLoadingTemplate?: string;
   classNameLoadingTemplateContainer?: string;
@@ -221,6 +259,22 @@ interface PropsCartProvider {
   classNameTableContainer?: string;
   classNameVariationsList?: string;
   customSuccessMessage?: string;
+
+  // Discount code input props
+  discountButtonText?: string;
+  discountClassName?: string;
+  discountClassNameMainContainer?: string;
+  discountClassNameButtonItemRemove?: string;
+  discountClassNameButton?: string;
+  discountClassNameButtonContainer?: string;
+  discountClassNameErrorMessage?: string;
+  discountClassNameInput?: string;
+  discountClassNameListItem?: string;
+  discountClassNameListItems?: string;
+  discountClassNameInputContainer?: string;
+  discountShowAppliedItems?: boolean;
+  showDiscountCode?: boolean;
+
   domainId?: number;
   googlePlacesLoaded?: boolean;
   hideHead?: boolean;
@@ -280,6 +334,7 @@ const CartProvider = ({
   classNameCartTabPanel = 'merchi-tab-panel',
   classNameCartTitle = 'merchi-cart-title',
   classNameCartTotalContainer = 'merchi-cart-total-container',
+  classNameCartTotaListContainer = 'merchi-cart-total-list-container',
   classNameCartTotalItem = 'merchi-cart-total-item',
   classNameCartTotalItemPrice = 'merchi-cart-total-item-price',
   classNameClearCartContainer = 'merchi-cart-clear-container',
@@ -290,6 +345,7 @@ const CartProvider = ({
   classNameListUnstyled = 'list-unstyled',
   classNameListContainer = 'pb-2',
   classNameListItem = 'list-group-item',
+  classNameListItemCartTotals = 'list-group-item d-flex justify-content-between align-items-center',
   classNameLoadingTemplate = 'merchi-loading-template',
   classNameLoadingTemplateContainer = 'merchi-loading-template-container',
   classNameNoItems = 'merchi-no-cart-items',
@@ -299,6 +355,22 @@ const CartProvider = ({
   classNameVariationsList = 'list-unstyled list-inline',
   customSuccessMessage,
   domainId,
+
+  // Discount code input props
+  discountButtonText = 'Apply',
+  discountClassName = 'merchi-discount-group-container',
+  discountClassNameButton = 'btn btn-primary btn-lg',
+  discountClassNameButtonContainer = 'col-auto',
+  discountClassNameButtonItemRemove = 'btn btn-sm btn-link',
+  discountClassNameErrorMessage = 'text-danger',
+  discountClassNameInput = 'form-control input-lg',
+  discountClassNameInputContainer,
+  discountClassNameListItem = 'list-group-item d-flex align-items-center justify-content-between mt-2',
+  discountClassNameListItems = 'list-group',
+  discountClassNameMainContainer,
+  discountShowAppliedItems = true,
+  showDiscountCode = true,
+
   hideHead = false,
   includeTheme = false,
   initialiseCart = true,
@@ -367,6 +439,7 @@ const CartProvider = ({
           classNameCartTitle,
           classNameCartTotalContainer,
           classNameCartTotalItem,
+          classNameCartTotaListContainer,
           classNameCartTotalItemPrice,
           classNameClearCartContainer,
           classNameClearCartText,
@@ -375,6 +448,7 @@ const CartProvider = ({
           classNameListInline,
           classNameListContainer,
           classNameListItem,
+          classNameListItemCartTotals,
           classNameListUnstyled,
           classNameLoadingTemplate,
           classNameLoadingTemplateContainer,
@@ -384,6 +458,21 @@ const CartProvider = ({
           classNameTableContainer,
           classNameVariationsList,
           customSuccessMessage,
+
+          discountButtonText,
+          discountClassName,
+          discountClassNameButton,
+          discountClassNameButtonContainer,
+          discountClassNameButtonItemRemove,
+          discountClassNameErrorMessage,
+          discountClassNameInput,
+          discountClassNameInputContainer,
+          discountClassNameListItem,
+          discountClassNameListItems,
+          discountClassNameMainContainer,
+          discountShowAppliedItems,
+          showDiscountCode,
+
           domainId,
           googlePlacesLoaded,
           hideHead,

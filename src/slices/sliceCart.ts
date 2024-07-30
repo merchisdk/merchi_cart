@@ -55,6 +55,7 @@ export const sliceCart = createSlice({
     domainId: undefined,
     fetchingCart: false,
     loading: false,
+    loadingPatchingCart: false,
     modalCartOpen: false,
     modalClearCartOpen: false,
     needsShipping: false,
@@ -157,6 +158,12 @@ export const sliceCart = createSlice({
     },
     toggleClearCart: (state: any) => {
       state.modalClearCartOpen = !state.modalClearCartOpen;
+    },
+    patchCart: (state: any) => {
+      state.loadingPatchingCart = true;
+    },
+    patchCartDone: (state: any) => {
+      state.loadingPatchingCart = false;
     },
   },
 });
