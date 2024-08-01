@@ -248,8 +248,15 @@ button.merchi-nav-link {
   padding: 15px;
   border: 1px solid transparent;
   border-radius: 4px;
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  max-width: 1140px;
+  margin-left: auto;
+  margin-right: auto;
 }
-
 .merchi-form-group {
   text-align: left;
 }

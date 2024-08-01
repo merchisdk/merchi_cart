@@ -25,9 +25,11 @@ export default function DiscountInputGroup() {
     discountClassNameMainContainer,
     discountShowAppliedItems,
   } = useCartContext();
+  const { discountItems = [] } = cart;
+  const defaultCodes = discountItems.map((i: any) => i.code).join(',');
   const merchi = new Merchi();
   const hookForm = useForm({
-    defaultValues: { codes: '' },
+    defaultValues: { codes: defaultCodes },
   });
   const {
     getValues,
@@ -77,7 +79,7 @@ export default function DiscountInputGroup() {
     await onSubmit({ codes });
   }
 
-  const [items, setItems] = React.useState([]);
+  const [items, setItems] = React.useState(discountItems || []);
 
   async function removeItem(index: number) {
     const item: any = {...(items[index] as any)};
