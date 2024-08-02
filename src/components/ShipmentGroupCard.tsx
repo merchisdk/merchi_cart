@@ -10,7 +10,11 @@ function NoCartShipmentOptionsFound() {
   const { classNameNoItems } = useCartContext();
   return (
     <div className={classNameNoItems}>
-      <img src={pngProductNotFound.src} width={276} height={215} />
+      <img
+        src={pngProductNotFound.src || pngProductNotFound}
+        width={276}
+        height={215}
+      />
       <p>No shipment options found.</p>
     </div>
   );

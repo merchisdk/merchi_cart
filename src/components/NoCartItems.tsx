@@ -6,7 +6,12 @@ function NoCartItems() {
   const { classNameNoItems } = useCartContext();
   return (
     <div className={classNameNoItems}>
-      <img src={pngProductNotFound.src} alt="Cart items not found" width={276} height={215} />
+      <img
+        src={pngProductNotFound?.src || pngProductNotFound}
+        alt="Cart items not found"
+        width={276}
+        height={215}
+      />
       <p>No cart items.</p>
     </div>
   );
