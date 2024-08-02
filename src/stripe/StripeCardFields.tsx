@@ -105,9 +105,9 @@ function InnerForm({
                 </div>
               )}
               <PaymentButton loading={loadingStripePayment} />
-              {pngStripe.src && (
+              {pngStripe && (
                 <img
-                  src={pngStripe.src}
+                  src={pngStripe.src || pngStripe}
                   width={250}
                   alt='Secure credit card payments by Stripe'
                 />

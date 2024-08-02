@@ -120,7 +120,7 @@ export default function DiscountInputGroup() {
       )}
       {errors.codes && (
         <div className={discountClassNameErrorMessage}>
-          {errors.codes.message}
+          {(errors as any)?.codes?.message}
         </div>
       )}
       {discountShowAppliedItems && (
