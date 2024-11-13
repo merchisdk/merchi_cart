@@ -18,7 +18,7 @@ import { faCoins, faCreditCard, faUserPlus, faUserTag } from '@fortawesome/free-
 import { useCartContext } from '../CartProvider';
 import DiscountInputGroup from '../components/DiscountInputGroup';
 import CartTotalsListGroup from '../components/CartTotalsListGroup';
-import { cartItemsNeedShipment } from '../slices/sliceCart';
+import { cartItemsNeedShipment } from '../utilities/shipment';
 
 function PanelClientCheckout() {
   const { cart, showDiscountCode } = useCartContext();

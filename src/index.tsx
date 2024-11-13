@@ -1,6 +1,6 @@
 import Cart from './Cart';
 import { MerchiCartModal, MerchiShoppingCartModal } from './modals';
-import { ButtonOpenCart, ButtonListWrappedOpenCart } from '../esm/buttons/ButtonOpenCartMerchiCartModal';
+import { ButtonOpenCart, ButtonListWrappedOpenCart } from './buttons/ButtonOpenCartMerchiCartModal';
 import * as components from './components';
 import CardProvider from './CartProvider';
 import CartAlert from './CartAlert';

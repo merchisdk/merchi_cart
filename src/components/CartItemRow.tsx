@@ -8,7 +8,7 @@ import { Button } from '../buttons';
 import { useCartContext } from '../CartProvider';
 import { makeCart } from '../utilities/cart';
 import { cartEmbed } from '../utilities/helpers';
-import { cartItemsNeedShipment } from '../slices/sliceCart';
+import { cartItemsNeedShipment } from '../utilities/shipment';
 import {
   cartHasShippmentGroupsAndAllHaveSelectedGroups,
   initTabs,
