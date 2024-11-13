@@ -3,7 +3,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faShoppingCart } from '@fortawesome/free-solid-svg-icons';
 import Button from './Button';
 import { useCartContext } from '../CartProvider';
-import { toggleCartOpen } from '../store';
 import { useSelector } from 'react-redux';
 
 const Badge = ({ color, children }: any) => {
@@ -11,12 +10,16 @@ const Badge = ({ color, children }: any) => {
 }
 
 export function ButtonOpenCart() {
-  const { classNameCartToggleIconButton } = useCartContext();
-  const { cart, fetchingCart, loading } = useSelector((s: any) => s.stateCart);
+  const {
+    classNameCartToggleIconButton,
+    fetchingCart,
+    toggleCartModal,
+  } = useCartContext();
+  const { cart, loading } = useSelector((s: any) => s.stateCart);
   const cartItems = cart.cartItems || [];
   return (
     <Button
-      onClick={toggleCartOpen}
+      onClick={toggleCartModal}
       className={classNameCartToggleIconButton}
     >
       <FontAwesomeIcon

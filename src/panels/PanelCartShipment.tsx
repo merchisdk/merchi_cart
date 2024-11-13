@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux';
 import { faTruck } from '@fortawesome/free-solid-svg-icons';
 import { ActiveFormShipmentAddressAndNotes } from '../forms/FormShipmentAddressAndNotes';
 import {
@@ -13,13 +12,15 @@ import {
   ShipmentGroupCard,
   Title,
 } from '../components';
-import { tabIdShipment } from '../slices/sliceCart';
+import { tabIdShipment } from '../utilities/tabs';
+import { useCartContext } from '../CartProvider';
 
 function PanelCartShipment() {
   const {
+    cart,
     fetchingShipmentGroups,
-    shipmentGroups,
-  } = useSelector((s: any) => s.stateCartShipment);
+  } = useCartContext();
+  const { shipmentGroups = [] } = cart;
   return (
     <CartTabPanel tabId={tabIdShipment}>
       <CartBody style={{ paddingTop: '2rem' }}>

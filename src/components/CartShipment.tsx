@@ -1,6 +1,5 @@
-import { useDispatch } from 'react-redux';
 import Title from './CartTitle';
-import { sliceCart, tabIdShipment } from '../slices/sliceCart';
+import { tabIdShipment } from '../utilities/tabs';
 import { addressInOneLine } from '../utilities/address';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTruck } from '@fortawesome/free-solid-svg-icons';
@@ -16,12 +15,12 @@ function CartShipment({ cart }: Props) {
     classNameBtnDefault,
     classNameListContainer,
     classNameListUnstyled,
+    setActiveTabIndex,
   } = useCartContext();
   const { receiverAddress, receiverNotes } = cart;
   const address = receiverAddress ? receiverAddress : null;
-  const dispatch = useDispatch();
   function openShipmentTab() {
-    dispatch(sliceCart.actions.setActiveTab(tabIdShipment));
+    setActiveTabIndex(tabIdShipment);
   }
   return (
     <div className={classNameListContainer}>

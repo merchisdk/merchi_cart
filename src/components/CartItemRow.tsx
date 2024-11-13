@@ -2,11 +2,22 @@ import * as React from 'react';
 import { cartItemCurrencyAndCost } from '../utilities/currency';
 import { productFeatureImageUrl } from '../utilities/product';
 import { valueString } from '../utilities/variations';
-import { actionDeleteCartItem, setCartItem } from '../store';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faEdit, faTrashAlt } from '@fortawesome/free-solid-svg-icons';
 import { Button } from '../buttons';
 import { useCartContext } from '../CartProvider';
+import { makeCart } from '../utilities/cart';
+import { cartEmbed } from '../utilities/helpers';
+import { cartItemsNeedShipment } from '../slices/sliceCart';
+import {
+  cartHasShippmentGroupsAndAllHaveSelectedGroups,
+  initTabs,
+  setDisableTab,
+  tabCheckout,
+  tabShipment,
+  tabsWithShipment,
+} from '../utilities/tabs';
+import { getCartCookieToken } from '../utilities/cookie';
 
 interface VariationListItemProps {
   variation: any;
@@ -78,14 +89,24 @@ interface Props {
   loading: boolean;
 }
 
-function CartItemRow({ cartItem, index, loading }: Props) {
+function CartItemRow({ cartItem, index }: Props) {
   const {
+    alertError,
+    cart,
+
+    domainId,
+    setCart,
+
     classNameBtnLink,
     classNameCartItemFeatureImage,
     classNameCartItemInfo,
     classNameCartItemInfoCell,
     classNameCartItemInfoCellRight,
     classNameCartItemInfoContainer,
+
+    setCartItem,
+    tabs,
+    setTabs,
   } = useCartContext();
   const {
     product,
@@ -94,6 +115,44 @@ function CartItemRow({ cartItem, index, loading }: Props) {
     variationsGroups,
   } = cartItem;
   const { name } = product;
+
+  const [loading, setLoading] = React.useState(false);
+
+  async function actionDeleteCartItem() {
+    setLoading(true);
+    const cartToken = await getCartCookieToken((domainId as number));
+    try {
+      const cartEnt = makeCart({...cart}, false, cartToken);
+      const cartItems = (cartEnt as any).cartItems;
+      cartItems.splice(index, 1);
+      (cartEnt as any).cartItems = cartItems;
+      const r = await cartEnt.save({embed: cartEmbed});
+      const cartJson = r.toJson();
+      const needsShipping = cartItemsNeedShipment(cartJson);
+      setCart({...cartJson});
+      if (cart.cartItems.length === 0) {
+        setTabs([...initTabs]);
+      } else {
+        if (needsShipping) {
+          setTabs([...tabsWithShipment]);
+          if (cart.cartItems.length) {
+            const _tabs = [...tabs];
+            _tabs[1] = setDisableTab(tabShipment, false);
+            if (cartHasShippmentGroupsAndAllHaveSelectedGroups(cartJson)) {
+              _tabs[2] = setDisableTab(tabCheckout, false);
+            }
+            setTabs([..._tabs]);
+          }
+        } else {
+          setTabs([...initTabs]);
+        }
+      }
+    } catch(e: any) {
+      alertError(e.errorMessage || e.message || 'Unable to remove item from cart.');
+    } finally {
+      setLoading(false);
+    }
+  }
   return (
     <tr>
       <th scope='row' className={classNameCartItemInfoCell}>
@@ -124,13 +183,13 @@ function CartItemRow({ cartItem, index, loading }: Props) {
       <td className={classNameCartItemInfoCellRight}>
         <Button
           className={classNameBtnLink}
-          onClick={() => setCartItem(cartItem, index)}
+          onClick={() => setCartItem(cartItem)}
         >
           <FontAwesomeIcon icon={faEdit} />
         </Button>
         <Button
           className={classNameBtnLink}
-          onClick={() => actionDeleteCartItem(index)}
+          onClick={actionDeleteCartItem} //TODO modify delete action
         >
           <FontAwesomeIcon
             icon={loading ? faCircleNotch : faTrashAlt}

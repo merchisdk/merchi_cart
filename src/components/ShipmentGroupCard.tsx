@@ -1,10 +1,10 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { setSelectedShipmentQuote } from '../store';
+import React, { useState } from 'react';
 import { addressInOneLine } from '../utilities/address';
 import { currencyTaxAndCost } from '../utilities/currency';
 import { useCartContext } from '../CartProvider';
 import pngProductNotFound from '../assets/product-not-found.png';
+import { makeCart, makeCartShipmentQuote } from '../utilities/cart';
+import { cartEmbed } from '../utilities/helpers';
 
 function NoCartShipmentOptionsFound() {
   const { classNameNoItems } = useCartContext();
@@ -88,11 +88,34 @@ interface ShipmentOptionProps {
 }
 
 function ShipmentQuote({ groupIndex, quote }: ShipmentOptionProps) {
-  const { classNameListItem } = useCartContext();
-  const { selectedQuotes } = useSelector((s: any) => s.stateCartShipment);
-  const isSelected = selectedQuotes[groupIndex].id === quote.id;
-  function doClick() {
-    setSelectedShipmentQuote(groupIndex, quote);
+  const {
+    alertError,
+    cart,
+    classNameListItem,
+    setLoadingTotals,
+    setCart
+  } = useCartContext();
+  const {
+    shipmentGroups = [],
+  } = cart;
+  const selectedQuotes = shipmentGroups.map((g: any) => g.selectedQuote);
+  const [isSelected, setIsSelected] = useState(selectedQuotes[groupIndex].id === quote.id);
+  async function doClick() {
+    setIsSelected(!isSelected);
+    try {
+      setLoadingTotals(true);
+      const cartEnt = makeCart({...cart}, false, );
+      const cartShipmentQuote = makeCartShipmentQuote({...quote});
+      (cartEnt as any).shipmentGroups[groupIndex].selectedQuote = cartShipmentQuote;
+      await cartEnt.save({embed: cartEmbed});
+      const cartJson = await cartEnt.toJson();
+      setCart({...cartJson});
+    } catch (e: any) {
+      alertError(e.errorMessage || e.message || 'Unable to select shipment option.');
+      setIsSelected(!isSelected);
+    } finally {
+      setLoadingTotals(false);
+    }
   }
   const icon = isSelected ? 'far fa-check-square' : 'far fa-square';
   return (

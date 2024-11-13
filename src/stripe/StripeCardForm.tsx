@@ -1,10 +1,6 @@
 import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
 import { ButtonPay } from '../buttons';
-import {
-  callbackCreditCardPaymentSuccess
-} from '../store';
 import FormStripeCardFields from './StripeCardFields';
 import {
   stripeCardFormSubmit,
@@ -14,10 +10,10 @@ import {
 import { PaymentRequestPaymentMethodEvent } from '@stripe/stripe-js';
 import { companyStripePubKeyOrTestPubKey } from './utils';
 import { useCartContext } from '../CartProvider';
-import { alertError } from '../store';
+import { tabIdPaymentSuccess } from '../utilities/tabs';
 
 function PaymentButton({ loading }: any) {
-  const { cart } = useSelector((s: any) => s.stateCart);
+  const { cart } = useCartContext();
   return (
     <div>
       <ButtonPay cart={cart} loading={loading} />
@@ -28,8 +24,7 @@ function PaymentButton({ loading }: any) {
 const badgeTestMode = <div style={{color: 'red'}}>Test mode</div>;
 
 function StripeCardForm() {
-  const { cart } = useSelector((s: any) => s.stateCart);
-  const { apiUrl } = useCartContext();
+  const { alertError, apiUrl, cart, setActiveTabIndex, setInvoiceJson } = useCartContext();
   const { domain } = cart;
   const [error, setError] = useState(({} as any));
   const company = domain.company;
@@ -39,6 +34,10 @@ function StripeCardForm() {
   const [loadingStripePayment, setLoadingStripePayment] = useState(false);
   const [loadingStripePaymentButtons, setLoadingStripePaymentButtons] = useState(false);
   const url: string = apiUrl || '';
+  function callbackCreditCardPaymentSuccess(invoiceJson: any) {
+    setInvoiceJson(invoiceJson);
+    setActiveTabIndex(tabIdPaymentSuccess);
+  }
   async function doStripePayment(r: any) {
     setLoadingStripePayment(true);
     setError({});

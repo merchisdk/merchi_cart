@@ -5,7 +5,7 @@ import {
   tabIdItems,
   tabIdPaymentSuccess,
   tabIdShipment,
-} from '../slices/sliceCart';
+} from '../utilities/tabs';
 import ButtonNext from './ButtonNext';
 import ButtonShipmentTabNext from './ButtonShipmentTabNext';
 

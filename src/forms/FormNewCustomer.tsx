@@ -1,29 +1,55 @@
 import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
 import InputAcceptUserTermsAndConditions from './InputAcceptUserTermsAndConditions';
-import { actionCreateNewCustomer } from '../store';
 import { Button } from '../buttons';
 import InputSelect from './InputSelect';
 import InputText from './InputText';
 import { useCartContext } from '../CartProvider';
-import { phoneOptions } from '../utilities/helpers';
+import { cartEmbed, phoneOptions } from '../utilities/helpers';
 import InputError from './InputError';
+import { createNewCustomer, makeUser } from '../utilities/user';
+import { makeCart } from '../utilities/cart';
+import { getCartCookieToken } from '../utilities/cookie';
 
 export const emailValidation = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]/i;
 
 export function FormCustomerNew() {
   const {
+    cart,
     classNameBtnPrimary,
     classNameCartFormGroup,
     classNameCartFormGroupButton,
+    domainId,
+    setCart,
     showUserTermsAndConditions,
   } = useCartContext();
-  const {
-    creatingNewCustomer: loading,
-    serverError: error,
-  } = useSelector((s: any) => s.stateNewCustomerForm);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(({} as any));
   const [acceptConditions, setAcceptConditions] = React.useState(true);
+
+  async function actionCreateNewCustomer(customerJson: any) {
+    setError({});
+    setLoading(true);
+    try {
+      const r = await createNewCustomer(
+        {...customerJson, registeredUnderDomains: [{id: domainId}]}
+      );
+      const { user } = r;
+
+      // patch cart with new user
+      const cartToken = await getCartCookieToken((domainId as number));
+      const clientEnt = makeUser({id: user.id});
+      const cartEnt = makeCart({...cart}, false, cartToken);
+      cartEnt.client = clientEnt;
+      const _cart = await cartEnt.save({embed: cartEmbed});
+      const cartJson = _cart.toJson();
+      setCart(cartJson);
+    } catch (e: any) {
+      setError({message: e.errorMessage || e.message || 'Unable to attach client to cart.'});
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {

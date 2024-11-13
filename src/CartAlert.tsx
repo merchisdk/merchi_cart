@@ -1,13 +1,14 @@
-import { useSelector } from 'react-redux';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { Alert } from './components';
-import { closeAlert } from './store';
 import { useCartContext } from './CartProvider';
 
 function CartAlert() {
-  const { classNameBtnClose } = useCartContext();
-  const { alert } = useSelector((s: any) => s.stateCartAlert);
+  const {
+    alert,
+    classNameBtnClose,
+    setAlert,
+  } = useCartContext();
   const { icon, message, show, title } = alert;
   return (
     <>
@@ -21,7 +22,7 @@ function CartAlert() {
             className={classNameBtnClose}
             data-bs-dismiss="alert"
             aria-label="Close"
-            onClick={closeAlert}
+            onClick={() => setAlert({...alert, show: false})}
           >
             <FontAwesomeIcon icon={faTimes} />
           </button>

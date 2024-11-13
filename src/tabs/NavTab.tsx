@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { sliceCart } from '../slices/sliceCart';
 import { useCartContext } from '../CartProvider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -12,16 +10,16 @@ interface Props {
 }
 
 function NavTab({ disabled, icon, name, tabId }: Props) {
-  const dispatch = useDispatch();
   const {
+    activeTabIndex,
     classNameCartTabItem,
     classNameCartTabItemLink,
+    setActiveTabIndex,
   } = useCartContext();
-  const { activeTab } = useSelector((s: any) => s.stateCart);
   function toggle() {
-    dispatch(sliceCart.actions.setActiveTab(tabId));
+    setActiveTabIndex(tabId);
   }
-  const active = activeTab === tabId;
+  const active = activeTabIndex === tabId;
   return (
     <div className={classNameCartTabItem}>
       <button

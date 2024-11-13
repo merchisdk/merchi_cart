@@ -1,17 +1,19 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import { Merchi } from 'merchi_sdk_ts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch, faTags, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useCartContext } from '../CartProvider';
-import { actionPatchCart, getCartToken } from '../store';
 import Title from './CartTitle';
 import { makeCart, makeDiscountItem } from '../utilities/cart';
+import { cartEmbed } from '../utilities/helpers';
+import { getCartCookieToken } from '../utilities/cookie';
 
 export default function DiscountInputGroup() {
-  const { cart } = useSelector((s: any) => s.stateCart);
   const {
+    alertError,
+    cart,
+    setCart,
     discountButtonText = 'Apply',
     discountClassName = 'merchi-discount-group-container',
     discountClassNameButton = 'btn btn-primary',
@@ -24,6 +26,7 @@ export default function DiscountInputGroup() {
     discountClassNameListItems = 'list-group',
     discountClassNameMainContainer,
     discountShowAppliedItems,
+    domainId,
   } = useCartContext();
   const { discountItems = [] } = cart;
   const defaultCodes = discountItems.map((i: any) => i.code).join(',');
@@ -48,11 +51,20 @@ export default function DiscountInputGroup() {
     }
   };
 
+  async function actionPatchCart(cartEnt: any) {
+    try {
+      const cart = await cartEnt.save({embed: cartEmbed});
+      setCart(cart.toJson());
+    } catch (e: any) {
+      alertError(e.errorMessage || e.message || 'nknown server error.');
+    }
+  }
+
   async function validateCodes(codes: string) {
     const query: Array<any> = [['codes', codes]];
     setLoading(true);
     setError({});
-    const cartToken = await getCartToken();
+    const cartToken = await getCartCookieToken((domainId as string | number));
     try {
       let url = `/carts/${cart.id}/check_discount_code/`;
       const r = await merchi.authenticatedFetch(url, { query });

@@ -1,7 +1,30 @@
 import * as React from 'react';
-import { createContext, ReactNode, useContext, useState } from 'react';
+import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { faCheckCircle, faExclamationTriangle, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
+import { Alert, Tab } from '../types';
+import {
+  getCartShipmentGroupsAndQuotes,
+  makeCart,
+  stripeIsValidAndActive,
+} from './utilities/cart';
+import { cartEmbed } from './utilities/helpers';
+import { initTabs, tabIdItems, tabShipment } from './utilities/tabs';
+import { Merchi } from 'merchi_sdk_ts';
+import { getCartCookie, getCartCookieToken, setCartCookie } from './utilities/cookie';
+import { makeAddress } from './utilities/address';
+import { appendStyleSheetText } from './utilities/helpers';
 
 export interface PropsCart {
+  cart: any;
+  setCart: (cartJson: any) => void;
+  activeTabIndex: number;
+  setActiveTabIndex: (index: number) => void;
+
+  alert: Alert;
+  alertError: (message: string) => void;
+  alertSuccess: (message: string) => void;
+  setAlert: (alert: Alert) => void;
+  cartItem: any;
   classNameAlertError?: string;
   classNameAlertInfo?: string;
   classNameAlertSuccess?: string;
@@ -87,17 +110,62 @@ export interface PropsCart {
   domainId?: number;
   googlePlacesLoaded?: boolean;
   hideHead?: boolean;
+
+  invoiceJson: any;
+  setInvoiceJson: (invoiceJson: any) => void;
+
   includeTheme?: boolean,
   initialiseCart?: boolean;
+
+  cartSettingsInvalid: boolean;
+
+  fetchingCart: boolean;
+  setFetchingCart: (fetchingCart: boolean) => void;
+
+  fetchingShipmentGroups: boolean;
+
+  isCartModalOpen?: boolean;
+  setIsCartModalOpen?: (isOpen: boolean) => void;
   onClickClose?: () => void;
+  toggleCartModal: () => void;
+
   showUserTermsAndConditions?: boolean;
   productFormClassNames?: any;
   apiUrl?: string;
+
+  updateCartShipmentAddress: (addressJson: any) => void;
+
   urlFrontend?: string;
   urlTrackingPage?: string;
+  setCartItem: (cartItem: any) => void;
+
+  tabs: Tab[];
+  setTabs: (tabs: Tab[]) => void;
+
+  clearCart: () => void;
+  closeClearCart: () => void;
+
+  setCartComplete: () => void;
+  refetchCart: () => void;
+
+  loadingTotals: boolean;
+  setLoadingTotals: (loading: boolean) => void;
+
+  setActiveTabAndEditDisabled: (nextTab: {tabId: number, tabIndexToSet: number, disabled: boolean}) => void;
+  loading: boolean;
 }
 
 const CartContext = createContext<PropsCart>({
+  cart: {},
+  setCart: console.log,
+  activeTabIndex: 0,
+  setActiveTabIndex: console.log,
+
+  alert: ({} as Alert),
+  alertError: console.log,
+  alertSuccess: console.log,
+  setAlert: console.log,
+  cartItem: {},
   classNameAlertError: undefined,
   classNameAlertInfo: undefined,
   classNameAlertSuccess: undefined,
@@ -181,19 +249,53 @@ const CartContext = createContext<PropsCart>({
   domainId: undefined,
   googlePlacesLoaded: false,
   hideHead: false,
+
+  invoiceJson: {},
+  setInvoiceJson: console.log,
+
   includeTheme: false,
   initialiseCart: true,
+
+  cartSettingsInvalid: false,
+
+  fetchingCart: false,
+  setFetchingCart: console.log,
+
+  fetchingShipmentGroups: false,
+
+  isCartModalOpen: false,
+  setIsCartModalOpen: console.log,
   onClickClose: undefined,
+  toggleCartModal: console.log,
+
   productFormClassNames: {},
   showUserTermsAndConditions: undefined,
   apiUrl: undefined,
+
+  updateCartShipmentAddress: console.log,
+
   urlFrontend: undefined,
   urlTrackingPage: undefined,
+  setCartItem: console.log,
+  tabs: [tabShipment],
+  setTabs: console.log,
+
+  clearCart: console.log,
+  closeClearCart: console.log,
+
+  setCartComplete: console.log,
+  refetchCart: console.log,
+
+  loadingTotals: false,
+  setLoadingTotals: console.log,
+  setActiveTabAndEditDisabled: console.log,
+  loading: false,
 });
 
 export const useCartContext = () => useContext(CartContext);
 
 interface PropsCartProvider {
+  cart?: any;
   children: ReactNode;
   classNameAlertError?: string;
   classNameAlertInfo?: string;
@@ -280,6 +382,10 @@ interface PropsCartProvider {
   hideHead?: boolean;
   includeTheme?: boolean;
   initialiseCart?: boolean;
+
+  isCartModalOpen?: boolean;
+  setIsCartModalOpen?: (isOpen: boolean) => void;
+
   onClickClose?: () => void;
   productFormClassNames?: any;
   showUserTermsAndConditions?: boolean;
@@ -289,6 +395,7 @@ interface PropsCartProvider {
 }
 
 const CartProvider = ({
+  cart: initCart = {},
   children,
   classNameAlertError = 'alert-danger',
   classNameAlertInfo = 'alert-info',
@@ -374,13 +481,31 @@ const CartProvider = ({
   hideHead = false,
   includeTheme = false,
   initialiseCart = true,
+
+  isCartModalOpen = false,
+  setIsCartModalOpen = console.log,
   onClickClose,
+
   productFormClassNames = {},
   showUserTermsAndConditions = true,
   apiUrl = 'https://api.merchi.co/v6/',
   urlFrontend = 'https://merchi.co/',
   urlTrackingPage,
 }: PropsCartProvider) => {
+  const merchi = new Merchi();
+  const [cart, setCart] = useState(({...initCart} as any));
+
+  const toggleCartModal = () => setIsCartModalOpen(!isCartModalOpen);
+
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
+  const [tabs, setTabs] = useState({...initTabs});
+
+  function setActiveTabAndEditDisabled(nextTab: {tabId: number, tabIndexToSet: number, disabled: boolean}) {
+    const { tabId, tabIndexToSet, disabled } = nextTab;
+    tabs[tabIndexToSet].disabled = disabled;
+    setActiveTabIndex(tabId);
+  }
+
   const [googlePlacesLoaded, setGoogleMapsLoaded] = useState(false);
   // Persistent callback setup
   if (typeof window !== 'undefined') {
@@ -390,102 +515,318 @@ const CartProvider = ({
       };
     }
   }
+  const [cartItem, setCartItem] = useState(({} as any));
+
+  const [alert, setAlert] = useState(({
+    icon: faInfoCircle,
+    message: '',
+    show: false,
+    title: '',
+    type: 'info',
+  } as Alert));
+
+  function alertSuccess(message: string) {
+    setAlert({
+      icon: faCheckCircle,
+      message,
+      show: true,
+      title: 'Success!',
+      type: 'success',
+    });
+  }
+
+  function alertError(message: string) {
+    setAlert({
+      icon: faExclamationTriangle,
+      message,
+      show: true,
+      title: 'Error!',
+      type: 'danger',
+    });
+  }
+
+  function closeClearCart() {
+    setActiveTabIndex(tabIdItems);
+  }
+
+  const [fetchingCart, setFetchingCart] = useState(false);
+  const [cartSettingsInvalid, setCartSettingsInvalid] = useState(false);
+
+  // Create cart and save cart cookie
+  async function createCartAndCookie() {
+    setFetchingCart(true);
+    try {
+      const cart = makeCart({domain: {id: domainId}}, true);
+      await cart.create({embed: cartEmbed});
+      const cartJson = await cart.toJson();
+      if (domainId) setCartCookie(Number(domainId), cartJson, undefined);
+      setCart({...cartJson});
+    } catch (e: any) {
+      alertError(e.errorMessage || e.message || 'Unable to fetch cart.');
+    } finally {
+      setFetchingCart(false);
+    }
+  }
+
+  async function getCart(cartIdAndToken: Array<string>) {
+    const id = Number(cartIdAndToken[0]);
+
+    // Set the cart token on the merchi entity
+    if (cartIdAndToken[1]) merchi.cartToken = cartIdAndToken[1];
+    setFetchingCart(true);
+    try {
+      const cart = await merchi.Cart.get(id, {embed: cartEmbed});
+      const cartJson = await cart.toJson();
+      if (stripeIsValidAndActive(cartJson)) {
+        setCart({...cartJson});
+      } else {
+        console.error(
+          `MErhci cart error: Stripe payment ` +
+          `options have not been correctly set up. ` +
+          `Check the company profile payment options tab ` +
+          `to set and edit stripe payment options.`
+        );
+        setCartSettingsInvalid(true);
+      }
+    } catch(e: any){
+      await createCartAndCookie();
+    } finally {
+      setFetchingCart(false);
+    }
+  }
+
+  async function actionGetMerchiCart() {
+    const cartIdAndToken = await getCartCookie((domainId as number));
+    if (cartIdAndToken) {
+      getCart(cartIdAndToken);
+    } else {
+      createCartAndCookie();
+    }
+  }
+
+  async function clearCart() {
+    await createCartAndCookie();
+    closeClearCart();
+  }
+
+  const [fetchingShipmentGroups, setFetchingShipmentGroups] = useState(false);
+  async function updateCartShipmentAddress(address: any) {
+    // Updates the receiver address on cart and fetches new shipment quotes
+    const token = await getCartCookieToken((domainId as string | number));
+    const receiverAddress = makeAddress(address, true);
+    const cartEnt = makeCart(cart, false, token);
+    setFetchingShipmentGroups(true);
+    try {
+      cartEnt.receiverAddress = receiverAddress;
+      await cartEnt.save({embed: cartEmbed});
+      const cartWithGroups = await getCartShipmentGroupsAndQuotes(cartEnt.toJson());
+      const cartJson = cartWithGroups.toJson();
+      setCart({...cartJson});
+    } catch (e: any) {
+      alertError(e.errorMessage || e.message || 'Unable to set address');
+    } finally {
+      setFetchingShipmentGroups(false);
+    }
+  }
+
+  async function getMerchiCartValues() {
+    const { cartItems, currency, subtotalCost, taxAmount, totalCost } = (cart as any);
+    const cartItemsCount = cartItems ? cartItems.length : 0;
+    return {
+      cart,
+      cartItemsCount,
+      currency: currency || '',
+      subtotalCost: subtotalCost || 0,
+      taxAmount: taxAmount || 0,
+      totalCost: totalCost || 0,
+    };
+  }
+
+  async function isMerchiCartFetching() {
+    return fetchingCart;
+  }
+
+  const [loading, setLoading] = useState(false);
+
+  // Fetch the associated cart theme via the cart domain.
+  async function actionFetchTheme() {
+    setLoading(true);
+    try {
+      const domain = await merchi.Domain.get(domainId, {embed: {activeTheme: {mainCss: {}}}});
+      const theme = domain.activeTheme;
+      await appendStyleSheetText(theme.mainCss, () => setLoading(false));
+    } catch (e: any) {
+      alertError(e.errorMessage || e.message || 'Error fetching domain theme.');
+      setLoading(false);
+    }
+  }
+
+  async function setCartComplete() {
+    await createCartAndCookie();
+    location.reload();
+  }
+
+  async function refetchCart() {
+    await actionGetMerchiCart();
+  }
+
+  const [invoiceJson, setInvoiceJson] = useState({});
+
+  const [loadingTotals, setLoadingTotals] = useState(false);
+
+  // Set a global toggle function for cart wrapper
+  if (window && typeof window !== 'undefined') {
+    (window as any).toggleCartOpen = toggleCartModal;
+    (window as any).getCart = () => actionGetMerchiCart();
+    (window as any).getMerchiCartValues = getMerchiCartValues;
+    (window as any).isMerchiCartFetching = isMerchiCartFetching;
+    (window as any).setCartComplete = setCartComplete;
+    (window as any).refetchCart = refetchCart;
+  }
+
+  useEffect(() => {
+    if (domainId) actionGetMerchiCart();
+    if (domainId && includeTheme) actionFetchTheme(); 
+  }, [domainId]);
   return (
     <CartContext.Provider
-      value={
-        {
-          classNameAlertError,
-          classNameAlertInfo,
-          classNameAlertSuccess,
-          classNameAlertWarning,
-          classNameBtn,
-          classNameBtnBack,
-          classNameBtnCartClear,
-          classNameBtnClose,
-          classNameBtnDanger,
-          classNameBtnDefault,
-          classNameBtnDownloadInvoice,
-          classNameBtnEditCartItem,
-          classNameBtnPrimary,
-          classNameBtnLink,
-          classNameBtnNext,
-          classNameBtnNextComplete,
-          classNameBtnPay,
-          classNameCartBody,
-          classNameCartFooter,
-          classNameCartFormCheckbox,
-          classNameCartFormGroup,
-          classNameCartFormGroupButton,
-          classNameCartFormGroupCheckbox,
-          classNameCartFormInput,
-          classNameCartFormLabelCheckbox,
-          classNameCartInputError,
-          classNameCartNav,
-          classNameCartRow,
-          classNameCartRowColumn,
-          classNameCartTabItem,
-          classNameCartTabItemLink,
-          classNameCartToggleIconButton,
-          classNameCartGoogleSuggestList,
-          classNameCartGoogleSuggestListItem,
-          classNameCartHeader,
-          classNameCartItemFeatureImage,
-          classNameCartItemInfo,
-          classNameCartItemInfoCell,
-          classNameCartItemInfoCellRight,
-          classNameCartItemInfoContainer,
-          classNameCartTab,
-          classNameCartTabPanel,
-          classNameCartTitle,
-          classNameCartTotalContainer,
-          classNameCartTotalItem,
-          classNameCartTotaListContainer,
-          classNameCartTotalItemPrice,
-          classNameClearCartContainer,
-          classNameClearCartText,
-          classNameListClientInfo,
-          classNameList,
-          classNameListInline,
-          classNameListContainer,
-          classNameListItem,
-          classNameListItemCartTotals,
-          classNameListUnstyled,
-          classNameLoadingTemplate,
-          classNameLoadingTemplateContainer,
-          classNameNoItems,
-          classNameShipmentOption,
-          classNameTable,
-          classNameTableContainer,
-          classNameVariationsList,
-          customSuccessMessage,
+      value={{
+        cart,
+        setCart,
 
-          discountButtonText,
-          discountClassName,
-          discountClassNameButton,
-          discountClassNameButtonContainer,
-          discountClassNameButtonItemRemove,
-          discountClassNameErrorMessage,
-          discountClassNameInput,
-          discountClassNameInputContainer,
-          discountClassNameListItem,
-          discountClassNameListItems,
-          discountClassNameMainContainer,
-          discountShowAppliedItems,
-          showDiscountCode,
+        cartSettingsInvalid, // if true do show error to user about settings
 
-          domainId,
-          googlePlacesLoaded,
-          hideHead,
-          includeTheme,
-          initialiseCart,
-          onClickClose,
-          productFormClassNames,
-          showUserTermsAndConditions,
-          apiUrl,
-          urlFrontend,
-          urlTrackingPage,
-        } as PropsCart
-      }
+        activeTabIndex,
+        setActiveTabIndex,
+        alert,
+        alertSuccess,
+        alertError,
+        setAlert,
+        cartItem,
+        setCartItem,
+        classNameAlertError,
+        classNameAlertInfo,
+        classNameAlertSuccess,
+        classNameAlertWarning,
+        classNameBtn,
+        classNameBtnBack,
+        classNameBtnCartClear,
+        classNameBtnClose,
+        classNameBtnDanger,
+        classNameBtnDefault,
+        classNameBtnDownloadInvoice,
+        classNameBtnEditCartItem,
+        classNameBtnPrimary,
+        classNameBtnLink,
+        classNameBtnNext,
+        classNameBtnNextComplete,
+        classNameBtnPay,
+        classNameCartBody,
+        classNameCartFooter,
+        classNameCartFormCheckbox,
+        classNameCartFormGroup,
+        classNameCartFormGroupButton,
+        classNameCartFormGroupCheckbox,
+        classNameCartFormInput,
+        classNameCartFormLabelCheckbox,
+        classNameCartInputError,
+        classNameCartNav,
+        classNameCartRow,
+        classNameCartRowColumn,
+        classNameCartTabItem,
+        classNameCartTabItemLink,
+        classNameCartToggleIconButton,
+        classNameCartGoogleSuggestList,
+        classNameCartGoogleSuggestListItem,
+        classNameCartHeader,
+        classNameCartItemFeatureImage,
+        classNameCartItemInfo,
+        classNameCartItemInfoCell,
+        classNameCartItemInfoCellRight,
+        classNameCartItemInfoContainer,
+        classNameCartTab,
+        classNameCartTabPanel,
+        classNameCartTitle,
+        classNameCartTotalContainer,
+        classNameCartTotalItem,
+        classNameCartTotaListContainer,
+        classNameCartTotalItemPrice,
+        classNameClearCartContainer,
+        classNameClearCartText,
+        classNameListClientInfo,
+        classNameList,
+        classNameListInline,
+        classNameListContainer,
+        classNameListItem,
+        classNameListItemCartTotals,
+        classNameListUnstyled,
+        classNameLoadingTemplate,
+        classNameLoadingTemplateContainer,
+        classNameNoItems,
+        classNameShipmentOption,
+        classNameTable,
+        classNameTableContainer,
+        classNameVariationsList,
+        customSuccessMessage,
+
+        discountButtonText,
+        discountClassName,
+        discountClassNameButton,
+        discountClassNameButtonContainer,
+        discountClassNameButtonItemRemove,
+        discountClassNameErrorMessage,
+        discountClassNameInput,
+        discountClassNameInputContainer,
+        discountClassNameListItem,
+        discountClassNameListItems,
+        discountClassNameMainContainer,
+        discountShowAppliedItems,
+        showDiscountCode,
+
+        fetchingCart, // boolean indicator true when fetching cart
+        setFetchingCart,
+
+        fetchingShipmentGroups, // boolean for fetching shipment groups
+
+        domainId,
+        googlePlacesLoaded,
+        hideHead,
+
+        invoiceJson,
+        setInvoiceJson,
+
+        includeTheme,
+        initialiseCart,
+
+        isCartModalOpen, // Control the cart modal open and closed
+        toggleCartModal,
+
+        onClickClose,
+        productFormClassNames,
+        showUserTermsAndConditions,
+        apiUrl,
+
+        updateCartShipmentAddress,
+
+        urlFrontend,
+        urlTrackingPage,
+
+        tabs,
+        setTabs,
+
+        clearCart, // Resets the cart and it's values
+        closeClearCart,
+
+        setCartComplete, // creates a token and cart and then reloads the page
+        refetchCart, // used to refetch the cart
+
+        loading,
+
+        loadingTotals,
+        setLoadingTotals,
+
+        setActiveTabAndEditDisabled,
+      } as PropsCart}
     >
       {children}
     </CartContext.Provider>

@@ -1,4 +1,3 @@
-import { useDispatch, useSelector } from 'react-redux';
 import { useForm } from 'react-hook-form';
 import InputsAddress from './InputsAddress';
 import {
@@ -6,13 +5,15 @@ import {
   InnerContainer,
 } from '../components/containers';
 import { Title } from '../components';
-import {
-  updateCartShipmentAddress,
-  saveCartShipmentAddressAndGoToNextTab,
-} from '../store';
-import { shipmentFormId, sliceCartShipment } from '../slices/sliceCartShipment';
+import { shipmentFormId } from '../utilities/shipment';
 import { faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { useCartContext } from '../CartProvider';
+import { useState } from 'react';
+import { getCartCookieToken } from '../utilities/cookie';
+import { makeAddress } from '../utilities/address';
+import { makeCart } from '../utilities/cart';
+import { cartEmbed } from '../utilities/helpers';
+import { tabIdCheckout } from '../utilities/tabs';
 
 interface PropsAddress {
   defaultAddress?: any;
@@ -37,20 +38,21 @@ interface Props {
   showHeadings?: boolean;
   setCartShipmentAddress: (values: any) => void;
   toggleAddressFields: () => void;
-  updateCartShipmentAddress: (address: any) => void;
 }
 
 function FormShipmentAddressAndNotes({
-    address = {},
-    formId,
-    notes = '',
-    showIcon = true,
-    deliveryNomenclature = false,
-    showHeadings = true,
-    setCartShipmentAddress,
+  address = {},
+  formId,
+  notes = '',
+  showIcon = true,
+  deliveryNomenclature = false,
+  showHeadings = true,
+  setCartShipmentAddress,
+}: Props) {
+  const {
+    classNameCartFormGroup,
     updateCartShipmentAddress,
-  }: Props) {
-  const { classNameCartFormGroup } = useCartContext();
+  } = useCartContext();
   const hookForm = useForm({
     defaultValues: {
       receiverAddress: address,
@@ -72,7 +74,7 @@ function FormShipmentAddressAndNotes({
     const newAddress = addr ? {...addr} : {};
     oldAddresses['receiverAddress'] = newAddress;
     reset(oldAddresses);
-    updateCartShipmentAddress(newAddress)
+    updateCartShipmentAddress(newAddress);
   }
   return (
     <form
@@ -112,19 +114,37 @@ function FormShipmentAddressAndNotes({
 }
 
 export function ActiveFormShipmentAddressAndNotes() {
-  const dispatch = useDispatch();
   const {
-    addressFieldsOpen,
-    receiverAddress,
+    alertError,
+    domainId,
+    cart,
+    setCart,
+    setLoadingTotals,
+    setActiveTabAndEditDisabled,
+  } = useCartContext();
+  const {
+    receiverAddress = {},
     receiverNotes,
-  } = useSelector((s: any) => s.stateCartShipment);
-  function toggleAddressFieldsOpen() {
-    dispatch(sliceCartShipment.actions.toggleAddressFields());
-  }
-  function actionUpdateCartShipmentAddress(address: any) {
-    dispatch(sliceCartShipment.actions.
-      updateShipmentAddress(address));
-    updateCartShipmentAddress();
+  } = cart;
+  const [addressFieldsOpen, setAddressFieldsOpen] = useState(false);
+
+  async function saveCartShipmentAddressAndGoToNextTab(values: any) {
+    const { receiverAddress: address, receiverNotes } = values;
+    const cartToken = await getCartCookieToken((domainId as number));
+    setLoadingTotals(true);
+    const receiverAddress = makeAddress(address, true);
+    const cartEnt = makeCart(cart, false, cartToken);
+    cartEnt.receiverAddress = receiverAddress;
+    cartEnt.receiverNotes = receiverNotes;
+    try {
+      await cartEnt.save({embed: cartEmbed});
+      setCart(c.toJson());
+      setActiveTabAndEditDisabled({tabId: tabIdCheckout, tabIndexToSet: 2, disabled: false});
+    } catch (e: any) {
+      alertError(e.errorMessage || e.message || 'Unable to set shipment address.');
+    } finally {
+      setLoadingTotals(false);
+    }
   }
   return (
     <FormShipmentAddressAndNotes
@@ -133,8 +153,7 @@ export function ActiveFormShipmentAddressAndNotes() {
       formId={shipmentFormId}
       notes={receiverNotes}
       setCartShipmentAddress={saveCartShipmentAddressAndGoToNextTab}
-      toggleAddressFields={toggleAddressFieldsOpen}
-      updateCartShipmentAddress={actionUpdateCartShipmentAddress}
+      toggleAddressFields={() => setAddressFieldsOpen(!addressFieldsOpen)}
     />
   );
 }

@@ -23,9 +23,14 @@ export async function getCookie(name: string, defaultValue: any) {
   }
 }
 
-export async function getCartCookie(domainId: number) {
+export async function getCartCookie(domainId: number | string) {
   const idAndToken: string = await getCookie(`cart-${domainId}`, null);
   return idAndToken ? idAndToken.split(',') : null;
+}
+
+export async function getCartCookieToken(domainId: number | string) {
+  const cartIdAndToken = domainId ? await getCartCookie(Number(domainId)) : undefined;
+  return cartIdAndToken && cartIdAndToken[1] || undefined;
 }
 
 async function setSessionCookie(name: string, value: any, domain?: any) {

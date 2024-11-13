@@ -1,6 +1,6 @@
 import { useSelector } from 'react-redux';
 import CartItemRow from '../components/CartItemRow'
-import { tabIdItems } from '../slices/sliceCart';
+import { tabIdItems } from '../utilities/tabs';
 import {
   CartTableContainer,
   CartTabPanel,
