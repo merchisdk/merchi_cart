@@ -500,10 +500,6 @@ const CartProvider = ({
 
   const [isOpen, setIsOpen] = useState(false);
 
-  const toggleCartModal = () => setIsCartModalOpen
-    ? setIsCartModalOpen(!isCartModalOpen)
-    : setIsOpen(!isOpen);
-
   const [activeTabIndex, setActiveTabIndex] = useState(0);
   const [tabs, setTabs] = useState([...initTabs]);
 
@@ -709,6 +705,22 @@ const CartProvider = ({
     }
   }
 
+  const toggleCartModal = () => {
+    const newIsOpen = setIsCartModalOpen ? !isCartModalOpen : !isOpen;
+  
+    // Toggle the modal state
+    if (setIsCartModalOpen) {
+      setIsCartModalOpen(newIsOpen);
+    } else {
+      setIsOpen(newIsOpen);
+    }
+  
+    // Refetch the cart if the modal is opening
+    if (newIsOpen) {
+      refetchCart();
+    }
+  };
+  
   // Set a global toggle function for cart wrapper
   if (window && typeof window !== 'undefined') {
     (window as any).addCartItem = addCartItem;
