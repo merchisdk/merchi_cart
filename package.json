@@ -1,6 +1,6 @@
 {
   "name": "merchi_cart",
-  "version": "1.0.0-test-c",
+  "version": "1.0.0-test-g",
   "description": "Merchi's cart",
   "source": "src/index.ts",
   "main": "lib/index.js",
@@ -76,7 +76,6 @@
     "@fortawesome/fontawesome-svg-core": "6.4.2",
     "@fortawesome/free-solid-svg-icons": "6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@reduxjs/toolkit": "^2.0.1",
     "@rollup/plugin-image": "^3.0.3",
     "@stripe/react-stripe-js": "^2.3.0",
     "@stripe/stripe-js": "^2.1.6",

@@ -1,8 +1,8 @@
-import { useSelector } from 'react-redux';
+import { useCartContext } from '../CartProvider';
 import SquareCard from '../square/SquareCard';
 
 function FormSquarePayment() {
-  const { cart } = useSelector((s: any) => s.stateCart);
+  const { cart } = useCartContext();
   const company = cart && cart.domain && cart.domain.company;
   return (
     <>

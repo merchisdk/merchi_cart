@@ -5,6 +5,7 @@ import { Alert, Tab } from '../types';
 import {
   getCartShipmentGroupsAndQuotes,
   makeCart,
+  makeCartItem,
   stripeIsValidAndActive,
 } from './utilities/cart';
 import { cartEmbed } from './utilities/helpers';
@@ -13,6 +14,8 @@ import { Merchi } from 'merchi_sdk_ts';
 import { getCartCookie, getCartCookieToken, setCartCookie } from './utilities/cookie';
 import { makeAddress } from './utilities/address';
 import { appendStyleSheetText } from './utilities/helpers';
+import { makeJob } from './utilities/job';
+import { makeProduct } from './utilities/product';
 
 export interface PropsCart {
   cart: any;
@@ -482,8 +485,8 @@ const CartProvider = ({
   includeTheme = false,
   initialiseCart = true,
 
-  isCartModalOpen = false,
-  setIsCartModalOpen = console.log,
+  isCartModalOpen,
+  setIsCartModalOpen,
   onClickClose,
 
   productFormClassNames = {},
@@ -495,10 +498,14 @@ const CartProvider = ({
   const merchi = new Merchi();
   const [cart, setCart] = useState(({...initCart} as any));
 
-  const toggleCartModal = () => setIsCartModalOpen(!isCartModalOpen);
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleCartModal = () => setIsCartModalOpen
+    ? setIsCartModalOpen(!isCartModalOpen)
+    : setIsOpen(!isOpen);
 
   const [activeTabIndex, setActiveTabIndex] = useState(0);
-  const [tabs, setTabs] = useState({...initTabs});
+  const [tabs, setTabs] = useState([...initTabs]);
 
   function setActiveTabAndEditDisabled(nextTab: {tabId: number, tabIndexToSet: number, disabled: boolean}) {
     const { tabId, tabIndexToSet, disabled } = nextTab;
@@ -674,8 +681,37 @@ const CartProvider = ({
 
   const [loadingTotals, setLoadingTotals] = useState(false);
 
+  async function addCartItem(
+    jobJson: any,
+    onSuccess: (cartItem: any) => void,
+    onError: (e: any) => void,
+  ) {
+    setFetchingCart(true);
+    const jobEnt = makeJob(jobJson, true);
+    const cartToken = await getCartCookieToken((domainId as number));
+    const cartEnt = makeCart(cart, false, cartToken);
+    const cartItemEnt = makeCartItem({}, true);
+    const cartItemProduct = makeProduct({ id: (jobEnt.product as any).id });
+    cartItemEnt.cart = cartEnt;
+    cartItemEnt.quantity = jobEnt.quantity;
+    cartItemEnt.product = cartItemProduct;
+    cartItemEnt.variations = jobEnt.variations;
+    cartItemEnt.variationsGroups = jobEnt.variationsGroups;
+    cartItemEnt.taxType = jobEnt.taxType;
+    try {
+      const item = await cartItemEnt.create();
+      const itemJson = await item.toJson();
+      onSuccess(itemJson);
+    } catch(e: any) {
+      onError(e);
+    } finally {
+      setFetchingCart(false);
+    }
+  }
+
   // Set a global toggle function for cart wrapper
   if (window && typeof window !== 'undefined') {
+    (window as any).addCartItem = addCartItem;
     (window as any).toggleCartOpen = toggleCartModal;
     (window as any).getCart = () => actionGetMerchiCart();
     (window as any).getMerchiCartValues = getMerchiCartValues;
@@ -798,7 +834,7 @@ const CartProvider = ({
         includeTheme,
         initialiseCart,
 
-        isCartModalOpen, // Control the cart modal open and closed
+        isCartModalOpen: typeof isCartModalOpen !== 'undefined' ? isCartModalOpen : isOpen, // Control the cart modal open and closed
         toggleCartModal,
 
         onClickClose,

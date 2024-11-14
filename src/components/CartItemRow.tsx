@@ -86,7 +86,6 @@ function VariationsGroupsList({ groups }: VariationsGroupsListProps) {
 interface Props {
   cartItem: any;
   index: number;
-  loading: boolean;
 }
 
 function CartItemRow({ cartItem, index }: Props) {

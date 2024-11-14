@@ -33,6 +33,7 @@ yarn add merchi_cart
   refetchCart - refetches the cart
 
   window functions:
+  addCartItem - takes job json and creates a cart item
   getCart - fetches the cart
   getMerchiCartValues - retruns the following:
     cart
@@ -43,6 +44,7 @@ yarn add merchi_cart
     totalCost
   isMerchiCartFetching - checks the fetching state of the cart
   setCartComplete - Resets the cart
+  toggleCartOpen - open close cart modal
   refetchCart - refetches the cart
 
 

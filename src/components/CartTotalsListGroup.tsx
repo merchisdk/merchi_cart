@@ -1,7 +1,6 @@
 import React from 'react';
 import { useCartContext } from '../CartProvider';
 import { cartRequiresShipment } from '../utilities/cart';
-import { useSelector } from 'react-redux';
 import { CartTotal } from '../CartTotals';
 
 interface RowProps {
@@ -28,12 +27,12 @@ function CostsListItem({ attr, name }: RowProps) {
 
 function CartTotalsListGroup() {
   const {
+    cart,
     classNameCartTotaListContainer,
     classNameCartTotalItemPrice,
     classNameList,
     classNameListItem
   } = useCartContext();
-  const { cart } = useSelector((s: any) => s.stateCart);
   const cartItems = cart.cartItems ? cart.cartItems : [];
 
   return (
