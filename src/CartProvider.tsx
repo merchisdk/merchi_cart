@@ -722,7 +722,7 @@ const CartProvider = ({
   };
   
   // Set a global toggle function for cart wrapper
-  if (window && typeof window !== 'undefined') {
+  if (typeof window !== 'undefined') {
     (window as any).addCartItem = addCartItem;
     (window as any).toggleCartOpen = toggleCartModal;
     (window as any).getCart = () => actionGetMerchiCart();
