@@ -20,6 +20,7 @@ function CartModal(props: Props) {
   const { isCartModalOpen, toggleCartModal } = useCartContext();
   const {
     cartButtonWrappedInContainer = true,
+    footer,
     listContainerClass,
     listItemClass,
     showOpenCartButton = true,
@@ -40,7 +41,9 @@ function CartModal(props: Props) {
         isOpen={isCartModalOpen}
         toggle={toggleCartModal}
       >
-        <CartComponents />
+        <CartComponents
+          footer={footer}
+        />
       </Modal>
     </>
   );

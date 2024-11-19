@@ -4,7 +4,7 @@ import {
   faMapMarkerAlt,
   faShoppingCart,
 } from '@fortawesome/free-solid-svg-icons';
-import { Tab } from '../../types';
+import { Tab } from '../types';
 
 export const tabIdClearCart = -2;
 export const tabIdItem = -1;

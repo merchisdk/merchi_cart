@@ -116,6 +116,7 @@ yarn add merchi_cart
 | `classNameVariationsList`                     | `string?`  | `"list-unstyled list-inline"`                                               | `Class for variation info`            |
 | `customSuccessMessage`                        | `string?`  | `undefined`                                                                 | `A message to display on payment success` |
 | `domainId`                                    | `number`   | `undefined`                                                                 | `The merchi domain/store id for the cart` |
+| `footer`                                      | `ReactElement`| `undefined`                                                              | `A customer footer component` |
 | `hideHead`                                    | `boolean`  | `false`                                                                     | `hides the cart head title and close` |
 | `includeTheme`                                | `boolean?` | `false`                                                                     | `If true will fetch and apply the store theme to the page` |
 | `initialiseCart`                              | `boolean?` | `true`                                                                      | `If true will initial fetch cart and set cart function on window`|
@@ -124,6 +125,7 @@ yarn add merchi_cart
 | `isCartModalOpen`                             | `boolean`  | `false`                                                                     | `a boolean value to control the cart modal open/closed`|
 | `productFormClassNames`                       | `obj`      | `{}`                                                                        | `An object to be passsed to the merchi_product_form `|
 | `showUserTermsAndConditions`                  | `boolean?` | `true`                                                                      | `Display the user t&cs for Merchi`    |
+| `showCartItemInfo`                  | `boolean?` | `true`                                                                      | `Will display the cart item info in the cart items table`|
 | `apiUrl`                                      | `string?`  | `'https://api.merchi.co/v6/'`                                               | `URL to connect to the Merchi API`    |
 | `urlFrontend`                                 | `string?`  | `'https://merchi.co/'`                                                      | `URL to redirect users to a frontend` |
 | `urlTrackingPage`                             | `string?`  | `undefined`                                                                 | `URL used on the thankyou page for tracking`|

@@ -5,6 +5,8 @@ import { useCartContext } from "../CartProvider";
 import pngProductNotFound from "../assets/product-not-found.png";
 import { makeCart, makeCartShipmentQuote } from "../utilities/cart";
 import { cartEmbed } from "../utilities/helpers";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheckSquare, faSquare } from "@fortawesome/free-solid-svg-icons";
 
 function NoCartShipmentOptionsFound() {
   const { classNameNoItems } = useCartContext();
@@ -86,8 +88,13 @@ interface ShipmentOptionProps {
 }
 
 function ShipmentQuote({ groupIndex, quote }: ShipmentOptionProps) {
-  const { alertError, cart, classNameListItem, setLoadingTotals, setCart } =
-    useCartContext();
+  const {
+    alertError,
+    cart,
+    classNameListItem,
+    setLoadingTotals,
+    setCart,
+  } = useCartContext();
   const { shipmentGroups = [] } = cart;
   const selectedQuotes = shipmentGroups.map((g: any) => g.selectedQuote);
   const [isSelected, setIsSelected] = useState(
@@ -113,7 +120,6 @@ function ShipmentQuote({ groupIndex, quote }: ShipmentOptionProps) {
       setLoadingTotals(false);
     }
   }
-  const icon = isSelected ? "far fa-check-square" : "far fa-square";
   return (
     <div
       className={classNameListItem}
@@ -129,7 +135,7 @@ function ShipmentQuote({ groupIndex, quote }: ShipmentOptionProps) {
       >
         <ShipmentOptionInfo quote={quote} />
         <div>
-          <i className={icon} />
+          <FontAwesomeIcon icon={isSelected ? faCheckSquare : faSquare} />
         </div>
       </div>
     </div>
@@ -158,7 +164,7 @@ function ShipmentGroupCard({ group, groupIndex }: Props) {
         <div className={classNameList}>
           {quotes.map((q: any, i: number) => (
             <ShipmentQuote
-              key={`${i}-group`}
+              key={`${i}-group-quote`}
               quote={q}
               groupIndex={groupIndex}
             />

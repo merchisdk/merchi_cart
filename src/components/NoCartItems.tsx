@@ -7,11 +7,7 @@ function NoCartItems() {
   return (
     <div className={classNameNoItems}>
       <img
-        src={
-          (pngProductNotFound && "src" in pngProductNotFound
-            ? pngProductNotFound.src
-            : pngProductNotFound) || ""
-        }
+        src={pngProductNotFound?.src || pngProductNotFound || ''}
         alt="Cart items not found"
         width={276}
         height={215}

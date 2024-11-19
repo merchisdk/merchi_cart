@@ -123,7 +123,7 @@ export function ActiveFormShipmentAddressAndNotes() {
     cartEnt.receiverNotes = receiverNotes;
     try {
       await cartEnt.save({ embed: cartEmbed });
-      setCart(c.toJson()); // Update cart context
+      setCart(cartEnt.toJson()); // Update cart context
       setActiveTabAndEditDisabled({
         tabId: tabIdCheckout,
         tabIndexToSet: 2,

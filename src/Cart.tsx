@@ -30,7 +30,13 @@ import {
 } from './utilities/tabs';
 import './styles/globals.css';
 
-export function CartComponents() {
+interface Props {
+  footer?: React.ReactElement;
+}
+
+export function CartComponents({
+  footer
+}: Props) {
   const {
     activeTabIndex,
     cart,
@@ -58,11 +64,13 @@ export function CartComponents() {
           {![tabIdItem, tabIdClearCart, tabIdPaymentSuccess].includes(activeTabIndex) &&
             <>
               {activeTabIndex !== tabIdCheckout && (<CartTotals />)}
-              <CartFooter>
-                <ButtonBack />
-                <ButtonClearCart />
-                <ButtonNextDynamic />
-              </CartFooter>
+              {footer || (
+                <CartFooter>
+                  <ButtonBack />
+                  <ButtonClearCart />
+                  <ButtonNextDynamic />
+                </CartFooter>
+              )}
             </>
           }
         </div>
@@ -74,7 +82,7 @@ export function CartComponents() {
 export default function Cart(props: PropsCart) {
   return (
     <CartProvider {...props}>
-      <CartComponents />
+      <CartComponents footer={props.footer} />
     </CartProvider>
   );
 }

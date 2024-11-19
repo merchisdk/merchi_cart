@@ -72,8 +72,8 @@ function PanelCartShipment() {
                     group={group}
                     groupIndex={index}
                     key={`${index}-shipment-group`}
-                  />)
-                }
+                  />
+                )}
               </InnerContainer>
             </CheckoutContainer>
           )}

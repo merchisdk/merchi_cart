@@ -8,6 +8,7 @@ import { Button } from '../buttons';
 import { useCartContext } from '../CartProvider';
 import { makeCart } from '../utilities/cart';
 import { cartEmbed } from '../utilities/helpers';
+import { tabIdItem } from '../utilities/tabs';
 import { cartItemsNeedShipment } from '../utilities/shipment';
 import {
   cartHasShippmentGroupsAndAllHaveSelectedGroups,
@@ -103,9 +104,12 @@ function CartItemRow({ cartItem, index }: Props) {
     classNameCartItemInfoCellRight,
     classNameCartItemInfoContainer,
 
+    setActiveTabIndex,
     setCartItem,
     tabs,
     setTabs,
+
+    showCartItemInfo,
   } = useCartContext();
   const {
     product,
@@ -154,25 +158,27 @@ function CartItemRow({ cartItem, index }: Props) {
   }
   return (
     <tr>
-      <th scope='row' className={classNameCartItemInfoCell}>
+      <td scope='row' className={classNameCartItemInfoCell}>
         <img
           src={productFeatureImageUrl(product)}
           alt={name}
           width='70'
           className={classNameCartItemFeatureImage}
         />
-        <div className={classNameCartItemInfoContainer}>
-          <div className={classNameCartItemInfo}>
-            <h5 style={{display: 'inline'}}>
-              {name}
-            </h5>
-            {variations && <VariationList variations={variations} />}
+        {showCartItemInfo && (
+          <div className={classNameCartItemInfoContainer}>
+            <div className={classNameCartItemInfo}>
+              <h5 style={{display: 'inline'}}>
+                {name}
+              </h5>
+              {variations && <VariationList variations={variations} />}
+            </div>
+            <div className={classNameCartItemInfo}>
+              {variationsGroups && <VariationsGroupsList groups={variationsGroups} />}
+            </div>
           </div>
-          <div className={classNameCartItemInfo}>
-            {variationsGroups && <VariationsGroupsList groups={variationsGroups} />}
-          </div>
-        </div>
-      </th>
+        )}
+      </td>
       <td className={classNameCartItemInfoCellRight}>
         <strong>{quantity}</strong>
       </td>
@@ -182,7 +188,10 @@ function CartItemRow({ cartItem, index }: Props) {
       <td className={classNameCartItemInfoCellRight}>
         <Button
           className={classNameBtnLink}
-          onClick={() => setCartItem(cartItem)}
+          onClick={() => {
+            setCartItem({...cartItem});
+            setActiveTabIndex(tabIdItem);
+          }}
         >
           <FontAwesomeIcon icon={faEdit} />
         </Button>

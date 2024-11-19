@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
 import { faCheckCircle, faExclamationTriangle, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
-import { Alert, Tab } from '../types';
+import { Alert, Tab } from './types';
 import {
   getCartShipmentGroupsAndQuotes,
   makeCart,
@@ -111,6 +111,9 @@ export interface PropsCart {
   showDiscountCode?: boolean;
 
   domainId?: number;
+
+  footer?: React.ReactElement;
+
   googlePlacesLoaded?: boolean;
   hideHead?: boolean;
 
@@ -132,6 +135,7 @@ export interface PropsCart {
   onClickClose?: () => void;
   toggleCartModal: () => void;
 
+  showCartItemInfo?: boolean;
   showUserTermsAndConditions?: boolean;
   productFormClassNames?: any;
   apiUrl?: string;
@@ -272,6 +276,7 @@ const CartContext = createContext<PropsCart>({
   toggleCartModal: console.log,
 
   productFormClassNames: {},
+  showCartItemInfo: undefined,
   showUserTermsAndConditions: undefined,
   apiUrl: undefined,
 
@@ -391,6 +396,7 @@ interface PropsCartProvider {
 
   onClickClose?: () => void;
   productFormClassNames?: any;
+  showCartItemInfo?: boolean;
   showUserTermsAndConditions?: boolean;
   apiUrl?: string;
   urlFrontend?: string;
@@ -491,6 +497,7 @@ const CartProvider = ({
 
   productFormClassNames = {},
   showUserTermsAndConditions = true,
+  showCartItemInfo = true,
   apiUrl = 'https://api.merchi.co/v6/',
   urlFrontend = 'https://merchi.co/',
   urlTrackingPage,
@@ -869,6 +876,8 @@ const CartProvider = ({
         refetchCart, // used to refetch the cart
 
         loading,
+
+        showCartItemInfo,
 
         loadingTotals,
         setLoadingTotals,
