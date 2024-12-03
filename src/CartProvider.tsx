@@ -155,6 +155,8 @@ export interface PropsCart {
   setCartComplete: () => void;
   refetchCart: () => void;
 
+  createCartAndCookie: (callback?: () => void) => void;
+
   loadingTotals: boolean;
   setLoadingTotals: (loading: boolean) => void;
 
@@ -293,6 +295,7 @@ const CartContext = createContext<PropsCart>({
 
   setCartComplete: console.log,
   refetchCart: console.log,
+  createCartAndCookie: console.log,
 
   loadingTotals: false,
   setLoadingTotals: console.log,
@@ -393,6 +396,7 @@ interface PropsCartProvider {
 
   isCartModalOpen?: boolean;
   setIsCartModalOpen?: (isOpen: boolean) => void;
+  createCartAndCookie: (callback?: () => void) => void;
 
   onClickClose?: () => void;
   productFormClassNames?: any;
@@ -563,7 +567,7 @@ const CartProvider = ({
   const [cartSettingsInvalid, setCartSettingsInvalid] = useState(false);
 
   // Create cart and save cart cookie
-  async function createCartAndCookie() {
+  async function createCartAndCookie(callback?: () => void) {
     setFetchingCart(true);
     try {
       const cart = makeCart({domain: {id: domainId}}, true);
@@ -571,6 +575,7 @@ const CartProvider = ({
       const cartJson = await cart.toJson();
       if (domainId) setCartCookie(Number(domainId), cartJson, undefined);
       setCart({...cartJson});
+      if (callback) callback();
     } catch (e: any) {
       alertError(e.errorMessage || e.message || 'Unable to fetch cart.');
     } finally {
@@ -614,8 +619,9 @@ const CartProvider = ({
     }
   }
 
-  async function clearCart() {
+  async function clearCart(callback?: () => void) {
     await createCartAndCookie();
+    if (callback) callback();
     closeClearCart();
   }
 
@@ -737,6 +743,7 @@ const CartProvider = ({
     (window as any).isMerchiCartFetching = isMerchiCartFetching;
     (window as any).setCartComplete = setCartComplete;
     (window as any).refetchCart = refetchCart;
+    (window as any).createCartAndCookie = createCartAndCookie;
   }
 
   useEffect(() => {
@@ -874,6 +881,7 @@ const CartProvider = ({
 
         setCartComplete, // creates a token and cart and then reloads the page
         refetchCart, // used to refetch the cart
+        createCartAndCookie, // creates a new cart and cookie
 
         loading,
 

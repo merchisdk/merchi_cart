@@ -17,7 +17,7 @@ function cleanVariation(variation: any) {
   const { variationField = {} } = variation;
   return {
     ...variation,
-    id: variation.id,
+    id: undefined,
     value: variation.value,
     variationField: {id: variationField.id},
     variationFiles: variation.variationFiles.map((f: any) => ({id: f.id})),
@@ -25,9 +25,9 @@ function cleanVariation(variation: any) {
 }
 
 function cleanVariationGroups(variationsGroup: any) {
-  const { id, quantity = 0, variations = [] } = variationsGroup;
+  const { quantity = 0, variations = [] } = variationsGroup;
   return {
-    id,
+    idL: undefined,
     quantity,
     variations: variations?.map(cleanVariation),
   };
@@ -102,6 +102,10 @@ function PanelEditCartItem({ cart }: Props) {
   function onSubmit(jobJson: any) {
     actionCartItemEdit(jobJson);
   }
+  const cleanCartItem = {
+    ...cartItem,
+    id: undefined,
+  };
   return (
     <CartTabPanel tabId={tabIdItem}>
       <CartBody style={{padding: '2rem'}}>
@@ -109,7 +113,7 @@ function PanelEditCartItem({ cart }: Props) {
           <MerchiProductForm
             apiUrl={apiUrl}
             isCartItem={true}
-            initJob={cartItem}
+            initJob={{...cleanCartItem}}
             initProduct={cartItem.product}
             onSubmit={onSubmit}
             productFormId={formId}

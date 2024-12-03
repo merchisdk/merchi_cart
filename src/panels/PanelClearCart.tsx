@@ -35,7 +35,7 @@ function PanelClearCart() {
             <p>
               <Button
                 className={classNameBtnDanger}
-                onClick={clearCart}
+                onClick={() => clearCart()}
               >
                 Yes, clear cart
               </Button>

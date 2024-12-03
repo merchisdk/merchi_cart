@@ -31,6 +31,7 @@ yarn add merchi_cart
   context functions:
   setCartComplete - Resets the cart
   refetchCart - refetches the cart
+  createCartAndCookie = clears and resets the cart with a new cookie
 
   window functions:
   addCartItem - takes job json and creates a cart item
@@ -46,6 +47,7 @@ yarn add merchi_cart
   setCartComplete - Resets the cart
   toggleCartOpen - open close cart modal
   refetchCart - refetches the cart
+  createCartAndCookie = clears and resets the cart with a new cookie
 
 
 ### Props
