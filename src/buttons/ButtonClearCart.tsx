@@ -1,14 +1,13 @@
 import { useCartContext } from '../CartProvider';
-import { tabIdClearCart } from '../slices/sliceCart';
-import { setActiveTab } from '../store';
+import { tabIdClearCart } from '../utilities/tabs';
 import Button from './Button';
 
 function ButtonClearCart() {
-  const { classNameBtnCartClear } = useCartContext();
+  const { classNameBtnCartClear, setActiveTabIndex } = useCartContext();
   return (
     <Button
       className={classNameBtnCartClear}
-      onClick={() => setActiveTab(tabIdClearCart)}
+      onClick={() => setActiveTabIndex(tabIdClearCart)}
     >
       Clear cart
     </Button>

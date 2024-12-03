@@ -1,6 +1,4 @@
 import * as React from 'react';
-import { Provider, useSelector } from 'react-redux';
-import { store } from './store';
 import CartAlert from './CartAlert';
 import CartHeader from './CartHeader';
 import CartNav from './tabs/CartNav';
@@ -29,33 +27,23 @@ import {
   tabIdClearCart,
   tabIdItem,
   tabIdPaymentSuccess,
-} from './slices/sliceCart';
-import {
-  actionFetchTheme,
-  initMerchiCart,
-} from './store';
+} from './utilities/tabs';
 import './styles/globals.css';
 
-export function CartComponents() {
+interface Props {
+  footer?: React.ReactElement;
+}
+
+export function CartComponents({
+  footer
+}: Props) {
   const {
-    domainId,
-    hideHead,
-    includeTheme,
-    initialiseCart
-  } = useCartContext();
-  const {
-    activeTab,
+    activeTabIndex,
+    cart,
     cartSettingsInvalid,
     fetchingCart,
-  } = useSelector((s: any) => s.stateCart);
-  React.useEffect(() => {
-    if (initialiseCart && domainId) {
-      if (includeTheme) {
-        actionFetchTheme(domainId);
-      }
-      initMerchiCart(domainId);
-    }
-  }, [domainId, includeTheme, initialiseCart]);
+    hideHead,
+  } = useCartContext();
   return (
     <>
       {!hideHead && <CartHeader />}
@@ -68,33 +56,33 @@ export function CartComponents() {
       ) : (
         <div className='merchi-tab-pane'>
           <PanelClearCart />
-          <PanelEditCartItem />
+          <PanelEditCartItem cart={cart} />
           <PanelCartItems />
           <PanelCartShipment />
           <PanelClientCheckout />
           <PanelPaymentSuccess />
-          {![tabIdItem, tabIdClearCart, tabIdPaymentSuccess].includes(activeTab) &&
+          {![tabIdItem, tabIdClearCart, tabIdPaymentSuccess].includes(activeTabIndex) &&
             <>
-              {activeTab !== tabIdCheckout && (<CartTotals />)}
-              <CartFooter>
-                <ButtonBack />
-                <ButtonClearCart />
-                <ButtonNextDynamic />
-              </CartFooter>
+              {activeTabIndex !== tabIdCheckout && (<CartTotals />)}
+              {footer || (
+                <CartFooter>
+                  <ButtonBack />
+                  <ButtonClearCart />
+                  <ButtonNextDynamic />
+                </CartFooter>
+              )}
             </>
           }
         </div>
-        )}
+      )}
     </>
   );
 }
 
 export default function Cart(props: PropsCart) {
   return (
-    <Provider store={store}>
-      <CartProvider {...props}>
-        <CartComponents />
-      </CartProvider>
-    </Provider>
+    <CartProvider {...props}>
+      <CartComponents footer={props.footer} />
+    </CartProvider>
   );
 }

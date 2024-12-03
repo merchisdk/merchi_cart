@@ -1,16 +1,7 @@
-import { useEffect } from 'react';
 import { CartComponents } from './Cart';
-import { useSelector } from 'react-redux';
-import {
-  actionFetchTheme,
-  initMerchiCart,
-  store,
-  toggleCartOpen,
-} from './store';
 import { Modal } from 'reactstrap';
 import { ButtonListWrappedOpenCart } from './buttons/ButtonOpenCartMerchiCartModal';
-import CartProvider, { PropsCart } from './CartProvider';
-import { Provider } from 'react-redux';
+import CartProvider, { PropsCart, useCartContext } from './CartProvider';
 
 interface Props extends PropsCart {
   cartButtonWrappedInContainer?: boolean;
@@ -26,26 +17,15 @@ interface Props extends PropsCart {
 }
 
 function CartModal(props: Props) {
-  const { modalCartOpen } = useSelector((s: any) => s.stateCart);
+  const { isCartModalOpen, toggleCartModal } = useCartContext();
   const {
     cartButtonWrappedInContainer = true,
-    includeTheme,
-    initialiseCart,
-    domainId,
+    footer,
     listContainerClass,
     listItemClass,
     showOpenCartButton = true,
     size = 'xl',
   } = props;
-  // Init cart and token on mount
-  useEffect(() => {
-    if (initialiseCart && domainId) {
-      if (includeTheme) {
-        actionFetchTheme(domainId);
-      }
-      initMerchiCart(domainId);
-    }
-  }, [domainId, includeTheme, initialiseCart]);
   return (
     <>
       {showOpenCartButton && (
@@ -58,10 +38,12 @@ function CartModal(props: Props) {
       <Modal
         size={size}
         className='m-auto'
-        isOpen={modalCartOpen}
-        toggle={toggleCartOpen}
+        isOpen={isCartModalOpen}
+        toggle={toggleCartModal}
       >
-        <CartComponents />
+        <CartComponents
+          footer={footer}
+        />
       </Modal>
     </>
   );
@@ -69,11 +51,9 @@ function CartModal(props: Props) {
 
 export function MerchiCartModal(props: Props) {
   return (
-    <Provider store={store}>
-      <CartProvider {...props}>
-        <CartModal {...props} />
-      </CartProvider>
-    </Provider>
+    <CartProvider {...props}>
+      <CartModal {...props} />
+    </CartProvider>
   );
 }
 

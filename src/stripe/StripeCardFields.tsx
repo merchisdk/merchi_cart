@@ -1,5 +1,5 @@
-import * as React from 'react';
-import StripePaymentButtons from './StripePaymentButtons';
+import * as React from "react";
+import StripePaymentButtons from "./StripePaymentButtons";
 import {
   CardCvcElement,
   CardExpiryElement,
@@ -7,13 +7,13 @@ import {
   Elements,
   useStripe,
   useElements,
-} from '@stripe/react-stripe-js';
+} from "@stripe/react-stripe-js";
 import {
   loadStripe,
   PaymentRequestPaymentMethodEvent,
-} from '@stripe/stripe-js';
-import { CARD_ELEMENT_OPTIONS } from './utils';
-import pngStripe from '../assets/stripe-payment-secure.png';
+} from "@stripe/stripe-js";
+import { CARD_ELEMENT_OPTIONS } from "./utils";
+import pngStripe from "../assets/stripe-payment-secure.png";
 
 type DoStripePaymentRequestForButton = (
   stripe: any,
@@ -41,7 +41,7 @@ function InnerForm({
   PaymentButton,
   setLoadingStripePayment,
 }: FormProps) {
-  const inputClass = 'form-control p-t-8 stripe-form-control';
+  const inputClass = "form-control p-t-8 stripe-form-control";
   const stripe = useStripe();
   const elements = useElements();
   function paymentStart(e: any) {
@@ -57,19 +57,19 @@ function InnerForm({
   return (
     <>
       {loadingStripePaymentButtons ? (
-        <div style={{ alignItems: 'center' }}>
+        <div style={{ alignItems: "center" }}>
           <div
             style={{
-              alignItems: 'center',
-              display: 'flex',
-              justifyContent: 'center',
-              marginBottom: '1rem',
-              textAlign: 'center',
+              alignItems: "center",
+              display: "flex",
+              justifyContent: "center",
+              marginBottom: "1rem",
+              textAlign: "center",
             }}
           >
-            <div className='spinner-merchi-small' />
+            <div className="spinner-merchi-small" />
           </div>
-          <p style={{ fontSize: '14px', fontWeight: 600, textAlign: 'center' }}>
+          <p style={{ fontSize: "14px", fontWeight: 600, textAlign: "center" }}>
             Processing payment
           </p>
         </div>
@@ -86,7 +86,7 @@ function InnerForm({
             />
           )}
           <form onSubmit={paymentStart}>
-            <div className='merchi-cart-stripe-input-container'>
+            <div className="merchi-cart-stripe-input-container">
               <CardNumberElement
                 className={inputClass}
                 {...CARD_ELEMENT_OPTIONS}
@@ -100,16 +100,20 @@ function InnerForm({
                 {...CARD_ELEMENT_OPTIONS}
               />
               {error.message && (
-                <div className='merchi-cart-stripe-input-error'>
+                <div className="merchi-cart-stripe-input-error">
                   {error.message}
                 </div>
               )}
               <PaymentButton loading={loadingStripePayment} />
               {pngStripe && (
                 <img
-                  src={pngStripe.src || pngStripe}
+                  src={
+                    (pngStripe && "src" in pngStripe
+                      ? pngStripe.src
+                      : pngStripe) || ""
+                  }
                   width={250}
-                  alt='Secure credit card payments by Stripe'
+                  alt="Secure credit card payments by Stripe"
                 />
               )}
             </div>
@@ -160,17 +164,17 @@ function FormStripeCardFields({
       />
     </Elements>
   ) : (
-    <div style={{ alignItems: 'center' }}>
+    <div style={{ alignItems: "center" }}>
       <div
         style={{
-          alignItems: 'center',
-          display: 'flex',
-          justifyContent: 'center',
-          marginBottom: '1rem',
-          textAlign: 'center',
+          alignItems: "center",
+          display: "flex",
+          justifyContent: "center",
+          marginBottom: "1rem",
+          textAlign: "center",
         }}
       >
-        <div className='spinner-merchi-small' />
+        <div className="spinner-merchi-small" />
       </div>
     </div>
   );

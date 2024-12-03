@@ -1,10 +1,8 @@
-import { useSelector } from 'react-redux';
 import {
   CheckoutContainer,
   InnerContainer,
 } from '../components/containers';
-import { tabIdPaymentSuccess } from '../slices/sliceCart';
-import { doCartComplete } from '../store';
+import { tabIdPaymentSuccess } from '../utilities/tabs';
 import { companyPrimaryAddress } from '../utilities/company';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheckCircle } from '@fortawesome/free-solid-svg-icons';
@@ -16,13 +14,12 @@ function PanelPaymentSuccess() {
   const {
     classNameBtnPrimary,
     customSuccessMessage,
+    fetchingCart,
+    invoiceJson,
+    setCartComplete,
     urlTrackingPage,
   } = useCartContext();
-  const {
-    cartCompleteLoading,
-    invoice,
-  } = useSelector((s: any) => s.stateCartPayment);
-  const { domain, id, unpaid } = invoice;
+  const { domain, id, unpaid } = invoiceJson;
   const email = domain && domain.company ? companyPrimaryAddress(domain.company) : null;
   return (
     <CartTabPanel tabId={tabIdPaymentSuccess}>
@@ -47,10 +44,10 @@ function PanelPaymentSuccess() {
             <p>
               <Button
                 className={classNameBtnPrimary}
-                disabled={cartCompleteLoading}
-                onClick={doCartComplete}
+                disabled={fetchingCart}
+                onClick={setCartComplete}
               >
-                {cartCompleteLoading ? 'Loading...' : 'Done'}
+                {fetchingCart ? 'Loading...' : 'Done'}
               </Button>
             </p>
           </InnerContainer>

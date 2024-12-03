@@ -1,22 +1,22 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux';
+import { useCartContext } from '../CartProvider';
 import {
   tabIdCheckout,
   tabIdItems,
   tabIdPaymentSuccess,
   tabIdShipment,
-} from '../slices/sliceCart';
+} from '../utilities/tabs';
 import ButtonNext from './ButtonNext';
 import ButtonShipmentTabNext from './ButtonShipmentTabNext';
 
 function ButtonNextDynamic() {
-  const { cart, activeTab } = useSelector((s: any) => s.stateCart);
+  const { cart, activeTabIndex } = useCartContext();
   const cartItems = cart.cartItems;
   const hasCartItems = cartItems && cartItems.length;
-  const isCartItemsTabActive = activeTab === tabIdItems;
-  const isShipmentTabActive = activeTab === tabIdShipment;
-  const isCheckoutTabOpen = activeTab === tabIdCheckout;
-  const isPaymentSuccessOpen = activeTab === tabIdPaymentSuccess;
+  const isCartItemsTabActive = activeTabIndex === tabIdItems;
+  const isShipmentTabActive = activeTabIndex === tabIdShipment;
+  const isCheckoutTabOpen = activeTabIndex === tabIdCheckout;
+  const isPaymentSuccessOpen = activeTabIndex === tabIdPaymentSuccess;
   return isCheckoutTabOpen || isPaymentSuccessOpen ? (
     <></>
   ) : isShipmentTabActive ? (

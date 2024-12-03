@@ -1,26 +1,23 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { useCartContext } from '../CartProvider';
 import { generatePublicInvoicePdf } from '../utilities/invoice';
 import { useState } from 'react';
 import { CgSpinner } from 'react-icons/cg';
 import { FaFileInvoiceDollar } from 'react-icons/fa';
-import { alertError } from '../store';
 
 function ButtonInvoiceDownload() {
   const {
+    alertError,
     classNameBtnDownloadInvoice,
     apiUrl,
+    invoiceJson
   } = useCartContext();
-  const {
-    invoice = {},
-  } = useSelector((s: any) => s.stateCartPayment);
-  const { unpaid } = invoice;
+  const { unpaid } = invoiceJson;
   const [loading, setLoading] = useState(false);
   async function generate(receipt?: boolean) {
     setLoading(true);
     try {
-      await generatePublicInvoicePdf((apiUrl as string), invoice, receipt);
+      await generatePublicInvoicePdf((apiUrl as string), invoiceJson, receipt);
       setLoading(false);
     } catch (e: any) {
       alertError(e.message);

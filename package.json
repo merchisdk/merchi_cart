@@ -1,6 +1,6 @@
 {
   "name": "merchi_cart",
-  "version": "0.1.12",
+  "version": "1.1.0",
   "description": "Merchi's cart",
   "source": "src/index.ts",
   "main": "lib/index.js",
@@ -76,7 +76,6 @@
     "@fortawesome/fontawesome-svg-core": "6.4.2",
     "@fortawesome/free-solid-svg-icons": "6.4.2",
     "@fortawesome/react-fontawesome": "^0.2.0",
-    "@reduxjs/toolkit": "^2.0.1",
     "@rollup/plugin-image": "^3.0.3",
     "@stripe/react-stripe-js": "^2.3.0",
     "@stripe/stripe-js": "^2.1.6",
@@ -91,18 +90,17 @@
     "eslint-config-next": "13.4.16",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
-    "merchi_product_form": "1.0.11",
-    "merchi_sdk_js": "^0.0.16",
+    "merchi_product_form": "1.1.0",
+    "merchi_sdk_js": "^0.0.22",
+    "merchi_sdk_ts": "^1.0.52",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.44",
-    "react": "18.2.0",
-    "react-addons-css-transition-group": "^15.6.2",
+    "react": "^18.0.0",
     "react-country-region-selector": "^3.6.1",
-    "react-dom": "18.2.0",
+    "react-dom": "^18.0.0",
     "react-geosuggest": "^2.14.1",
     "react-hook-form": "7.45.4",
     "react-icons": "^4.10.1",
-    "react-redux": "^9.1.0",
     "react-square-web-payments-sdk": "^3.2.1",
     "react-transition": "^1.0.3",
     "react-transition-group": "^4.4.5",
@@ -111,5 +109,11 @@
     "rollup-plugin-babel": "^4.4.0",
     "sass": "^1.70.0",
     "typescript": "^5.1.6"
+  },
+  "overrides": {
+    "react-geosuggest": {
+      "react": "18.2.0",
+      "react-dom": "18.2.0"
+    }
   }
 }

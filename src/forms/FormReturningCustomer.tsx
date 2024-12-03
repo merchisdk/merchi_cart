@@ -1,23 +1,32 @@
-import { useSelector } from 'react-redux';
+import * as React from 'react';
 import { useForm } from 'react-hook-form';
-import { tryReturningCustomer } from '../store';
 import { Button } from '../buttons';
 import InputError from './InputError';
 import { useCartContext } from '../CartProvider';
+import {
+  makeUser,
+  tryReturningCustomerEmail,
+} from '../utilities/user';
+import { makeCart } from '../utilities/cart';
+import { getCartCookieToken } from '../utilities/cookie';
+import { cartEmbed } from '../utilities/helpers';
 
 const emailValidation = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]/i;
 
 function FormReturningCustomer() {
   const {
+    alertError,
+    cart,
     classNameBtnPrimary,
     classNameCartFormGroup,
     classNameCartFormInput,
     classNameCartFormGroupButton,
+    domainId,
+    setCart,
   } = useCartContext();
-  const {
-    returningCustomerError,
-    returningCustomerLoading,
-  } = useSelector((s: any) => s.stateFormReturningCustomer);
+  const [loading, setLoading] = React.useState(false);
+  const [error, setError] = React.useState(({} as any));
+
   const hookForm = useForm({ defaultValues: { emailAddress: '' } });
   const {
     handleSubmit,
@@ -26,8 +35,26 @@ function FormReturningCustomer() {
     register,
   } = hookForm;
   async function submit() {
-    const values = getValues();
-    await tryReturningCustomer(values.emailAddress);
+    setError({});
+    const { emailAddress } = getValues();
+    setLoading(true);
+    try {
+      const user: any = await tryReturningCustomerEmail(emailAddress);
+
+      // patch cart with new user
+      const cartToken = await getCartCookieToken((domainId as number));
+      const clientEnt = makeUser({id: user.id, emailAddresses: [{emailAddress}]});
+      const cartEnt = makeCart({...cart}, false, cartToken);
+      cartEnt.client = clientEnt;
+      const _cart = await cartEnt.save({embed: cartEmbed});
+      const cartJson = _cart.toJson();
+      setCart(cartJson);
+    } catch(e: any) {
+      alertError(e.errorMessage);
+      setError({message: e.errorMessage || e.message || 'Server error.'});
+    } finally {
+      setLoading(false);
+    }
   }
   return (
     <form onSubmit={handleSubmit(submit)}>
@@ -49,15 +76,15 @@ function FormReturningCustomer() {
           which you used previously.
         </small>
         <InputError error={errors.emailAddress} />
-        {returningCustomerError && <InputError error={returningCustomerError} />}
+        {error && <InputError error={error} />}
       </div>
       <div className={classNameCartFormGroupButton}>
         <Button
           className={classNameBtnPrimary}
-          disabled={returningCustomerLoading}
+          disabled={loading}
           type='submit'
         >
-          {returningCustomerLoading ? 'Loading...' : 'Submit'}
+          {loading ? 'Loading...' : 'Submit'}
         </Button>
       </div>
     </form>

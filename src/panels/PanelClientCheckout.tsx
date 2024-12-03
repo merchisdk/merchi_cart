@@ -1,5 +1,4 @@
-import { useSelector } from 'react-redux';
-import { tabIdCheckout } from '../slices/sliceCart';
+import { tabIdCheckout } from '../utilities/tabs';
 import {
   CheckoutContainer,
   InnerContainer,
@@ -19,10 +18,11 @@ import { faCoins, faCreditCard, faUserPlus, faUserTag } from '@fortawesome/free-
 import { useCartContext } from '../CartProvider';
 import DiscountInputGroup from '../components/DiscountInputGroup';
 import CartTotalsListGroup from '../components/CartTotalsListGroup';
+import { cartItemsNeedShipment } from '../utilities/shipment';
 
 function PanelClientCheckout() {
-  const { showDiscountCode } = useCartContext();
-  const { cart, needsShipping } = useSelector((s: any) => s.stateCart);
+  const { cart, showDiscountCode } = useCartContext();
+  const needsShipping = cartItemsNeedShipment(cart);
   const { client, domain } = cart;
   const company = domain && domain.company;
   return (

@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux';
 import { formatCurrency } from './utilities/currency';
 import { cartRequiresShipment } from './utilities/cart';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -12,21 +11,19 @@ interface Props {
 
 export function CartTotal({ attribute }: Props) {
   const {
+    loading,
+    loadingTotals
+  } = useCartContext();
+  const {
     cart,
     fetchingCart,
-    loading,
-  } = useSelector((s: any) => s.stateCart);
-  const {
-    fetchingShipmentGroups,
-    fetchingShipmentQuote,
-  } = useSelector((s: any) => s.stateCartShipment);
+  } = useCartContext();
   const { domain } = cart;
   const company = domain ? domain.company : null;
   const currency = company ? company.defaultCurrency : 'AUD';
   const isLoading =
     fetchingCart ||
-    fetchingShipmentGroups ||
-    fetchingShipmentQuote ||
+    loadingTotals ||
     loading;
   const money = cart[attribute] ? cart[attribute] : 0;
   return (
@@ -67,11 +64,11 @@ function CostsTableRow({ attr, name }: RowProps) {
 
 function CartTotals() {
   const {
+    cart,
     classNameCartTotalContainer,
     classNameCartTotalItemPrice
   } = useCartContext();
-  const { cart } = useSelector((s: any) => s.stateCart);
-  const cartItems = cart.cartItems ? cart.cartItems : [];
+  const cartItems = cart?.cartItems || [];
   return (
     <div className={classNameCartTotalContainer}>
       <Table className='merchi-cart-total-table'>
@@ -80,13 +77,12 @@ function CartTotals() {
             attr='cartItemsTotalCost'
             name='Subtotal'
           />
-          {
-            cartRequiresShipment({ ...cart, cartItems }) &&
-              <CostsTableRow
-                attr='shipmentTotalCost'
-                name='Shipping'
-              />
-          }
+          {cartRequiresShipment({ ...cart, cartItems }) && (
+            <CostsTableRow
+              attr='shipmentTotalCost'
+              name='Shipping'
+            />
+          )}
           <CostsTableRow
             attr='totalCost'
             name='Total'

@@ -1,12 +1,10 @@
 import * as React from 'react';
-import { useSelector } from 'react-redux';
 import { useCartContext } from '../CartProvider';
-import { tabIdPaymentSuccess } from '../slices/sliceCart';
+import { tabIdPaymentSuccess } from '../utilities/tabs';
 import NavTab from './NavTab';
 
 function CartNav() {
-  const { classNameCartNav } = useCartContext();
-  const { tabs } = useSelector((s: any) => s.stateCart);
+  const { classNameCartNav, tabs } = useCartContext();
   return (
     <div className={classNameCartNav}>
       {tabs.filter((tab: any) => tab.tabId !== tabIdPaymentSuccess).

@@ -1,15 +1,15 @@
-import { useSelector } from 'react-redux';
 import CartItemRow from '../components/CartItemRow'
-import { tabIdItems } from '../slices/sliceCart';
+import { tabIdItems } from '../utilities/tabs';
 import {
   CartTableContainer,
   CartTabPanel,
   NoCartItems,
   Table,
 } from '../components';
+import { useCartContext } from '../CartProvider';
 
 function PanelCartItems() {
-  const { cart, deletingCartItemIndex } = useSelector((s: any) => s.stateCart);
+  const { cart } = useCartContext();
   const cartItems = cart.cartItems ? cart.cartItems : [];
   const hasItems = cartItems.length > 0;
   return (
@@ -40,7 +40,6 @@ function PanelCartItems() {
                     key={cartItem.id}
                     cartItem={cartItem}
                     index={index}
-                    loading={deletingCartItemIndex === index}
                   />)
                 }
               </tbody>

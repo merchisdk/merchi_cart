@@ -19,19 +19,7 @@ yarn add merchi_cart
 ```
 
 ### Usage
-  functions:
-  doAddCartItem(jobJson, onSuccess, onError) - Takes Merchi job entity as json, creates a cart item and appends the cart item to the cart.
-  doCartComplete - Resets the cart
-  doToggleCartOpen - Toggles the MerchiCartModal components
-  getMerchiCart - returns the cart
-  getMerchiCartValues - retruns the following:
-    cart
-    cartItemsCount
-    currency
-    subtotalCost
-    taxAmount
-    totalCost
-  isMerchiCartFetching - checks the fetching state of the cart
+  context functions:
 
   components:
   ButtonOpenCart
@@ -40,11 +28,33 @@ yarn add merchi_cart
   MerchiCartModal
   MerchiShoppingCartModal
 
+  context functions:
+  setCartComplete - Resets the cart
+  refetchCart - refetches the cart
+  createCartAndCookie = clears and resets the cart with a new cookie
+
+  window functions:
+  addCartItem - takes job json and creates a cart item
+  getCart - fetches the cart
+  getMerchiCartValues - retruns the following:
+    cart
+    cartItemsCount
+    currency
+    subtotalCost
+    taxAmount
+    totalCost
+  isMerchiCartFetching - checks the fetching state of the cart
+  setCartComplete - Resets the cart
+  toggleCartOpen - open close cart modal
+  refetchCart - refetches the cart
+  createCartAndCookie = clears and resets the cart with a new cookie
+
 
 ### Props
 
 | Name                                          | Type       | Default                                                                     | Description                           |
 |-----------------------------------------------|------------|-----------------------------------------------------------------------------|---------------------------------------|
+| `cart`                                        | `cartJson Object || undefined`| `"{}"`                                                   | `Pass in a cart to init the cart state in the provider`|
 | `classNameAlertError`                         | `string?`  | `"alert alert-danger"`                                                      | `Class for alert error`               |
 | `classNameAlertInfo`                          | `string?`  | `"alert alert-info"`                                                        | `Class for alert info`                |
 | `classNameAlertSuccess`                       | `string?`  | `"alert alert-success"`                                                     | `Class for alert success`             |
@@ -108,12 +118,16 @@ yarn add merchi_cart
 | `classNameVariationsList`                     | `string?`  | `"list-unstyled list-inline"`                                               | `Class for variation info`            |
 | `customSuccessMessage`                        | `string?`  | `undefined`                                                                 | `A message to display on payment success` |
 | `domainId`                                    | `number`   | `undefined`                                                                 | `The merchi domain/store id for the cart` |
+| `footer`                                      | `ReactElement`| `undefined`                                                              | `A customer footer component` |
 | `hideHead`                                    | `boolean`  | `false`                                                                     | `hides the cart head title and close` |
 | `includeTheme`                                | `boolean?` | `false`                                                                     | `If true will fetch and apply the store theme to the page` |
 | `initialiseCart`                              | `boolean?` | `true`                                                                      | `If true will initial fetch cart and set cart function on window`|
 | `onClickClose`                                | `() => void?`| `() => console.log('close merchi cart!')`                                 | `a function to close the cart`        |
+| `setIsCartModalOpen`                          | `(isOpen: boolean) => void?`| `() => console.log('close merchi cart!')`                  | `a function to open/close cart modal wrapper`|
+| `isCartModalOpen`                             | `boolean`  | `false`                                                                     | `a boolean value to control the cart modal open/closed`|
 | `productFormClassNames`                       | `obj`      | `{}`                                                                        | `An object to be passsed to the merchi_product_form `|
 | `showUserTermsAndConditions`                  | `boolean?` | `true`                                                                      | `Display the user t&cs for Merchi`    |
+| `showCartItemInfo`                  | `boolean?` | `true`                                                                      | `Will display the cart item info in the cart items table`|
 | `apiUrl`                                      | `string?`  | `'https://api.merchi.co/v6/'`                                               | `URL to connect to the Merchi API`    |
 | `urlFrontend`                                 | `string?`  | `'https://merchi.co/'`                                                      | `URL to redirect users to a frontend` |
 | `urlTrackingPage`                             | `string?`  | `undefined`                                                                 | `URL used on the thankyou page for tracking`|

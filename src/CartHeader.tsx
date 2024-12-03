@@ -2,13 +2,13 @@ import * as React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faShoppingCart, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useCartContext } from './CartProvider';
-import { toggleCartOpen } from './store';
 
 function CartHeader() {
   const {
     classNameCartHeader,
     classNameBtnClose,
     onClickClose,
+    toggleCartModal,
   } = useCartContext();
   return (
     <div className={classNameCartHeader}>
@@ -17,7 +17,7 @@ function CartHeader() {
         type="button"
         className={classNameBtnClose}
         aria-label="Close"
-        onClick={onClickClose || toggleCartOpen}
+        onClick={onClickClose || toggleCartModal}
       >
         <FontAwesomeIcon icon={faTimes} />
       </button>

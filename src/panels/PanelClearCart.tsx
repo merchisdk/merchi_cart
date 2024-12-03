@@ -1,7 +1,6 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt } from '@fortawesome/free-solid-svg-icons';
-import { doClearCart, closeClearCart } from '../store';
-import { tabIdClearCart } from '../slices/sliceCart'
+import { tabIdClearCart } from '../utilities/tabs';
 import { Button } from '../buttons';
 import { CartBody, CartTabPanel } from '../components';
 import { useCartContext } from '../CartProvider';
@@ -12,6 +11,8 @@ function PanelClearCart() {
     classNameBtnDefault,
     classNameClearCartContainer,
     classNameClearCartText,
+    clearCart,
+    closeClearCart,
    } = useCartContext();
   return (
     <CartTabPanel tabId={tabIdClearCart}>
@@ -34,7 +35,7 @@ function PanelClearCart() {
             <p>
               <Button
                 className={classNameBtnDanger}
-                onClick={doClearCart}
+                onClick={() => clearCart()}
               >
                 Yes, clear cart
               </Button>

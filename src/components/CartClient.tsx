@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { axtionSetCartClient } from '../store';
 import {
   primaryEmail,
   primaryPhone,
@@ -30,10 +29,12 @@ interface Props {
 
 function CartClient({ client }: Props) {
   const {
+    cart,
     classNameBtnDefault,
+    setCart,
   } = useCartContext();
   function clearClient() {
-    axtionSetCartClient(null);
+    setCart({...cart, client: null});
   }
   return (
     <div>
