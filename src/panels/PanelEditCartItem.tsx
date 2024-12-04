@@ -14,13 +14,13 @@ import { makeCartItem } from '../utilities/cart';
 import { getCartCookieToken } from '../utilities/cookie';
 
 function cleanVariation(variation: any) {
-  const { variationField = {} } = variation;
+  const { variationField = {}, variationFiles = [] } = variation;
   return {
     ...variation,
     id: undefined,
     value: variation.value,
     variationField: {id: variationField.id},
-    variationFiles: variation.variationFiles.map((f: any) => ({id: f.id})),
+    variationFiles: variationFiles.map((f: any) => ({id: f.id})),
   };
 }
 
