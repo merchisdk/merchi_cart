@@ -56,7 +56,6 @@ function PanelEditCartItem({ cart }: Props) {
   
   // This action patches the cart item
   async function actionCartItemEdit(cartItemJson: any) {
-    console.log(cartItemJson, 'what is that');
     setLoading(true);
     const cartToken = await getCartCookieToken((domainId as number));
     try {
