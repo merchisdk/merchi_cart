@@ -1,6 +1,6 @@
 {
   "name": "merchi_cart",
-  "version": "1.1.0",
+  "version": "1.1.3",
   "description": "Merchi's cart",
   "source": "src/index.ts",
   "main": "lib/index.js",
@@ -90,7 +90,7 @@
     "eslint-config-next": "13.4.16",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
-    "merchi_product_form": "1.1.0",
+    "merchi_product_form": "1.1.3",
     "merchi_sdk_js": "^0.0.22",
     "merchi_sdk_ts": "^1.0.52",
     "moment": "^2.30.1",
