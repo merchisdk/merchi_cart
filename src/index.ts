@@ -1,4 +1,4 @@
-import Cart from './Cart';
+import Cart, { CartComponents } from './Cart';
 import { MerchiCartModal, MerchiShoppingCartModal } from './modals';
 import { ButtonOpenCart, ButtonListWrappedOpenCart } from './buttons/ButtonOpenCartMerchiCartModal';
 import * as components from './components';
@@ -16,6 +16,7 @@ export {
   ButtonOpenCart,
   ButtonListWrappedOpenCart,
   Cart,
+  CartComponents,
   CartAlert,
   CartHeader,
   CartProvider,
