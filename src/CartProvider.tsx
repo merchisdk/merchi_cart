@@ -162,6 +162,8 @@ export interface PropsCart {
 
   setActiveTabAndEditDisabled: (nextTab: {tabId: number, tabIndexToSet: number, disabled: boolean}) => void;
   loading: boolean;
+
+  getCartShipmentOptions?: () => void;
 }
 
 const CartContext = createContext<PropsCart>({
@@ -301,6 +303,8 @@ const CartContext = createContext<PropsCart>({
   setLoadingTotals: console.log,
   setActiveTabAndEditDisabled: console.log,
   loading: false,
+
+  getCartShipmentOptions: console.log,
 });
 
 export const useCartContext = () => useContext(CartContext);
@@ -405,6 +409,8 @@ interface PropsCartProvider {
   apiUrl?: string;
   urlFrontend?: string;
   urlTrackingPage?: string;
+
+  getCartShipmentOptions: () => void;
 }
 
 const CartProvider = ({
