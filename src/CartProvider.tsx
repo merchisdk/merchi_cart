@@ -645,6 +645,19 @@ const CartProvider = ({
     }
   }
 
+  async function getCartShipmentOptions() {
+    setFetchingShipmentGroups(true);
+    try {
+      const cartWithGroups = await getCartShipmentGroupsAndQuotes(cart);
+      const cartJson = cartWithGroups.toJson();
+      setCart({...cartJson});
+    } catch (e: any) {
+      alertError(e.errorMessage || e.message || 'Unable to fetch shipment options');
+    } finally {
+      setFetchingShipmentGroups(false);
+    }
+  }
+
   async function getMerchiCartValues() {
     const { cartItems, currency, subtotalCost, taxAmount, totalCost } = (cart as any);
     const cartItemsCount = cartItems ? cartItems.length : 0;
@@ -891,6 +904,8 @@ const CartProvider = ({
         setLoadingTotals,
 
         setActiveTabAndEditDisabled,
+
+        getCartShipmentOptions, // refetch of the shipment quote options
       } as PropsCart}
     >
       {children}
