@@ -654,7 +654,10 @@ const CartProvider = ({
   async function getCartShipmentOptions() {
     setFetchingShipmentGroups(true);
     try {
-      const cartWithGroups = await getCartShipmentGroupsAndQuotes(cart);
+      const cartWithGroups = await merchi.authenticatedFetch(
+        `/generate-cart-shipment-quotes/${cart.id}/`,
+        {method: 'GET'}
+      );
       const cartJson = cartWithGroups.toJson();
       setCart({...cartJson});
     } catch (e: any) {
