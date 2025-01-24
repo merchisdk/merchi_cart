@@ -7,6 +7,7 @@ import { makeCart, makeCartShipmentQuote } from "../utilities/cart";
 import { cartEmbed } from "../utilities/helpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckSquare, faSquare } from "@fortawesome/free-solid-svg-icons";
+import { getCartCookieToken } from "../../esm/utilities";
 
 function NoCartShipmentOptionsFound() {
   const { classNameNoItems } = useCartContext();
@@ -83,43 +84,13 @@ function ShipmentOptionInfo({ quote }: PropsShipmentOptionInfo) {
 }
 
 interface ShipmentOptionProps {
-  groupIndex: number;
+  isSelected: boolean;
+  doClick: () => void;
   quote: any;
 }
 
-function ShipmentQuote({ groupIndex, quote }: ShipmentOptionProps) {
-  const {
-    alertError,
-    cart,
-    classNameListItem,
-    setLoadingTotals,
-    setCart,
-  } = useCartContext();
-  const { shipmentGroups = [] } = cart;
-  const selectedQuotes = shipmentGroups.map((g: any) => g.selectedQuote);
-  const [isSelected, setIsSelected] = useState(
-    selectedQuotes[groupIndex].id === quote.id
-  );
-  async function doClick() {
-    setIsSelected(!isSelected);
-    try {
-      setLoadingTotals(true);
-      const cartEnt = makeCart({ ...cart }, false);
-      const cartShipmentQuote = makeCartShipmentQuote({ ...quote });
-      (cartEnt as any).shipmentGroups[groupIndex].selectedQuote =
-        cartShipmentQuote;
-      await cartEnt.save({ embed: cartEmbed });
-      const cartJson = await cartEnt.toJson();
-      setCart({ ...cartJson });
-    } catch (e: any) {
-      alertError(
-        e.errorMessage || e.message || "Unable to select shipment option."
-      );
-      setIsSelected(!isSelected);
-    } finally {
-      setLoadingTotals(false);
-    }
-  }
+function ShipmentQuote({ isSelected, doClick, quote }: ShipmentOptionProps) {
+  const { classNameListItem } = useCartContext();
   return (
     <div
       className={classNameListItem}
@@ -148,8 +119,26 @@ interface Props {
 }
 
 function ShipmentGroupCard({ group, groupIndex }: Props) {
-  const { classNameList, classNameListInline } = useCartContext();
+  const { alertError, cart, classNameList, classNameListInline, domainId, setCart } = useCartContext();
   const { cartItems, quotes = [] } = group;
+  const [selectedQuote, setSelectedQuote] = useState(group.selectedQuote || {});
+  async function doClick(groupIndex: number, quote: any) {
+    setSelectedQuote(quote);
+    try {
+      const token = await getCartCookieToken((domainId as string | number));
+      const cartEnt = makeCart({ ...cart }, false, token);
+      const cartShipmentQuote = makeCartShipmentQuote({ ...quote });
+      (cartEnt as any).shipmentGroups[groupIndex].selectedQuote = cartShipmentQuote;
+      await cartEnt.save({ embed: cartEmbed });
+      const cartJson = await cartEnt.toJson();
+      setCart({ ...cart, ...cartJson });
+    } catch (e: any) {
+      alertError(
+        e.errorMessage || e.message || "Unable to select shipment option."
+      );
+      setSelectedQuote({});
+    }
+  }
   return (
     <div>
       <ul className={classNameListInline}>
@@ -166,7 +155,8 @@ function ShipmentGroupCard({ group, groupIndex }: Props) {
             <ShipmentQuote
               key={`${i}-group-quote`}
               quote={q}
-              groupIndex={groupIndex}
+              isSelected={(selectedQuote as any)?.id === q.id}
+              doClick={() => doClick(groupIndex, q)}
             />
           ))}
         </div>

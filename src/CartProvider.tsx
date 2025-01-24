@@ -636,14 +636,23 @@ const CartProvider = ({
     // Updates the receiver address on cart and fetches new shipment quotes
     const token = await getCartCookieToken((domainId as string | number));
     const receiverAddress = makeAddress(address, true);
-    const cartEnt = makeCart(cart, false, token);
+    let cartEnt = makeCart(cart, false, token);
     setFetchingShipmentGroups(true);
     try {
       cartEnt.receiverAddress = receiverAddress;
-      await cartEnt.save({embed: cartEmbed});
-      const cartWithGroups = await getCartShipmentGroupsAndQuotes(cartEnt.toJson());
-      const cartJson = cartWithGroups.toJson();
-      setCart({...cartJson});
+      cartEnt = await cartEnt.save({embed: cartEmbed});
+      const cartJson = cartEnt.toJson();
+      const query: Array<any> = [];
+      query.push(['cart_token', cart.token]);
+      const cartWithShipmentGroups = await merchi.authenticatedFetch(
+        `/generate-cart-shipment-quotes/${cart.id}/`,
+        {method: 'GET', query}
+      );
+
+      setCart({
+        ...cartJson,
+        shipmentGroups: cartWithShipmentGroups.shipmentGroups || []
+      });
     } catch (e: any) {
       alertError(e.errorMessage || e.message || 'Unable to set address');
     } finally {
@@ -654,12 +663,16 @@ const CartProvider = ({
   async function getCartShipmentOptions() {
     setFetchingShipmentGroups(true);
     try {
+      const query: Array<any> = [];
+      query.push(['cart_token', cart.token]);
       const cartWithGroups = await merchi.authenticatedFetch(
         `/generate-cart-shipment-quotes/${cart.id}/`,
-        {method: 'GET'}
+        {method: 'GET', query}
       );
-      const cartJson = cartWithGroups.toJson();
-      setCart({...cartJson});
+      setCart({
+        ...cart,
+        shipmentGroups: cartWithGroups.shipmentGroups || []
+      });
     } catch (e: any) {
       alertError(e.errorMessage || e.message || 'Unable to fetch shipment options');
     } finally {
