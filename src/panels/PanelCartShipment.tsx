@@ -38,10 +38,10 @@ function PanelCartShipment() {
               <Title
                 icon={faTruck}
                 title={
-                  shipmentGroups.length > 1 ?
-                    'Select shipment methods'
-                  : shipmentGroups.length ?
-                    'Select a shipment method'
+                  shipmentGroups.length > 1
+                  ? 'Select shipment methods'
+                  : shipmentGroups.length
+                  ? 'Select a shipment method'
                   : ''
                 }
               />
