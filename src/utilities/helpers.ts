@@ -188,7 +188,9 @@ export const cartEmbed: any = {
     variationsGroups: variationsGroupsEmbed,
   },
   client: {
-    emailAddresses: {}, profilePicture: {},
+    emailAddresses: {},
+    phoneNumbers: {},
+    profilePicture: {},
   },
   clientCompany: {},
   discountItems: {},
