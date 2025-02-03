@@ -19,7 +19,9 @@ import { makeProduct } from './utilities/product';
 
 export interface PropsCart {
   cart: any;
+  cartClient?: any;
   setCart: (cartJson: any) => void;
+  setCartClient: (client: any) => void;
   activeTabIndex: number;
   setActiveTabIndex: (index: number) => void;
 
@@ -168,7 +170,9 @@ export interface PropsCart {
 
 const CartContext = createContext<PropsCart>({
   cart: {},
+  cartClient: {},
   setCart: console.log,
+  setCartClient: console.log,
   activeTabIndex: 0,
   setActiveTabIndex: console.log,
 
@@ -311,6 +315,7 @@ export const useCartContext = () => useContext(CartContext);
 
 interface PropsCartProvider {
   cart?: any;
+  cartClient: any;
   children: ReactNode;
   classNameAlertError?: string;
   classNameAlertInfo?: string;
@@ -514,6 +519,7 @@ const CartProvider = ({
 }: PropsCartProvider) => {
   const merchi = new Merchi();
   const [cart, setCart] = useState(({...initCart} as any));
+  const [cartClient, setCartClient] = useState((null as any));
 
   const [isOpen, setIsOpen] = useState(false);
 
@@ -580,6 +586,7 @@ const CartProvider = ({
       await cart.create({embed: cartEmbed});
       const cartJson = await cart.toJson();
       if (domainId) setCartCookie(Number(domainId), cartJson, undefined);
+      setCartClient(null);
       setCart({...cartJson});
       if (callback) callback();
     } catch (e: any) {
@@ -790,6 +797,9 @@ const CartProvider = ({
       value={{
         cart,
         setCart,
+
+        cartClient,
+        setCartClient,
 
         cartSettingsInvalid, // if true do show error to user about settings
 
