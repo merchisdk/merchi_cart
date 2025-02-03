@@ -21,18 +21,18 @@ import CartTotalsListGroup from '../components/CartTotalsListGroup';
 import { cartItemsNeedShipment } from '../utilities/shipment';
 
 function PanelClientCheckout() {
-  const { cart, showDiscountCode } = useCartContext();
+  const { cart, cartClient, showDiscountCode } = useCartContext();
   const needsShipping = cartItemsNeedShipment(cart);
-  const { client, domain } = cart;
+  const { domain } = cart;
   const company = domain && domain.company;
   return (
     <CartTabPanel tabId={tabIdCheckout}>
       <CartBody style={{ paddingTop: '2rem' }}>
-        {client && client.id > -1 ?
+        {cartClient && cartClient.id > -1 ?
           <>
             <CheckoutContainer>
               <InnerContainer paddingBottom='3rem'>
-                <CartClient client={client} />
+                <CartClient />
               </InnerContainer>
             </CheckoutContainer>
             {needsShipping &&

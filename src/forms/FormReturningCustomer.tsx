@@ -23,6 +23,7 @@ function FormReturningCustomer() {
     classNameCartFormGroupButton,
     domainId,
     setCart,
+    setCartClient,
   } = useCartContext();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(({} as any));
@@ -40,13 +41,19 @@ function FormReturningCustomer() {
     setLoading(true);
     try {
       const user: any = await tryReturningCustomerEmail(emailAddress);
+      const userJson = {
+        id: user.id,
+        emailAddresses: [{emailAddress}],
+        name: user.name || 'Hidden for privacy'
+      };
 
       // patch cart with new user
       const cartToken = await getCartCookieToken((domainId as number));
-      const clientEnt = makeUser({id: user.id, emailAddresses: [{emailAddress}]});
+      const clientEnt = makeUser(userJson);
       const cartEnt = makeCart({...cart}, false, cartToken);
       cartEnt.client = clientEnt;
       const _cart = await cartEnt.save({embed: cartEmbed});
+      setCartClient(userJson);
       const cartJson = _cart.toJson();
       setCart(cartJson);
     } catch(e: any) {

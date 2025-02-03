@@ -23,23 +23,22 @@ export function ClientInfo({ client }: any) {
   );
 }
 
-interface Props {
-  client: any;
-}
-
-function CartClient({ client }: Props) {
+function CartClient() {
   const {
     cart,
+    cartClient,
     classNameBtnDefault,
     setCart,
+    setCartClient,
   } = useCartContext();
   function clearClient() {
+    setCartClient(null);
     setCart({...cart, client: null});
   }
   return (
     <div>
       <Title icon={faUserCircle} title='Checkout as' />
-      <ClientInfo client={client} />
+      {cartClient && <ClientInfo client={cartClient} />}
       <Button
         className={classNameBtnDefault}
         onClick={clearClient}

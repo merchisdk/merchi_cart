@@ -21,6 +21,7 @@ export function FormCustomerNew() {
     classNameCartFormGroupButton,
     domainId,
     setCart,
+    setCartClient,
     showUserTermsAndConditions,
   } = useCartContext();
   const [loading, setLoading] = React.useState(false);
@@ -42,6 +43,7 @@ export function FormCustomerNew() {
       const cartEnt = makeCart({...cart}, false, cartToken);
       cartEnt.client = clientEnt;
       const _cart = await cartEnt.save({embed: cartEmbed});
+      setCartClient({...user});
       const cartJson = _cart.toJson();
       setCart(cartJson);
     } catch (e: any) {
