@@ -7,8 +7,6 @@ export function productFeatureImageUrl(product: any) {
     featureImage!.viewUrl : pngProductNotFound.src || pngProductNotFound;
 }
 
-const merchi = new Merchi();
-
 export const makeProduct = (json: any, makeDirty?: boolean) => {
   const merchi = new Merchi();
   const product = new merchi.Product();

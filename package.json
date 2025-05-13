@@ -1,6 +1,6 @@
 {
   "name": "merchi_cart",
-  "version": "1.2.8",
+  "version": "1.2.9",
   "description": "Merchi's cart",
   "source": "src/index.ts",
   "main": "lib/index.js",
@@ -91,8 +91,8 @@
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
     "merchi_product_form": "1.1.3",
-    "merchi_sdk_js": "^0.0.22",
-    "merchi_sdk_ts": "^1.0.52",
+    "merchi_sdk_js": "^0.0.62",
+    "merchi_sdk_ts": "^1.0.71",
     "moment": "^2.30.1",
     "moment-timezone": "^0.5.44",
     "react": "^18.0.0",
