@@ -3,7 +3,6 @@ import { createContext, ReactNode, useContext, useEffect, useState } from 'react
 import { faCheckCircle, faExclamationTriangle, faInfoCircle } from '@fortawesome/free-solid-svg-icons';
 import { Alert, Tab } from './types';
 import {
-  getCartShipmentGroupsAndQuotes,
   makeCart,
   makeCartItem,
   stripeIsValidAndActive,
@@ -743,12 +742,14 @@ const CartProvider = ({
     const cartEnt = makeCart(cart, false, cartToken);
     const cartItemEnt = makeCartItem({}, true);
     const cartItemProduct = makeProduct({ id: (jobEnt.product as any).id });
+
     cartItemEnt.cart = cartEnt;
     cartItemEnt.quantity = jobEnt.quantity;
     cartItemEnt.product = cartItemProduct;
     cartItemEnt.variations = jobEnt.variations;
     cartItemEnt.variationsGroups = jobEnt.variationsGroups;
     cartItemEnt.taxType = jobEnt.taxType;
+    cartItemEnt.ownDrafts = jobEnt.ownDrafts;
     try {
       const item = await cartItemEnt.create();
       const itemJson = await item.toJson();
