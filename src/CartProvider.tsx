@@ -750,6 +750,7 @@ const CartProvider = ({
     cartItemEnt.variationsGroups = jobEnt.variationsGroups;
     cartItemEnt.taxType = jobEnt.taxType;
     cartItemEnt.ownDrafts = jobEnt.ownDrafts;
+    cartItemEnt.tags = jobEnt.tags;
     try {
       const item = await cartItemEnt.create();
       const itemJson = await item.toJson();

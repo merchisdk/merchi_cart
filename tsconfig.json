@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
       "declaration": true,
-      "target": "es5",
+      "target": "ES2018",
       "experimentalDecorators": true,
       "emitDecoratorMetadata": true,
       "pretty": true,
@@ -12,16 +12,15 @@
       "strictBindCallApply": true,
       "strictFunctionTypes": false,
       "strictPropertyInitialization": true,
-      "downlevelIteration": true,
       "jsx": "react-jsx",
       "module": "esnext",
       "outDir": "./lib",
       "allowJs": true,
       "allowSyntheticDefaultImports": true,
-      "moduleResolution": "node",
+      "moduleResolution": "bundler",
       "lib": ["es2015", "DOM", "es6"],
       "types": ["node", "jest", "react"],
       "strict": true,
       "esModuleInterop": true
-  },
+  }
 }
