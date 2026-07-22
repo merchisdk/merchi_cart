@@ -7,7 +7,7 @@ import { makeCart, makeCartShipmentQuote } from "../utilities/cart";
 import { cartEmbed } from "../utilities/helpers";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckSquare, faSquare } from "@fortawesome/free-solid-svg-icons";
-import { getCartCookieToken } from "../../esm/utilities";
+import { getCartCookieToken } from "../utilities/cookie";
 
 function NoCartShipmentOptionsFound() {
   const { classNameNoItems } = useCartContext();

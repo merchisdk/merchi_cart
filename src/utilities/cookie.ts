@@ -1,4 +1,3 @@
-import { isUndefined } from 'lodash';
 import { isBrowser } from "browser-or-node";
 
 export async function getCookie(name: string, defaultValue: any) {
@@ -16,7 +15,7 @@ export async function getCookie(name: string, defaultValue: any) {
       return cookie.substring(searchPrefix.length, cookie.length);
     }
   }
-  if (isUndefined(defaultValue)) {
+  if (defaultValue === undefined) {
     throw 'no such cookie present';
   } else {
     return defaultValue;

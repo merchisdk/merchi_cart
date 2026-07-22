@@ -41,23 +41,31 @@ function FormReturningCustomer() {
     setLoading(true);
     try {
       const user: any = await tryReturningCustomerEmail(emailAddress);
+      // /user-check-email/ returns user_id (not id)
+      const userId = user.user_id ?? user.id;
+      if (!userId) {
+        throw new Error('Unable to find returning customer.');
+      }
       const userJson = {
-        id: user.id,
+        id: userId,
         emailAddresses: [{emailAddress}],
         name: user.name || 'Hidden for privacy'
       };
 
-      // patch cart with new user
+      // patch cart with returning user
       const cartToken = await getCartCookieToken((domainId as number));
-      const clientEnt = makeUser(userJson);
+      const clientEnt = makeUser(userJson, true);
       const cartEnt = makeCart({...cart}, false, cartToken);
       cartEnt.client = clientEnt;
       const _cart = await cartEnt.save({embed: cartEmbed});
-      setCartClient(userJson);
       const cartJson = _cart.toJson();
+      if (!cartJson?.client?.id) {
+        throw new Error('Unable to attach client to cart.');
+      }
+      setCartClient(cartJson.client);
       setCart(cartJson);
     } catch(e: any) {
-      alertError(e.errorMessage);
+      alertError(e.errorMessage || e.message);
       setError({message: e.errorMessage || e.message || 'Server error.'});
     } finally {
       setLoading(false);

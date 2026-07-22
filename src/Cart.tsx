@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { Suspense, lazy } from 'react';
 import CartAlert from './CartAlert';
 import CartHeader from './CartHeader';
 import CartNav from './tabs/CartNav';
@@ -14,14 +15,11 @@ import {
   CartPaymentSettingsInvalid,
   LoadingTemplate,
 } from './components';
-import {
-  PanelCartItems,
-  PanelCartShipment,
-  PanelClearCart,
-  PanelClientCheckout,
-  PanelEditCartItem,
-  PanelPaymentSuccess,
-}from './panels';
+import { LoadingTemplateSm } from './components/LoadingTemplate';
+import PanelCartItems from './panels/PanelCartItems';
+import PanelCartShipment from './panels/PanelCartShipment';
+import PanelClearCart from './panels/PanelClearCart';
+import PanelPaymentSuccess from './panels/PanelPaymentSuccess';
 import {
   tabIdCheckout,
   tabIdClearCart,
@@ -29,6 +27,10 @@ import {
   tabIdPaymentSuccess,
 } from './utilities/tabs';
 import './styles/globals.css';
+
+// Heavy panels: keep out of the initial cart chunk until their tab is opened.
+const PanelClientCheckout = lazy(() => import('./panels/PanelClientCheckout'));
+const PanelEditCartItem = lazy(() => import('./panels/PanelEditCartItem'));
 
 interface Props {
   footer?: React.ReactElement;
@@ -56,10 +58,16 @@ export function CartComponents({
       ) : (
         <div className='merchi-tab-pane'>
           <PanelClearCart />
-          <PanelEditCartItem cart={cart} />
+          <Suspense fallback={<LoadingTemplateSm />}>
+            {activeTabIndex === tabIdItem && (
+              <PanelEditCartItem cart={cart} />
+            )}
+            {activeTabIndex === tabIdCheckout && (
+              <PanelClientCheckout />
+            )}
+          </Suspense>
           <PanelCartItems />
           <PanelCartShipment />
-          <PanelClientCheckout />
           <PanelPaymentSuccess />
           {![tabIdItem, tabIdClearCart, tabIdPaymentSuccess].includes(activeTabIndex) &&
             <>

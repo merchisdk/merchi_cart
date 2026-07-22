@@ -1,4 +1,4 @@
-import MerchiProductForm from 'merchi_product_form';
+import { Suspense, lazy, useState } from 'react';
 import { tabIdItem, tabIdItems } from '../utilities/tabs';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
@@ -8,10 +8,12 @@ import {
   CartFooter,
   CartTabPanel,
 } from '../components';
+import { LoadingTemplateSm } from '../components/LoadingTemplate';
 import { useCartContext } from '../CartProvider';
-import { useState } from 'react';
 import { makeCartItem } from '../utilities/cart';
 import { getCartCookieToken } from '../utilities/cookie';
+
+const MerchiProductForm = lazy(() => import('merchi_product_form'));
 
 function cleanVariation(variation: any) {
   const { variationField = {}, variationFiles = [] } = variation;
@@ -106,21 +108,26 @@ function PanelEditCartItem({ cart }: Props) {
     ...cartItem,
     id: undefined,
   };
+  const showForm =
+    activeTabIndex === tabIdItem && !!cartItem?.id && !!cartItem?.product?.id;
+
   return (
     <CartTabPanel tabId={tabIdItem}>
       <CartBody style={{padding: '2rem'}}>
-        {activeTabIndex === tabIdItem && cartItem?.id && cartItem?.product?.id && (
-          <MerchiProductForm
-            apiUrl={apiUrl}
-            isCartItem={true}
-            initJob={{...cleanCartItem}}
-            initProduct={cartItem.product}
-            onSubmit={onSubmit}
-            productFormId={formId}
-            hideRequestQuotationButton={true}
-            hidePaymentUpfrontButton={true}
-            {...productFormClassNames}
-          />
+        {showForm && (
+          <Suspense fallback={<LoadingTemplateSm />}>
+            <MerchiProductForm
+              apiUrl={apiUrl}
+              isCartItem={true}
+              initJob={{...cleanCartItem}}
+              initProduct={cartItem.product}
+              onSubmit={onSubmit}
+              productFormId={formId}
+              hideRequestQuotationButton={true}
+              hidePaymentUpfrontButton={true}
+              {...productFormClassNames}
+            />
+          </Suspense>
         )}
       </CartBody>
       <CartFooter>
