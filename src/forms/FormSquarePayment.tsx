@@ -1,13 +1,18 @@
+import * as React from 'react';
+import { Suspense, lazy } from 'react';
 import { useCartContext } from '../CartProvider';
-import SquareCard from '../square/SquareCard';
+import { LoadingTemplateSm } from '../components/LoadingTemplate';
+
+const SquareCard = lazy(() => import('../square/SquareCard'));
 
 function FormSquarePayment() {
   const { cart } = useCartContext();
   const company = cart && cart.domain && cart.domain.company;
+  if (!company?.acceptSquare) return null;
   return (
-    <>
-      {Boolean(company) && company.acceptSquare && <SquareCard />}
-    </>
+    <Suspense fallback={<LoadingTemplateSm />}>
+      <SquareCard />
+    </Suspense>
   );
 }
 
