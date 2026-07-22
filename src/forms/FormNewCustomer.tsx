@@ -36,15 +36,21 @@ export function FormCustomerNew() {
         {...customerJson, registeredUnderDomains: [{id: domainId}]}
       );
       const { user } = r;
+      if (!user?.id) {
+        throw new Error('Unable to create customer.');
+      }
 
       // patch cart with new user
       const cartToken = await getCartCookieToken((domainId as number));
-      const clientEnt = makeUser({id: user.id});
+      const clientEnt = makeUser({id: user.id}, true);
       const cartEnt = makeCart({...cart}, false, cartToken);
       cartEnt.client = clientEnt;
       const _cart = await cartEnt.save({embed: cartEmbed});
-      setCartClient({...user});
       const cartJson = _cart.toJson();
+      if (!cartJson?.client?.id) {
+        throw new Error('Unable to attach client to cart.');
+      }
+      setCartClient(cartJson.client);
       setCart(cartJson);
     } catch (e: any) {
       setError({message: e.errorMessage || e.message || 'Unable to attach client to cart.'});
