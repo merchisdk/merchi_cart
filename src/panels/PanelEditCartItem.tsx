@@ -12,6 +12,8 @@ import { LoadingTemplateSm } from '../components/LoadingTemplate';
 import { useCartContext } from '../CartProvider';
 import { makeCartItem } from '../utilities/cart';
 import { getCartCookieToken } from '../utilities/cookie';
+import { publishedFormBundle } from '../utilities/customForm';
+import CustomCartProductForm from '../components/CustomCartProductForm';
 
 const MerchiProductForm = lazy(() => import('merchi_product_form'));
 
@@ -54,8 +56,9 @@ function PanelEditCartItem({ cart }: Props) {
     setCartItem,
   } = useCartContext();
   const [loading, setLoading] = useState(false);
+  const [customFormActive, setCustomFormActive] = useState(false);
   const formId = 'edit-cart-item-form';
-  
+
   // This action patches the cart item
   async function actionCartItemEdit(cartItemJson: any) {
     setLoading(true);
@@ -68,7 +71,7 @@ function PanelEditCartItem({ cart }: Props) {
         variations = [],
         variationsGroups = [],
       } = cartItemJson;
-  
+
       const cartItemEnt = makeCartItem({
         ...cartItem,
         id: (cartItem as any).id,
@@ -79,19 +82,19 @@ function PanelEditCartItem({ cart }: Props) {
         variations: variations.map(cleanVariation),
         variationsGroups: variationsGroups.map(cleanVariationGroups),
       }, true, cartToken);
-  
+
       // Save changes to the Cart Item
       await cartItemEnt.save();
-  
+
       // Refetch the Cart and all it's relationships
       await refetchCart();
-  
+
       // Show success alert
       alertSuccess('Item updated.');
-  
+
       // Set active Cart tab
       setActiveTabIndex(tabIdItems);
-  
+
       // Clear Cart Item from state
       setCartItem({});
     } catch (e: any) {
@@ -110,37 +113,57 @@ function PanelEditCartItem({ cart }: Props) {
   };
   const showForm =
     activeTabIndex === tabIdItem && !!cartItem?.id && !!cartItem?.product?.id;
+  const hasPublishedCustomForm = !!publishedFormBundle(cartItem?.product);
+
+  const defaultForm = (
+    <Suspense fallback={<LoadingTemplateSm />}>
+      <MerchiProductForm
+        apiUrl={apiUrl}
+        isCartItem={true}
+        initJob={{...cleanCartItem}}
+        initProduct={cartItem.product}
+        onSubmit={onSubmit}
+        productFormId={formId}
+        hideRequestQuotationButton={true}
+        hidePaymentUpfrontButton={true}
+        {...productFormClassNames}
+      />
+    </Suspense>
+  );
 
   return (
     <CartTabPanel tabId={tabIdItem}>
       <CartBody style={{padding: '2rem'}}>
         {showForm && (
-          <Suspense fallback={<LoadingTemplateSm />}>
-            <MerchiProductForm
+          hasPublishedCustomForm ? (
+            <CustomCartProductForm
+              product={cartItem.product}
+              initialJob={cleanCartItem}
               apiUrl={apiUrl}
-              isCartItem={true}
-              initJob={{...cleanCartItem}}
-              initProduct={cartItem.product}
-              onSubmit={onSubmit}
-              productFormId={formId}
-              hideRequestQuotationButton={true}
-              hidePaymentUpfrontButton={true}
-              {...productFormClassNames}
+              onSave={onSubmit}
+              fallback={defaultForm}
+              onActiveChange={setCustomFormActive}
             />
-          </Suspense>
+          ) : (
+            defaultForm
+          )
         )}
       </CartBody>
       <CartFooter>
         <ButtonBack />
-        <Button
-          className={classNameBtnEditCartItem}
-          disabled={loading}
-          form={formId}
-          type='submit'
-        >
-          {loading && <FontAwesomeIcon icon={faCircleNotch} spin />}
-          {loading ? ' Loading...' : 'Save'}
-        </Button>
+        {/* Custom forms render their own Save in ProductFormShell; keep the
+            HTML-form Save only for the default merchi_product_form path. */}
+        {!customFormActive && (
+          <Button
+            className={classNameBtnEditCartItem}
+            disabled={loading}
+            form={formId}
+            type='submit'
+          >
+            {loading && <FontAwesomeIcon icon={faCircleNotch} spin />}
+            {loading ? ' Loading...' : 'Save'}
+          </Button>
+        )}
       </CartFooter>
     </CartTabPanel>
   );

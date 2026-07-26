@@ -173,6 +173,8 @@ const productWithImagesEmbed: any = {
   groupVariationFields: {options: {linkedFile: {}}},
   images: {},
   independentVariationFields: {options: {linkedFile: {}}},
+  // Published custom form pointer for cart-item edit (same shape as product embed).
+  productForm: {activeVersion: {}},
   taxType: {},
 };
 
