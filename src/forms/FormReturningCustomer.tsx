@@ -10,6 +10,10 @@ import {
 import { makeCart } from '../utilities/cart';
 import { getCartCookieToken } from '../utilities/cookie';
 import { cartEmbed } from '../utilities/helpers';
+import {
+  getSavedCheckoutCustomer,
+  saveCheckoutCustomer,
+} from '../utilities/local_storage';
 
 const emailValidation = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]/i;
 
@@ -27,8 +31,11 @@ function FormReturningCustomer() {
   } = useCartContext();
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(({} as any));
+  const savedCustomer = getSavedCheckoutCustomer(domainId);
 
-  const hookForm = useForm({ defaultValues: { emailAddress: '' } });
+  const hookForm = useForm({
+    defaultValues: { emailAddress: savedCustomer?.emailAddress || '' },
+  });
   const {
     handleSubmit,
     formState: { errors },
@@ -46,15 +53,10 @@ function FormReturningCustomer() {
       if (!userId) {
         throw new Error('Unable to find returning customer.');
       }
-      const userJson = {
-        id: userId,
-        emailAddresses: [{emailAddress}],
-        name: user.name || 'Hidden for privacy'
-      };
 
-      // patch cart with returning user
+      // Attach by id only — extra user fields trigger a forbidden user PATCH.
       const cartToken = await getCartCookieToken((domainId as number));
-      const clientEnt = makeUser(userJson, true);
+      const clientEnt = makeUser({id: userId}, true);
       const cartEnt = makeCart({...cart}, false, cartToken);
       cartEnt.client = clientEnt;
       const _cart = await cartEnt.save({embed: cartEmbed});
@@ -62,6 +64,11 @@ function FormReturningCustomer() {
       if (!cartJson?.client?.id) {
         throw new Error('Unable to attach client to cart.');
       }
+      saveCheckoutCustomer(domainId, {
+        id: userId,
+        name: user.name || savedCustomer?.name,
+        emailAddress,
+      });
       setCartClient(cartJson.client);
       setCart(cartJson);
     } catch(e: any) {
