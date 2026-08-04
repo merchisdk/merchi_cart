@@ -10,6 +10,10 @@ import InputError from './InputError';
 import { createNewCustomer, makeUser } from '../utilities/user';
 import { makeCart } from '../utilities/cart';
 import { getCartCookieToken } from '../utilities/cookie';
+import {
+  getSavedCheckoutCustomer,
+  saveCheckoutCustomer,
+} from '../utilities/local_storage';
 
 export const emailValidation = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]/i;
 
@@ -27,6 +31,7 @@ export function FormCustomerNew() {
   const [loading, setLoading] = React.useState(false);
   const [error, setError] = React.useState(({} as any));
   const [acceptConditions, setAcceptConditions] = React.useState(true);
+  const savedCustomer = getSavedCheckoutCustomer(domainId);
 
   async function actionCreateNewCustomer(customerJson: any) {
     setError({});
@@ -50,6 +55,12 @@ export function FormCustomerNew() {
       if (!cartJson?.client?.id) {
         throw new Error('Unable to attach client to cart.');
       }
+      saveCheckoutCustomer(domainId, {
+        id: user.id,
+        name: customerJson.name,
+        emailAddress: customerJson.emailAddresses?.[0]?.emailAddress,
+        phoneNumbers: customerJson.phoneNumbers,
+      });
       setCartClient(cartJson.client);
       setCart(cartJson);
     } catch (e: any) {
@@ -61,9 +72,14 @@ export function FormCustomerNew() {
 
   const { control, handleSubmit, watch } = useForm({
     defaultValues: {
-      emailAddresses: [{ emailAddress: '' }],
-      name: '',
-      phoneNumbers: [{ code: 'AU', number: '' }],
+      emailAddresses: [{
+        emailAddress: savedCustomer?.emailAddress || '',
+      }],
+      name: savedCustomer?.name || '',
+      phoneNumbers: [{
+        code: savedCustomer?.phoneNumbers?.[0]?.code || 'AU',
+        number: savedCustomer?.phoneNumbers?.[0]?.number || '',
+      }],
       registeredAsGuest: false,
     },
   });

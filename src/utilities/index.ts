@@ -6,6 +6,7 @@ export * from './currency';
 export * from './helpers';
 export * from './invoice';
 export * from './job';
+export * from './local_storage';
 export * from './product';
 export * from './shipment';
 export * from './tabs';

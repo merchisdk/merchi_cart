@@ -11,6 +11,11 @@ import { makeAddress } from "../utilities/address";
 import { makeCart } from "../utilities/cart";
 import { cartEmbed } from "../utilities/helpers";
 import { tabIdCheckout } from "../utilities/tabs";
+import {
+  addressHasContent,
+  getSavedCheckoutAddress,
+  saveCheckoutAddress,
+} from "../utilities/local_storage";
 
 interface PropsAddress {
   defaultAddress?: any;
@@ -110,7 +115,12 @@ export function ActiveFormShipmentAddressAndNotes() {
     setLoadingTotals,
     setActiveTabAndEditDisabled,
   } = useCartContext();
-  const { receiverAddress = {}, receiverNotes } = cart;
+  const saved = getSavedCheckoutAddress(domainId);
+  const cartAddress = cart?.receiverAddress;
+  const receiverAddress = addressHasContent(cartAddress)
+    ? cartAddress
+    : saved.address || {};
+  const receiverNotes = cart?.receiverNotes || saved.receiverNotes || "";
   const [addressFieldsOpen, setAddressFieldsOpen] = useState(false);
 
   async function saveCartShipmentAddressAndGoToNextTab(values: any) {
@@ -123,6 +133,7 @@ export function ActiveFormShipmentAddressAndNotes() {
     cartEnt.receiverNotes = receiverNotes;
     try {
       await cartEnt.save({ embed: cartEmbed });
+      saveCheckoutAddress(domainId, address, receiverNotes);
       setCart(cartEnt.toJson()); // Update cart context
       setActiveTabAndEditDisabled({
         tabId: tabIdCheckout,

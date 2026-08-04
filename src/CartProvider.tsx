@@ -15,6 +15,11 @@ import { makeAddress } from './utilities/address';
 import { appendStyleSheetText } from './utilities/helpers';
 import { makeJob } from './utilities/job';
 import { makeProduct } from './utilities/product';
+import {
+  getSavedCheckoutCustomer,
+  saveCheckoutAddress,
+} from './utilities/local_storage';
+import { makeUser } from './utilities/user';
 
 export interface PropsCart {
   cart: any;
@@ -577,15 +582,44 @@ const CartProvider = ({
   const [fetchingCart, setFetchingCart] = useState(false);
   const [cartSettingsInvalid, setCartSettingsInvalid] = useState(false);
 
+  async function attachSavedClientIfNeeded(cartJson: any) {
+    if (cartJson?.client?.id) {
+      setCartClient(cartJson.client);
+      return cartJson;
+    }
+    const savedCustomer = getSavedCheckoutCustomer(domainId);
+    if (!savedCustomer?.id) {
+      setCartClient(null);
+      return cartJson;
+    }
+    try {
+      const cartToken =
+        cartJson.token || (await getCartCookieToken(domainId as number));
+      const clientEnt = makeUser({ id: savedCustomer.id }, true);
+      const cartEnt = makeCart({ ...cartJson }, false, cartToken);
+      cartEnt.client = clientEnt;
+      const savedCart = await cartEnt.save({ embed: cartEmbed });
+      const nextCart = savedCart.toJson();
+      if (nextCart?.client?.id) {
+        setCartClient(nextCart.client);
+        return nextCart;
+      }
+    } catch {
+      // Stale saved customer id — leave customer forms available.
+    }
+    setCartClient(null);
+    return cartJson;
+  }
+
   // Create cart and save cart cookie
   async function createCartAndCookie(callback?: () => void) {
     setFetchingCart(true);
     try {
       const cart = makeCart({domain: {id: domainId}}, true);
       await cart.create({embed: cartEmbed});
-      const cartJson = await cart.toJson();
+      let cartJson = await cart.toJson();
       if (domainId) setCartCookie(Number(domainId), cartJson, undefined);
-      setCartClient(null);
+      cartJson = await attachSavedClientIfNeeded(cartJson);
       setCart({...cartJson});
       if (callback) callback();
     } catch (e: any) {
@@ -603,8 +637,9 @@ const CartProvider = ({
     setFetchingCart(true);
     try {
       const cart = await merchi.Cart.get(id, {embed: cartEmbed});
-      const cartJson = await cart.toJson();
+      let cartJson = await cart.toJson();
       if (stripeIsValidAndActive(cartJson)) {
+        cartJson = await attachSavedClientIfNeeded(cartJson);
         setCart({...cartJson});
       } else {
         console.error(
@@ -648,6 +683,7 @@ const CartProvider = ({
       cartEnt.receiverAddress = receiverAddress;
       cartEnt = await cartEnt.save({embed: cartEmbed});
       const cartJson = cartEnt.toJson();
+      saveCheckoutAddress(domainId, address);
       const query: Array<any> = [];
       query.push(['cart_token', cart.token]);
       const cartWithShipmentGroups = await merchi.authenticatedFetch(
