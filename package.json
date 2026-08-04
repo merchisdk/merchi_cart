@@ -11,8 +11,8 @@
     "**/*.scss"
   ],
   "scripts": {
-    "build:esm": "babel src --out-dir esm --config-file ./babel.esm.config.cjs --extensions '.js,.ts,.tsx' --verbose && yarn copy-assets && yarn compile-sass",
-    "build:lib": "babel src --out-dir lib --config-file ./babel.build.config.cjs --extensions '.js,.ts,.tsx' --verbose && yarn copy-assets && yarn compile-sass",
+    "build:esm": "babel src --out-dir esm --config-file ./babel.esm.config.cjs --extensions .js,.ts,.tsx --verbose && yarn copy-assets && yarn compile-sass",
+    "build:lib": "babel src --out-dir lib --config-file ./babel.build.config.cjs --extensions .js,.ts,.tsx --verbose && yarn copy-assets && yarn compile-sass",
     "build": "yarn build:esm && yarn build:lib",
     "copy-assets": "copyfiles -u 1 src/assets/**/* esm && copyfiles -u 1 src/assets/**/* lib",
     "compile-sass": "sass src/styles/globals.scss esm/styles/globals.css && sass src/styles/globals.scss lib/styles/globals.css",
