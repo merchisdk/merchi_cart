@@ -1,9 +1,7 @@
 import * as React from "react";
 import StripePaymentButtons from "./StripePaymentButtons";
 import {
-  CardCvcElement,
-  CardExpiryElement,
-  CardNumberElement,
+  CardElement,
   Elements,
   useStripe,
   useElements,
@@ -45,7 +43,7 @@ function InnerForm({
   const stripe = useStripe();
   const elements = useElements();
   function paymentStart(e: any) {
-    const card = (elements as any).getElement(CardNumberElement) as any;
+    const card = (elements as any).getElement(CardElement) as any;
     setLoadingStripePayment(true);
     e.preventDefault();
     if (!stripe || !elements) {
@@ -87,17 +85,9 @@ function InnerForm({
           )}
           <form onSubmit={paymentStart}>
             <div className="merchi-cart-stripe-input-container">
-              <CardNumberElement
+              <CardElement
                 className={inputClass}
-                {...CARD_ELEMENT_OPTIONS}
-              />
-              <CardExpiryElement
-                className={inputClass}
-                {...CARD_ELEMENT_OPTIONS}
-              />
-              <CardCvcElement
-                className={inputClass}
-                {...CARD_ELEMENT_OPTIONS}
+                options={CARD_ELEMENT_OPTIONS}
               />
               {error.message && (
                 <div className="merchi-cart-stripe-input-error">

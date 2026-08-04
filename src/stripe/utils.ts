@@ -4,6 +4,7 @@ export function companyStripePubKeyOrTestPubKey(company: any) {
 }
 
 export const CARD_ELEMENT_OPTIONS = {
+  hidePostalCode: true,
   style: {
     base: {
       '::placeholder': {
