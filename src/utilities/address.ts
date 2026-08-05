@@ -7,6 +7,19 @@ export function makeAddress(addressJson: any, makeDirty?: boolean) {
   return address.fromJson(addressJson, { makeDirty });
 }
 
+/** Plain address fields only — never reuse an existing address id (cart-token auth cannot PATCH it). */
+export function sanitizeAddressFields(address?: any) {
+  const a = address && typeof address === 'object' ? address : {};
+  return {
+    city: a.city || '',
+    country: a.country || '',
+    lineOne: a.lineOne || '',
+    lineTwo: a.lineTwo || '',
+    postcode: a.postcode || '',
+    state: a.state || '',
+  };
+}
+
 const isoCountries: any = {
   AF: "Afghanistan",
   AX: "Aland Islands",

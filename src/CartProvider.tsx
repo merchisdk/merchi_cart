@@ -11,7 +11,7 @@ import { cartEmbed } from './utilities/helpers';
 import { initTabs, tabIdItems, tabShipment } from './utilities/tabs';
 import { Merchi } from 'merchi_sdk_ts';
 import { getCartCookie, getCartCookieToken, setCartCookie } from './utilities/cookie';
-import { makeAddress } from './utilities/address';
+import { makeAddress, sanitizeAddressFields } from './utilities/address';
 import { appendStyleSheetText } from './utilities/helpers';
 import { makeJob } from './utilities/job';
 import { makeProduct } from './utilities/product';
@@ -153,7 +153,7 @@ export interface PropsCart {
   setCartItem: (cartItem: any) => void;
 
   tabs: Tab[];
-  setTabs: (tabs: Tab[]) => void;
+  setTabs: (tabs: Tab[] | ((prev: Tab[]) => Tab[])) => void;
 
   clearCart: () => void;
   closeClearCart: () => void;
@@ -532,7 +532,18 @@ const CartProvider = ({
 
   function setActiveTabAndEditDisabled(nextTab: {tabId: number, tabIndexToSet: number, disabled: boolean}) {
     const { tabId, tabIndexToSet, disabled } = nextTab;
-    tabs[tabIndexToSet].disabled = disabled;
+    setTabs((prev) => {
+      const index =
+        tabIndexToSet >= 0 && tabIndexToSet < prev.length
+          ? tabIndexToSet
+          : prev.findIndex((t) => t.tabId === tabId);
+      if (index < 0 || index >= prev.length) {
+        return prev;
+      }
+      const next = [...prev];
+      next[index] = { ...next[index], disabled };
+      return next;
+    });
     setActiveTabIndex(tabId);
   }
 
@@ -676,14 +687,15 @@ const CartProvider = ({
   async function updateCartShipmentAddress(address: any) {
     // Updates the receiver address on cart and fetches new shipment quotes
     const token = await getCartCookieToken((domainId as string | number));
-    const receiverAddress = makeAddress(address, true);
+    const addressFields = sanitizeAddressFields(address);
+    const receiverAddress = makeAddress(addressFields, true);
     let cartEnt = makeCart(cart, false, token);
     setFetchingShipmentGroups(true);
     try {
       cartEnt.receiverAddress = receiverAddress;
       cartEnt = await cartEnt.save({embed: cartEmbed});
       const cartJson = cartEnt.toJson();
-      saveCheckoutAddress(domainId, address);
+      saveCheckoutAddress(domainId, addressFields);
       const query: Array<any> = [];
       query.push(['cart_token', cart.token]);
       const cartWithShipmentGroups = await merchi.authenticatedFetch(
