@@ -532,7 +532,18 @@ const CartProvider = ({
 
   function setActiveTabAndEditDisabled(nextTab: {tabId: number, tabIndexToSet: number, disabled: boolean}) {
     const { tabId, tabIndexToSet, disabled } = nextTab;
-    tabs[tabIndexToSet].disabled = disabled;
+    setTabs((prev) => {
+      const index =
+        prev[tabIndexToSet]?.tabId === tabId
+          ? tabIndexToSet
+          : prev.findIndex((tab) => tab.tabId === tabId);
+      if (index < 0 || !prev[index]) {
+        return prev;
+      }
+      const next = [...prev];
+      next[index] = { ...next[index], disabled };
+      return next;
+    });
     setActiveTabIndex(tabId);
   }
 

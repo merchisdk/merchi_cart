@@ -10,7 +10,7 @@ import { getCartCookieToken } from "../utilities/cookie";
 import { makeAddress } from "../utilities/address";
 import { makeCart } from "../utilities/cart";
 import { cartEmbed } from "../utilities/helpers";
-import { tabIdCheckout } from "../utilities/tabs";
+import { getTabIndexById, tabIdCheckout } from "../utilities/tabs";
 import {
   addressHasContent,
   getSavedCheckoutAddress,
@@ -114,6 +114,7 @@ export function ActiveFormShipmentAddressAndNotes() {
     setCart,
     setLoadingTotals,
     setActiveTabAndEditDisabled,
+    tabs,
   } = useCartContext();
   const saved = getSavedCheckoutAddress(domainId);
   const cartAddress = cart?.receiverAddress;
@@ -137,7 +138,7 @@ export function ActiveFormShipmentAddressAndNotes() {
       setCart(cartEnt.toJson()); // Update cart context
       setActiveTabAndEditDisabled({
         tabId: tabIdCheckout,
-        tabIndexToSet: 2,
+        tabIndexToSet: getTabIndexById(tabs, tabIdCheckout),
         disabled: false,
       });
     } catch (e: any) {

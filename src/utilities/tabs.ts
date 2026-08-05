@@ -30,6 +30,10 @@ export function setDisableTab(tab: any, disabled: boolean) {
   return {...tab, disabled};
 }
 
+export function getTabIndexById(tabs: Tab[], tabId: number): number {
+  return tabs.findIndex((tab) => tab.tabId === tabId);
+}
+
 export function cartHasShippmentGroupsAndAllHaveSelectedGroups(cart: any) {
   const shipmentGroups = cart.shipmentGroups ? cart.shipmentGroups : [];
   const haveSelectedQuotes = shipmentGroups.map((g: any) => Boolean(g.selectedQuote));
