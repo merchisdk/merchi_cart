@@ -7,7 +7,7 @@ import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { useCartContext } from "../CartProvider";
 import { useState } from "react";
 import { getCartCookieToken } from "../utilities/cookie";
-import { makeAddress } from "../utilities/address";
+import { makeAddress, sanitizeAddressFields } from "../utilities/address";
 import { makeCart } from "../utilities/cart";
 import { cartEmbed } from "../utilities/helpers";
 import { tabIdCheckout } from "../utilities/tabs";
@@ -38,7 +38,7 @@ interface Props {
   showIcon?: boolean;
   deliveryNomenclature?: boolean;
   showHeadings?: boolean;
-  setCartShipmentAddress: (values: any) => void;
+  setCartShipmentAddress: (values: any) => void | Promise<void>;
   toggleAddressFields: () => void;
 }
 
@@ -61,8 +61,8 @@ function FormShipmentAddressAndNotes({
   });
   const { getValues, handleSubmit, register, reset } = hookForm;
 
-  function onSubmit() {
-    setCartShipmentAddress(getValues());
+  async function onSubmit() {
+    await setCartShipmentAddress(getValues());
   }
   function updateAddress(addr: any) {
     const oldAddresses: any = getValues();
@@ -125,16 +125,18 @@ export function ActiveFormShipmentAddressAndNotes() {
 
   async function saveCartShipmentAddressAndGoToNextTab(values: any) {
     const { receiverAddress: address, receiverNotes } = values;
-    const cartToken = await getCartCookieToken(domainId as number);
     setLoadingTotals(true);
-    const receiverAddress = makeAddress(address, true);
-    const cartEnt = makeCart(cart, false, cartToken);
-    cartEnt.receiverAddress = receiverAddress;
-    cartEnt.receiverNotes = receiverNotes;
     try {
+      const cartToken = await getCartCookieToken(domainId as number);
+      // Never PATCH an existing Address via cart token — create a fresh embed.
+      const addressFields = sanitizeAddressFields(address);
+      const receiverAddress = makeAddress(addressFields, true);
+      const cartEnt = makeCart(cart, false, cartToken);
+      cartEnt.receiverAddress = receiverAddress;
+      cartEnt.receiverNotes = receiverNotes;
       await cartEnt.save({ embed: cartEmbed });
-      saveCheckoutAddress(domainId, address, receiverNotes);
-      setCart(cartEnt.toJson()); // Update cart context
+      saveCheckoutAddress(domainId, addressFields, receiverNotes);
+      setCart(cartEnt.toJson());
       setActiveTabAndEditDisabled({
         tabId: tabIdCheckout,
         tabIndexToSet: 2,

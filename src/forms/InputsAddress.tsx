@@ -179,7 +179,7 @@ export function InputsAddress({
               {addressForm}
             </Collapse>
             <div className='d-flex align-items-center'>
-              {!!errors.length &&
+              {!!Object.keys(errors || {}).length &&
                 <div className='text-danger'>
                   <FontAwesomeIcon
                     icon={faExclamationTriangle}
@@ -187,7 +187,7 @@ export function InputsAddress({
                 </div>
               }
               <a
-                className={`ml-auto btn btn-sm btn-link ${!!errors.length && 'text-danger'}`}
+                className={`ml-auto btn btn-sm btn-link ${!!Object.keys(errors || {}).length && 'text-danger'}`}
                 onClick={toggleAddressFieldsOpen}
               >
                 <FontAwesomeIcon
