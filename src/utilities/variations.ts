@@ -1,3 +1,5 @@
+import { formatAreaSummary, localePrefersImperial } from './area';
+
 export enum FieldType {
   TEXT_INPUT = 1,
   SELECT = 2,
@@ -10,6 +12,9 @@ export enum FieldType {
   IMAGE_SELECT = 9,
   COLOUR_PICKER = 10,
   COLOUR_SELECT = 11,
+  TURNAROUND_TIME = 12,
+  COLOUR_EXTRACT = 13,
+  AREA = 14,
 }
 
 
@@ -19,7 +24,8 @@ export function isSelectable(fieldType: number) {
     FieldType.CHECKBOX,
     FieldType.RADIO,
     FieldType.IMAGE_SELECT,
-    FieldType.COLOUR_SELECT
+    FieldType.COLOUR_SELECT,
+    FieldType.COLOUR_EXTRACT,
   ].includes(fieldType);
 }
 
@@ -49,8 +55,26 @@ export function valueString(variation: any) {
   } = variation;
   if (isSelectable(field.fieldType)) {
     return concatinatedSelectedOptionValues(variation);
-  } else if (field.fieldType === FieldType.FILE_UPLOAD && variationFiles) {
+  } else if (
+    (field.fieldType === FieldType.FILE_UPLOAD ||
+      field.fieldType === FieldType.COLOUR_EXTRACT) &&
+    variationFiles
+  ) {
+    if (field.fieldType === FieldType.COLOUR_EXTRACT) {
+      const colours = concatinatedSelectedOptionValues(variation);
+      const fileLabel =
+        variationFiles.length > 1 ? 'uploaded files' : 'uploaded file';
+      return colours ? `${fileLabel} (${colours})` : fileLabel;
+    }
     return variationFiles.length > 1 ? 'uploaded files' : 'uploaded file';
+  } else if (field.fieldType === FieldType.AREA) {
+    return (
+      formatAreaSummary(
+        value,
+        localePrefersImperial() ? 'imperial' : 'metric',
+        field.areaUnit || 'mm'
+      ) || value
+    );
   }
   return value;
 }
