@@ -1,3 +1,5 @@
+import { formatAreaSummary, localePrefersImperial } from './area';
+
 export enum FieldType {
   TEXT_INPUT = 1,
   SELECT = 2,
@@ -12,6 +14,7 @@ export enum FieldType {
   COLOUR_SELECT = 11,
   TURNAROUND_TIME = 12,
   COLOUR_EXTRACT = 13,
+  AREA = 14,
 }
 
 
@@ -64,6 +67,14 @@ export function valueString(variation: any) {
       return colours ? `${fileLabel} (${colours})` : fileLabel;
     }
     return variationFiles.length > 1 ? 'uploaded files' : 'uploaded file';
+  } else if (field.fieldType === FieldType.AREA) {
+    return (
+      formatAreaSummary(
+        value,
+        localePrefersImperial() ? 'imperial' : 'metric',
+        field.areaUnit || 'mm'
+      ) || value
+    );
   }
   return value;
 }
