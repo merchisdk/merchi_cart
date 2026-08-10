@@ -92,7 +92,7 @@
     "lodash": "^4.17.21",
     "merchi_product_form": "^1.16.0",
     "merchi_sdk_product_form": "^1.0.7",
-    "merchi_sdk_ts": "^1.25.0",
+    "merchi_sdk_ts": "^1.27.0",
     "react-country-region-selector": "^3.6.1",
     "react-geosuggest": "^2.14.1",
     "react-hook-form": "7.45.4",
