@@ -12,9 +12,10 @@ import {
 } from '../components';
 import FormNewCustomer from '../forms/FormNewCustomer';
 import FormReturningCustomer from '../forms/FormReturningCustomer';
+import FormWhatsappCustomer from '../forms/FormWhatsappCustomer';
 import FormSquarePayment from '../forms/FormSquarePayment';
 import FormStripePayment from '../forms/FormStripePayment';
-import { faCoins, faCreditCard, faUserPlus, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faCreditCard, faPhone, faUserPlus, faUserTag } from '@fortawesome/free-solid-svg-icons';
 import { useCartContext } from '../CartProvider';
 import DiscountInputGroup from '../components/DiscountInputGroup';
 import CartTotalsListGroup from '../components/CartTotalsListGroup';
@@ -25,6 +26,7 @@ function PanelClientCheckout() {
   const needsShipping = cartItemsNeedShipment(cart);
   const { domain } = cart;
   const company = domain && domain.company;
+  const whatsappEnabled = Boolean(domain?.enableWhatsappNotifications);
   return (
     <CartTabPanel tabId={tabIdCheckout}>
       <CartBody style={{ paddingTop: '2rem' }}>
@@ -107,6 +109,17 @@ function PanelClientCheckout() {
                 <FormReturningCustomer />
               </InnerContainer>
             </CheckoutContainer>
+            {whatsappEnabled && (
+              <CheckoutContainer>
+                <InnerContainer paddingBottom='0px'>
+                  <Title
+                    icon={faPhone}
+                    title='Checkout with WhatsApp'
+                  />
+                  <FormWhatsappCustomer />
+                </InnerContainer>
+              </CheckoutContainer>
+            )}
           </>
         }
       </CartBody>

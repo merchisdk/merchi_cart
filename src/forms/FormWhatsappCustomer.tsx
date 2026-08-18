@@ -14,10 +14,9 @@ import {
   getSavedCheckoutCustomer,
   saveCheckoutCustomer,
 } from '../utilities/local_storage';
+import { emailValidation } from './FormNewCustomer';
 
-export const emailValidation = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]/i;
-
-export function FormCustomerNew() {
+function FormWhatsappCustomer() {
   const {
     cart,
     classNameBtnPrimary,
@@ -33,24 +32,24 @@ export function FormCustomerNew() {
   const [acceptConditions, setAcceptConditions] = React.useState(true);
   const savedCustomer = getSavedCheckoutCustomer(domainId);
 
-  async function actionCreateNewCustomer(customerJson: any) {
+  async function actionWhatsappCheckout(customerJson: any) {
     setError({});
     setLoading(true);
     try {
-      const r = await createNewCustomer(
-        {...customerJson, registeredUnderDomains: [{id: domainId}]}
-      );
+      const r = await createNewCustomer({
+        ...customerJson,
+        registeredUnderDomains: [{ id: domainId }],
+      });
       const { user } = r;
       if (!user?.id) {
         throw new Error('Unable to create customer.');
       }
 
-      // patch cart with new user
       const cartToken = await getCartCookieToken((domainId as number));
-      const clientEnt = makeUser({id: user.id}, true);
-      const cartEnt = makeCart({ ...cart, sendWhatsapp: false }, false, cartToken);
+      const clientEnt = makeUser({ id: user.id }, true);
+      const cartEnt = makeCart({ ...cart, sendWhatsapp: true }, false, cartToken);
       cartEnt.client = clientEnt;
-      const _cart = await cartEnt.save({embed: cartEmbed});
+      const _cart = await cartEnt.save({ embed: cartEmbed });
       const cartJson = _cart.toJson();
       if (!cartJson?.client?.id) {
         throw new Error('Unable to attach client to cart.');
@@ -64,7 +63,10 @@ export function FormCustomerNew() {
       setCartClient(cartJson.client);
       setCart(cartJson);
     } catch (e: any) {
-      setError({message: e.errorMessage || e.message || 'Unable to attach client to cart.'});
+      setError({
+        message:
+          e.errorMessage || e.message || 'Unable to attach client to cart.',
+      });
     } finally {
       setLoading(false);
     }
@@ -80,20 +82,23 @@ export function FormCustomerNew() {
         code: savedCustomer?.phoneNumbers?.[0]?.code || 'AU',
         number: savedCustomer?.phoneNumbers?.[0]?.number || '',
       }],
-      registeredAsGuest: false,
     },
   });
 
   async function onSubmit(values: any) {
-    await actionCreateNewCustomer({ ...values });
+    if (showUserTermsAndConditions && !acceptConditions) {
+      return;
+    }
+    await actionWhatsappCheckout({ ...values });
   }
 
-  // Basic validation for phone. Checking that phone is a number. Can make more complex if we want.
   function validatePhone() {
     const phone = watch('phoneNumbers.0.number');
+    if (!phone) return 'Phone number is required for WhatsApp checkout';
     if (isNaN(phone as any)) return 'Phone number must be a number';
-    else return true;
+    return true;
   }
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <InputText
@@ -125,17 +130,21 @@ export function FormCustomerNew() {
         <div style={{ flexGrow: 1 }}>
           <InputText
             control={control}
-            label='Phone Number'
+            label='WhatsApp Number'
             name='phoneNumbers[0].number'
             placeholder='0400 000 000'
             rules={{
-              required: 'Phone number is required',
+              required: 'WhatsApp number is required',
               validate: validatePhone,
             }}
             type='phone'
           />
         </div>
       </div>
+      <small className={classNameCartFormGroup}>
+        By continuing, you agree to receive order updates via WhatsApp at this
+        number.
+      </small>
       {showUserTermsAndConditions && (
         <div className={classNameCartFormGroup}>
           <InputAcceptUserTermsAndConditions
@@ -159,11 +168,11 @@ export function FormCustomerNew() {
           disabled={loading}
           type='submit'
         >
-          {loading ? 'Loading...' : 'Submit'}
+          {loading ? 'Loading...' : 'Continue with WhatsApp'}
         </Button>
       </div>
     </form>
   );
 }
 
-export default FormCustomerNew;
+export default FormWhatsappCustomer;

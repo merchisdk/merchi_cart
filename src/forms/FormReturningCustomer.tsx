@@ -57,7 +57,7 @@ function FormReturningCustomer() {
       // Attach by id only — extra user fields trigger a forbidden user PATCH.
       const cartToken = await getCartCookieToken((domainId as number));
       const clientEnt = makeUser({id: userId}, true);
-      const cartEnt = makeCart({...cart}, false, cartToken);
+      const cartEnt = makeCart({ ...cart, sendWhatsapp: false }, false, cartToken);
       cartEnt.client = clientEnt;
       const _cart = await cartEnt.save({embed: cartEmbed});
       const cartJson = _cart.toJson();
