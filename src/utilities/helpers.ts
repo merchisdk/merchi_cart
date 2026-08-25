@@ -199,7 +199,6 @@ export const cartEmbed: any = {
   domain: {
     company: {
       defaultTaxType: {},
-      isStripeAccountEnabled: {},
       taxTypes: {},
     },
   },

@@ -1,10 +1,9 @@
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { ButtonPay } from '../buttons';
 import FormStripeCardFields from './StripeCardFields';
 import {
   stripeCardFormSubmit,
-  stripeInitPromise,
   stripePaymentButtonSubmit,
 } from './actions';
 import { PaymentRequestPaymentMethodEvent } from '@stripe/stripe-js';
@@ -30,7 +29,6 @@ function StripeCardForm() {
   const company = domain.company;
   const hasCompanyPubKey = Boolean(company.isStripeValid && companyStripePubKeyOrTestPubKey(company));
   const companyPubKey = hasCompanyPubKey ? companyStripePubKeyOrTestPubKey(company) : '';
-  const canUseConnect = !!company.stripeAccountId;
   const [loadingStripePayment, setLoadingStripePayment] = useState(false);
   const [loadingStripePaymentButtons, setLoadingStripePaymentButtons] = useState(false);
   const url: string = apiUrl || '';
@@ -66,10 +64,6 @@ function StripeCardForm() {
       setError({message: e.errorMessage || e.message || 'Unable to process card.'});
     }
   }
-  const [stripePublicKey, setStripePublicKey] = useState(companyPubKey);
-  useEffect(() => {
-    if (!stripePublicKey && canUseConnect) stripeInitPromise(url).then(setStripePublicKey)
-  }, [stripePublicKey, canUseConnect]);
   return (
     <>
       {company.isTesting && badgeTestMode}
@@ -82,7 +76,7 @@ function StripeCardForm() {
         loadingStripePaymentButtons={loadingStripePaymentButtons}
         PaymentButton={PaymentButton}
         setLoadingStripePayment={setLoadingStripePayment}
-        stripePubKey={stripePublicKey}
+        stripePubKey={companyPubKey}
       />
     </>
   );
