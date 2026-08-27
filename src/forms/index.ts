@@ -3,6 +3,7 @@ import FormReturningCustomer from "./FormReturningCustomer";
 import FormShipmentAddressAndNotes, { ActiveFormShipmentAddressAndNotes } from "./FormShipmentAddressAndNotes";
 import FormSquarePayment from "./FormSquarePayment";
 import FormStripePayment from "./FormStripePayment";
+import FormWhatsappCustomer from "./FormWhatsappCustomer";
 
 export {
   ActiveFormShipmentAddressAndNotes,
@@ -11,4 +12,5 @@ export {
   FormShipmentAddressAndNotes,
   FormSquarePayment,
   FormStripePayment,
+  FormWhatsappCustomer,
 }
