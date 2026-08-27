@@ -48,7 +48,8 @@ export function FormCustomerNew() {
       // patch cart with new user
       const cartToken = await getCartCookieToken((domainId as number));
       const clientEnt = makeUser({id: user.id}, true);
-      const cartEnt = makeCart({ ...cart, sendWhatsapp: false }, false, cartToken);
+      const cartEnt = makeCart({ ...cart }, false, cartToken);
+      cartEnt.sendWhatsapp = false;
       cartEnt.client = clientEnt;
       const _cart = await cartEnt.save({embed: cartEmbed});
       const cartJson = _cart.toJson();

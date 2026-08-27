@@ -197,7 +197,6 @@ export const cartEmbed: any = {
   clientCompany: {},
   discountItems: {},
   domain: {
-    enableWhatsappNotifications: {},
     company: {
       defaultTaxType: {},
       isStripeAccountEnabled: {},
