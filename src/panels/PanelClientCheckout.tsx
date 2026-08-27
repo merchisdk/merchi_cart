@@ -8,14 +8,12 @@ import CartShipment from '../components/CartShipment';
 import {
   CartBody,
   CartTabPanel,
+  CustomerCheckoutMethodTabs,
   Title,
 } from '../components';
-import FormNewCustomer from '../forms/FormNewCustomer';
-import FormReturningCustomer from '../forms/FormReturningCustomer';
-import FormWhatsappCustomer from '../forms/FormWhatsappCustomer';
 import FormSquarePayment from '../forms/FormSquarePayment';
 import FormStripePayment from '../forms/FormStripePayment';
-import { faCoins, faCreditCard, faPhone, faUserPlus, faUserTag } from '@fortawesome/free-solid-svg-icons';
+import { faCoins, faCreditCard } from '@fortawesome/free-solid-svg-icons';
 import { useCartContext } from '../CartProvider';
 import DiscountInputGroup from '../components/DiscountInputGroup';
 import CartTotalsListGroup from '../components/CartTotalsListGroup';
@@ -90,37 +88,11 @@ function PanelClientCheckout() {
 
           </>
         :
-          <>
-            <CheckoutContainer>
-              <InnerContainer paddingBottom='0px'>
-                <Title
-                  icon={faUserPlus}
-                  title='Checkout as new customer'
-                />
-                <FormNewCustomer />
-              </InnerContainer>
-            </CheckoutContainer>
-            <CheckoutContainer>
-              <InnerContainer paddingBottom='0px'>
-                <Title
-                  icon={faUserTag}
-                  title='Checkout as returning customer'
-                />
-                <FormReturningCustomer />
-              </InnerContainer>
-            </CheckoutContainer>
-            {whatsappEnabled && (
-              <CheckoutContainer>
-                <InnerContainer paddingBottom='0px'>
-                  <Title
-                    icon={faPhone}
-                    title='Checkout with WhatsApp'
-                  />
-                  <FormWhatsappCustomer />
-                </InnerContainer>
-              </CheckoutContainer>
-            )}
-          </>
+          <CheckoutContainer>
+            <InnerContainer paddingBottom='0px'>
+              <CustomerCheckoutMethodTabs whatsappEnabled={whatsappEnabled} />
+            </InnerContainer>
+          </CheckoutContainer>
         }
       </CartBody>
     </CartTabPanel>
