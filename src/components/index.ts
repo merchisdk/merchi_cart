@@ -8,6 +8,7 @@ import CartTabContent from './CartTabContent';
 import CartTableContainer from './CartTableContainer';
 import CartTabPanel from './CartTabPanel';
 import Collapse from './Collapse';
+import CustomerCheckoutMethodTabs from './CustomerCheckoutMethodTabs';
 import DiscountInputGroup from './DiscountInputGroup';
 import LoadingTemplate, { LoadingTemplateSm } from './LoadingTemplate';
 import NoCartItems from './NoCartItems';
@@ -26,6 +27,7 @@ export {
   CartTableContainer,
   CartTabPanel,
   Collapse,
+  CustomerCheckoutMethodTabs,
   DiscountInputGroup,
   LoadingTemplate,
   LoadingTemplateSm,
