@@ -56,16 +56,11 @@ export function hasStripeLegacyAccount(cart: any) {
   return Boolean(company && companyStripePubKeyOrTestPubKey(company));
 }
 
-function hasStripeConnectAccount(cart: any) {
-  const company = cartCompany(cart);
-  return Boolean(company && company.isStripeAccountEnabled); 
-}
-
 export function stripeIsValidAndActive(cart: any) {
   const company = cartCompany(cart);
-  const hasStripe = hasStripeLegacyAccount(cart) ||
-    hasStripeConnectAccount(cart);
-  return Boolean(hasStripe && company && company.acceptStripe);
+  return Boolean(
+    hasStripeLegacyAccount(cart) && company && company.acceptStripe
+  );
 }
 
 export function cartRequiresShipment(cart: any) {
