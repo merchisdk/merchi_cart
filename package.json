@@ -1,6 +1,6 @@
 {
   "name": "merchi_cart",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Merchi's cart",
   "source": "src/index.ts",
   "main": "lib/index.js",
@@ -100,6 +100,6 @@
     "react-square-web-payments-sdk": "^3.2.1",
     "react-transition-group": "^4.4.5",
     "reactstrap": "^9.2.2",
-    "merchi_invoice": "^1.3.1"
+    "merchi_invoice": "^1.3.2"
   }
 }

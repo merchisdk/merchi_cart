@@ -6,7 +6,7 @@ import { tabIdPaymentSuccess } from '../utilities/tabs';
 
 export default function StripeCardForm() {
   const { alertError, apiUrl, cart, setActiveTabIndex, setInvoiceJson } = useCartContext();
-  return <StripePaymentGate apiUrl={apiUrl || 'https://api.merchi.co/v6/'} resource="cart" resourceId={cart.id}
+  return <StripePaymentGate engine={cart.stripePaymentEngine} apiUrl={apiUrl || 'https://api.merchi.co/v6/'} resource="cart" resourceId={cart.id}
     resourceToken={cart.token || cart.cartToken} legacy={<LegacyStripeCardForm />}>
     <StripePaymentForm apiUrl={apiUrl || 'https://api.merchi.co/v6/'} resource="cart"
     resourceId={cart.id} resourceToken={cart.token || cart.cartToken} onError={alertError}
