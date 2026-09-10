@@ -319,7 +319,7 @@ export const useCartContext = () => useContext(CartContext);
 
 interface PropsCartProvider {
   cart?: any;
-  cartClient: any;
+  cartClient?: any;
   children: ReactNode;
   classNameAlertError?: string;
   classNameAlertInfo?: string;
@@ -419,7 +419,7 @@ interface PropsCartProvider {
   urlFrontend?: string;
   urlTrackingPage?: string;
 
-  getCartShipmentOptions: () => void;
+  getCartShipmentOptions?: () => void;
 }
 
 const CartProvider = ({
