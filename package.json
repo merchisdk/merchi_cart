@@ -1,6 +1,6 @@
 {
   "name": "merchi_cart",
-  "version": "1.4.3",
+  "version": "1.4.4",
   "description": "Merchi's cart",
   "source": "src/index.ts",
   "main": "lib/index.js",
@@ -95,7 +95,6 @@
     "merchi_sdk_product_form": "^1.0.9",
     "merchi_sdk_ts": "^1.32.1",
     "react-country-region-selector": "^3.6.1",
-    "react-geosuggest": "^2.14.1",
     "react-hook-form": "7.45.4",
     "react-icons": "^4.10.1",
     "react-square-web-payments-sdk": "^3.2.1",
