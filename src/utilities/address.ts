@@ -303,6 +303,105 @@ export const addressComponentsSettings: any = {
   subpremise: 'short_name',
 };
 
+export const addressComponentsSettingsBackend: any = {
+  administrative_area_level_1: 'shortName',
+  administrative_area_level_2: 'shortName',
+  country: 'shortName',
+  establishment: 'longName',
+  floor: 'shortName',
+  locality: 'longName',
+  postal_code: 'shortName',
+  premise: 'shortName',
+  room: 'longName',
+  route: 'shortName',
+  street_number: 'shortName',
+  sublocality: 'longName',
+  subpremise: 'shortName',
+};
+
+export function googlePlacesResultAsNewAddress(placeDetails: any) {
+  const addressComponents = placeDetails?.addressComponents || [];
+  const name = placeDetails?.name || '';
+  const address = {
+    city: '',
+    country: '',
+    lineOne: name ? name : '',
+    lineTwo: '',
+    postcode: '',
+    state: '',
+  };
+
+  if (addressComponents && addressComponents.length > 0) {
+    for (let i = 0; i < addressComponents.length; i++) {
+      const addrComponent = addressComponents[i];
+      const addrTypes = addrComponent.types;
+
+      let addrType = null;
+      let componentSetting = null;
+
+      for (const type of addrTypes) {
+        if (addressComponentsSettingsBackend[type]) {
+          addrType = type;
+          componentSetting = addressComponentsSettingsBackend[type];
+          break;
+        }
+      }
+
+      if (componentSetting && addrType) {
+        const addressVal = addrComponent[componentSetting];
+        switch (addrType) {
+          case 'establishment':
+          case 'room':
+          case 'floor':
+          case 'street_number':
+          case 'premise':
+          case 'subpremise':
+          case 'route':
+            {
+              const oldLineOne = address.lineOne;
+              address.lineOne = oldLineOne.includes(addressVal)
+                ? oldLineOne
+                : `${oldLineOne} ${addressVal}`.trim();
+            }
+            break;
+          case 'locality':
+          case 'sublocality':
+            {
+              const oldCity = address.city ? `${address.city} ` : '';
+              address.city = (oldCity + addressVal).trim();
+            }
+            break;
+          case 'administrative_area_level_1':
+            address.state = addressVal;
+            break;
+          case 'administrative_area_level_2':
+            break;
+          case 'country':
+            address.country = addressVal;
+            break;
+          case 'postal_code':
+            address.postcode = addressVal;
+            break;
+          default:
+            break;
+        }
+      }
+    }
+
+    if (!address.lineOne.trim() && placeDetails?.formattedAddress) {
+      const parts = placeDetails.formattedAddress.split(',');
+      if (parts.length > 0) {
+        address.lineOne = parts[0].trim();
+      }
+    }
+
+    return address;
+  }
+
+  return null;
+}
+
+/** @deprecated Legacy react-geosuggest parser; use googlePlacesResultAsNewAddress instead. */
 export function geoSuggestResultAsNewAddress(resp: any) {
   const addressComponents = resp && resp.gmaps ?
     resp.gmaps.address_components : null;

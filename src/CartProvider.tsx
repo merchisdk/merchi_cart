@@ -120,6 +120,7 @@ export interface PropsCart {
 
   footer?: React.ReactElement;
 
+  /** @deprecated No longer used; address lookup goes through the Merchi API. */
   googlePlacesLoaded?: boolean;
   hideHead?: boolean;
 
@@ -402,6 +403,7 @@ interface PropsCartProvider {
   showDiscountCode?: boolean;
 
   domainId?: number;
+  /** @deprecated No longer used; address lookup goes through the Merchi API. */
   googlePlacesLoaded?: boolean;
   hideHead?: boolean;
   includeTheme?: boolean;
@@ -457,8 +459,8 @@ const CartProvider = ({
   classNameCartTabItem = 'nav-item merchi-nav-item',
   classNameCartTabItemLink = 'merchi-nav-link',
   classNameCartToggleIconButton = 'cart-icon-button-class',
-  classNameCartGoogleSuggestList = 'list-group m-b-0',
-  classNameCartGoogleSuggestListItem = 'list-group-item cursor-pointer',
+  classNameCartGoogleSuggestList = 'merchi-cart-google-suggest-list',
+  classNameCartGoogleSuggestListItem = 'merchi-cart-google-suggest-list-item',
   classNameCartHeader = 'merchi-cart-header',
   classNameCartItemFeatureImage = 'img-rounded m-10',
   classNameCartItemInfo = 'text-muted font-weight-normal font-italic',
@@ -506,6 +508,7 @@ const CartProvider = ({
   discountShowAppliedItems = true,
   showDiscountCode = true,
 
+  googlePlacesLoaded = false,
   hideHead = false,
   includeTheme = false,
   initialiseCart = true,
@@ -547,15 +550,6 @@ const CartProvider = ({
     setActiveTabIndex(tabId);
   }
 
-  const [googlePlacesLoaded, setGoogleMapsLoaded] = useState(false);
-  // Persistent callback setup
-  if (typeof window !== 'undefined') {
-    if (!(window as any).googleMapsScriptLoaded) {
-      (window as any).googleMapsScriptLoaded = () => {
-        setGoogleMapsLoaded(true);
-      };
-    }
-  }
   const [cartItem, setCartItem] = useState(({} as any));
 
   const [alert, setAlert] = useState(({
