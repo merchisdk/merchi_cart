@@ -1,6 +1,6 @@
 {
   "name": "merchi_cart",
-  "version": "1.4.4",
+  "version": "1.4.5",
   "description": "Merchi's cart",
   "source": "src/index.ts",
   "main": "lib/index.js",
@@ -18,7 +18,7 @@
     "copy-assets": "copyfiles -u 1 src/assets/**/* esm && copyfiles -u 1 src/assets/**/* lib",
     "compile-sass": "sass src/styles/globals.scss esm/styles/globals.css && sass src/styles/globals.scss lib/styles/globals.css",
     "start": "react-scripts start",
-    "test": "react-scripts test",
+    "test": "jest",
     "eject": "react-scripts eject"
   },
   "repository": {
@@ -77,9 +77,12 @@
     "copyfiles": "^2.4.1",
     "eslint": "8.47.0",
     "eslint-config-next": "13.4.16",
+    "jest": "28",
+    "jest-environment-jsdom": "28",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "sass": "^1.70.0",
+    "ts-jest": "28",
     "typescript": "^5.1.6"
   },
   "dependencies": {
@@ -93,7 +96,7 @@
     "lodash": "^4.17.21",
     "merchi_product_form": "^1.19.4",
     "merchi_sdk_product_form": "^1.0.9",
-    "merchi_sdk_ts": "^1.32.1",
+    "merchi_sdk_ts": "^1.42.0",
     "react-country-region-selector": "^3.6.1",
     "react-hook-form": "7.45.4",
     "react-icons": "^4.10.1",
