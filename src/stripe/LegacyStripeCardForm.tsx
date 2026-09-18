@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { ButtonPay } from '../buttons';
 import FormStripeCardFields from './StripeCardFields';
 import {
+  fetchTestPublishableKey,
   stripeCardFormSubmit,
   stripeInitPromise,
   stripePaymentButtonSubmit,
@@ -28,6 +29,7 @@ function StripeCardForm() {
   const { domain } = cart;
   const [error, setError] = useState(({} as any));
   const company = domain.company;
+  const isTestCheckout = Boolean(cart.isTest);
   const hasCompanyPubKey = Boolean(company.isStripeValid && companyStripePubKeyOrTestPubKey(company));
   const companyPubKey = hasCompanyPubKey ? companyStripePubKeyOrTestPubKey(company) : '';
   const canUseConnect = !!company.stripeAccountId;
@@ -66,13 +68,17 @@ function StripeCardForm() {
       setError({message: e.errorMessage || e.message || 'Unable to process card.'});
     }
   }
-  const [stripePublicKey, setStripePublicKey] = useState(companyPubKey);
+  const [stripePublicKey, setStripePublicKey] = useState(isTestCheckout ? '' : companyPubKey);
   useEffect(() => {
+    if (isTestCheckout) {
+      fetchTestPublishableKey(url).then(setStripePublicKey).catch(() => setStripePublicKey(''));
+      return;
+    }
     if (!stripePublicKey && canUseConnect) stripeInitPromise(url).then(setStripePublicKey)
-  }, [stripePublicKey, canUseConnect]);
+  }, [stripePublicKey, canUseConnect, isTestCheckout, url]);
   return (
     <>
-      {company.isTesting && badgeTestMode}
+      {!isTestCheckout && company.isTesting && badgeTestMode}
       <FormStripeCardFields
         doStripePayment={doStripePayment}
         doStripePaymentRequestForButton={doStripePaymentRequestForButton}

@@ -1,4 +1,5 @@
 import { isBrowser } from "browser-or-node";
+import { cartCookieName, readTestCheckoutFlag } from "./test_checkout";
 
 export async function getCookie(name: string, defaultValue: any) {
   if (!isBrowser) {
@@ -22,13 +23,14 @@ export async function getCookie(name: string, defaultValue: any) {
   }
 }
 
-export async function getCartCookie(domainId: number | string) {
-  const idAndToken: string = await getCookie(`cart-${domainId}`, null);
+export async function getCartCookie(domainId: number | string, isTest?: boolean) {
+  const test = isTest ?? readTestCheckoutFlag();
+  const idAndToken: string = await getCookie(cartCookieName(domainId, test), null);
   return idAndToken ? idAndToken.split(',') : null;
 }
 
-export async function getCartCookieToken(domainId: number | string) {
-  const cartIdAndToken = domainId ? await getCartCookie(Number(domainId)) : undefined;
+export async function getCartCookieToken(domainId: number | string, isTest?: boolean) {
+  const cartIdAndToken = domainId ? await getCartCookie(Number(domainId), isTest) : undefined;
   return cartIdAndToken && cartIdAndToken[1] || undefined;
 }
 
@@ -52,7 +54,8 @@ async function setSessionCookie(name: string, value: any, domain?: any) {
   document.cookie = cookie;
 }
 
-export const setCartCookie = async (storeId: number, cart: any, domain?: any) => {
+export const setCartCookie = async (storeId: number, cart: any, domain?: any, isTest?: boolean) => {
+  const test = isTest ?? (cart ? Boolean(cart.isTest) : readTestCheckoutFlag());
   const cookieValue = cart ? cart.id + ',' + cart.token : '';
-  await setSessionCookie('cart-' + String(storeId), cookieValue, domain);
+  await setSessionCookie(cartCookieName(storeId, test), cookieValue, domain);
 };

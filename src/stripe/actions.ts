@@ -7,6 +7,47 @@ export async function stripeInitPromise(apiUrl: string) {
   ).then((response: any) => response.key);
 }
 
+export async function fetchTestPublishableKey(apiUrl: string) {
+  const response: any = await fetch(
+    `${apiUrl}stripe/test_publishable_key/`,
+    { method: 'GET', mode: 'cors' }
+  );
+  if (response && typeof response.json === 'function') {
+    if (!response.ok) {
+      throw new Error('Stripe test keys are not configured');
+    }
+    const data = await response.json();
+    if (!data || !data.key) {
+      throw new Error('Stripe test keys are not configured');
+    }
+    return data.key;
+  }
+  if (!response || !response.key) {
+    throw new Error('Stripe test keys are not configured');
+  }
+  return response.key;
+}
+
+export async function completeTestPayment(apiUrl: string, cart: any) {
+  const query = new URLSearchParams({ cart_token: cart.token }).toString();
+  const response = await fetch(
+    `${apiUrl}carts/${cart.id}/complete_test_payment/?${query}`,
+    { method: 'POST', mode: 'cors' }
+  );
+  if (!response.ok) {
+    let message = 'Unable to complete the test order.';
+    try {
+      const data = await response.json();
+      message = data.message || data.errorMessage || message;
+    } catch {
+      // keep default
+    }
+    throw new Error(message);
+  }
+  const data = await response.json();
+  return data.invoice;
+}
+
 async function createPaymentIntent(apiUrl: string, cart: any, paymentMethodType?: string) {
   const { id, token } = cart;
   const fetchOptions: any = {

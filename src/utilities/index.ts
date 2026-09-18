@@ -10,5 +10,6 @@ export * from './local_storage';
 export * from './product';
 export * from './shipment';
 export * from './tabs';
+export * from './test_checkout';
 export * from './user';
 export * from './variations';
