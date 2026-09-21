@@ -2,10 +2,13 @@ import { useForm } from "react-hook-form";
 import InputsAddress from "./InputsAddress";
 import { CheckoutContainer, InnerContainer } from "../components/containers";
 import { Title } from "../components";
-import { shipmentFormId } from "../utilities/shipment";
+import {
+  checkoutShipmentHydrationAction,
+  shipmentFormId,
+} from "../utilities/shipment";
 import { faMapMarkerAlt } from "@fortawesome/free-solid-svg-icons";
 import { useCartContext } from "../CartProvider";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getCartCookieToken } from "../utilities/cookie";
 import { makeAddress, sanitizeAddressFields } from "../utilities/address";
 import { makeCart } from "../utilities/cart";
@@ -114,6 +117,8 @@ export function ActiveFormShipmentAddressAndNotes() {
     setCart,
     setLoadingTotals,
     setActiveTabAndEditDisabled,
+    updateCartShipmentAddress,
+    getCartShipmentOptions,
   } = useCartContext();
   const saved = getSavedCheckoutAddress(domainId);
   const cartAddress = cart?.receiverAddress;
@@ -122,6 +127,33 @@ export function ActiveFormShipmentAddressAndNotes() {
     : saved.address || {};
   const receiverNotes = cart?.receiverNotes || saved.receiverNotes || "";
   const [addressFieldsOpen, setAddressFieldsOpen] = useState(false);
+  const hydratedShipmentOptionsRef = useRef(false);
+
+  useEffect(() => {
+    if (hydratedShipmentOptionsRef.current || !cart?.id) return;
+    const draft = getSavedCheckoutAddress(domainId);
+    const action = checkoutShipmentHydrationAction({
+      cartAddress: cart?.receiverAddress,
+      savedAddress: draft.address,
+      shipmentGroups: cart?.shipmentGroups,
+    });
+    if (!action) return;
+    hydratedShipmentOptionsRef.current = true;
+    if (action === "apply-saved-address" && draft.address) {
+      updateCartShipmentAddress(draft.address);
+      return;
+    }
+    if (action === "refresh-quotes") {
+      getCartShipmentOptions?.();
+    }
+  }, [
+    cart?.id,
+    cart?.receiverAddress,
+    cart?.shipmentGroups,
+    domainId,
+    getCartShipmentOptions,
+    updateCartShipmentAddress,
+  ]);
 
   async function saveCartShipmentAddressAndGoToNextTab(values: any) {
     const { receiverAddress: address, receiverNotes } = values;
