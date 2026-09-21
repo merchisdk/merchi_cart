@@ -21,6 +21,12 @@ import {
 } from './utilities/local_storage';
 import { makeUser } from './utilities/user';
 import { persistTestCheckoutFlag, readTestCheckoutFlag } from './utilities/test_checkout';
+import {
+  appendJobSourceToFormData,
+  captureAndReadJobSource,
+  cartNeedsSourceUpdate,
+  jobSourceFieldsForApi,
+} from './utilities/job_source';
 
 export interface PropsCart {
   cart: any;
@@ -622,21 +628,19 @@ const CartProvider = ({
     setFetchingCart(true);
     try {
       const isTest = readTestCheckoutFlag();
+      const jobSource = jobSourceFieldsForApi(captureAndReadJobSource());
       const cart = makeCart({domain: {id: domainId}, isTest}, true);
-      if (isTest) {
-        const created = await merchi.authenticatedFetch('/carts/', {
-          method: 'POST',
-          body: cart.toFormData(),
-          query: [
-            ['embed', JSON.stringify(cartEmbed)],
-            ['skip_rights', 'y'],
-            ['is_test', 'true'],
-          ],
-        });
-        cart.fromJson(created.cart);
-      } else {
-        await cart.create({embed: cartEmbed});
-      }
+      const query: Array<[string, string]> = [
+        ['embed', JSON.stringify(cartEmbed)],
+        ['skip_rights', 'y'],
+      ];
+      if (isTest) query.push(['is_test', 'true']);
+      const created = await merchi.authenticatedFetch('/carts/', {
+        method: 'POST',
+        body: appendJobSourceToFormData(cart.toFormData() as FormData, jobSource),
+        query,
+      });
+      cart.fromJson(created.cart);
       let cartJson = await cart.toJson();
       if (domainId) setCartCookie(Number(domainId), cartJson, undefined, isTest);
       cartJson = await attachSavedClientIfNeeded(cartJson);
@@ -662,6 +666,19 @@ const CartProvider = ({
       if (Boolean(cartJson.isTest) !== isTest) {
         await createCartAndCookie();
         return;
+      }
+      const jobSource = jobSourceFieldsForApi(captureAndReadJobSource());
+      if (cartNeedsSourceUpdate(cartJson, jobSource)) {
+        const saved = await merchi.authenticatedFetch(`/carts/${cart.id}/`, {
+          method: 'PATCH',
+          body: appendJobSourceToFormData(cart.toFormData() as FormData, jobSource),
+          query: [
+            ['embed', JSON.stringify(cartEmbed)],
+            ['skip_rights', 'y'],
+          ],
+        });
+        cart.fromJson(saved.cart);
+        cartJson = cart.toJson();
       }
       if (stripeIsValidAndActive(cartJson) || isTest) {
         cartJson = await attachSavedClientIfNeeded(cartJson);
