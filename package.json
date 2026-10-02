@@ -94,7 +94,7 @@
     "browser-or-node": "^3.0.0-pre.0",
     "js-cookie": "^3.0.5",
     "lodash": "^4.17.21",
-    "merchi_product_form": "^1.19.4",
+    "merchi_product_form": "^1.19.14",
     "merchi_sdk_product_form": "^1.0.9",
     "merchi_sdk_ts": "^1.42.0",
     "react-country-region-selector": "^3.6.1",
