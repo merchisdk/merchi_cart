@@ -830,6 +830,9 @@ const CartProvider = ({
     cartItemEnt.taxType = jobEnt.taxType;
     cartItemEnt.ownDrafts = jobEnt.ownDrafts;
     cartItemEnt.tags = jobEnt.tags;
+    if (typeof jobJson.designInputNotes === 'string' && jobJson.designInputNotes) {
+      cartItemEnt.notes = jobJson.designInputNotes;
+    }
     try {
       const item = await cartItemEnt.create();
       const itemJson = await item.toJson();
